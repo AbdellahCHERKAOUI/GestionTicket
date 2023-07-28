@@ -1,5 +1,6 @@
 package com.binarios.gestionticket.entities;
 
+import com.binarios.gestionticket.enums.PersonRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,8 +25,12 @@ public class Person {
     @Column(nullable = false)
     private String password;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
+//    @ManyToOne
+//    @JoinColumn(name = "role_id")
+//    private PersonRole role;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private PersonRole role;
 
     @Column(nullable = false, unique = true)

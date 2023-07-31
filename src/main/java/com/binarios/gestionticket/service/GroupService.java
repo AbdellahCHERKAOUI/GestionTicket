@@ -53,7 +53,7 @@ public class GroupService {
 
         Group editedGroup = groupRepository.save(existingGroup);
 
-        /* Create a new GroupResponseDTO and set the ID, name, and description */
+        //Create new editedGroupResponseDTO to give it back as a response
         GroupResponseDTO editedGroupResponseDTO = new GroupResponseDTO();
         editedGroupResponseDTO.setId(editedGroup.getId());
         editedGroupResponseDTO.setName(editedGroup.getName());

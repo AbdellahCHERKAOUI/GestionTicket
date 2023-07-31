@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -43,8 +44,11 @@ public class Person {
     private String fullName;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
     private Specialite specialite;
 
+    @OneToMany
+    @Column()
+    @JoinColumn(name = "ticket_id")
+    private List<Ticket> tickets;
 
 }

@@ -9,7 +9,6 @@ import com.binarios.gestionticket.dto.response.TechResponseDTO;
 import com.binarios.gestionticket.entities.Group;
 import com.binarios.gestionticket.service.GroupService;
 import com.binarios.gestionticket.service.PersonService;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,14 +63,14 @@ public class AdminController {
 
     //Show Users
     @GetMapping("/person")
-    public ResponseEntity<Collection<PersonResponseDTO>> showPeople(@RequestBody PersonDTO personDTO) {
+    public ResponseEntity<Collection<PersonResponseDTO>> showPeople() {
 
         return new ResponseEntity<>(personService.allUsers(), HttpStatus.OK);
     }
 
     //Get Person by id
     @GetMapping("/person/{id}")
-    public ResponseEntity<PersonResponseDTO> showPeople(@PathVariable Long id,@RequestBody PersonDTO personDTO) {
+    public ResponseEntity<PersonResponseDTO> showPerson(@PathVariable Long id) {
 
         return new ResponseEntity<>(personService.getUserById(id), HttpStatus.OK);
     }

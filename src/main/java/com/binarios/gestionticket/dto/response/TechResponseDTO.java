@@ -4,7 +4,7 @@ import com.binarios.gestionticket.enums.Specialite;
 
 import java.time.LocalDate;
 
-public class PersonResponseDTO {
+public class TechResponseDTO {
     private Long id;
     private String username;
     private String role;
@@ -14,10 +14,10 @@ public class PersonResponseDTO {
     private String fullName;
     private Specialite specialite;
 
-    public PersonResponseDTO() {
+    public TechResponseDTO() {
     }
 
-    public PersonResponseDTO(Long id, String username, String role, String email, String phoneNumber, LocalDate birthDate, String fullName, Specialite specialite) {
+    public TechResponseDTO(Long id, String username, String role, String email, String phoneNumber, LocalDate birthDate, String fullName, Specialite specialite) {
         this.id = id;
         this.username = username;
         this.role = role;
@@ -85,10 +85,10 @@ public class PersonResponseDTO {
     }
 
     public Specialite getSpecialite() {
-        return specialite;
+        return specialite != null ? Specialite.valueOf(specialite.name()) : null;
     }
 
-    public void setSpecialite(Specialite specialite) {
-        this.specialite = specialite;
+    public void setSpecialite(String specialite) {
+        this.specialite = Specialite.valueOf(specialite);
     }
 }

@@ -23,6 +23,6 @@ public class Attachment {
     private String fileType;
 
     @Column(nullable = false)
-    private String filePath; // Store the file path to the directory on the server or on your file system directory
+    private String filePath;
 
 }

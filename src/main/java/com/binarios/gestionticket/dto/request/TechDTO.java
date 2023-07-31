@@ -1,47 +1,45 @@
-package com.binarios.gestionticket.dto.response;
+package com.binarios.gestionticket.dto.request;
 
 import com.binarios.gestionticket.enums.Specialite;
 
 import java.time.LocalDate;
 
-public class PersonResponseDTO {
-    private Long id;
-    private String username;
+public class TechDTO {
+    private String fullName;
+    private String password;
     private String role;
     private String email;
     private String phoneNumber;
     private LocalDate birthDate;
-    private String fullName;
     private Specialite specialite;
 
-    public PersonResponseDTO() {
+    public TechDTO() {
     }
 
-    public PersonResponseDTO(Long id, String username, String role, String email, String phoneNumber, LocalDate birthDate, String fullName, Specialite specialite) {
-        this.id = id;
-        this.username = username;
+    public TechDTO(String fullName, String password, String role, String email, String phoneNumber, LocalDate birthDate, Specialite specialite) {
+        this.fullName = fullName;
+        this.password = password;
         this.role = role;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.birthDate = birthDate;
-        this.fullName = fullName;
         this.specialite = specialite;
     }
 
-    public Long getId() {
-        return id;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
-    public String getUsername() {
-        return username;
+    public String getPassword() {
+        return password;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getRole() {
@@ -74,14 +72,6 @@ public class PersonResponseDTO {
 
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
     }
 
     public Specialite getSpecialite() {

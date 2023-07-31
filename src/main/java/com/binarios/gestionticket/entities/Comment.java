@@ -22,4 +22,8 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "ticket_id", nullable = false)
     private Ticket ticket;
+
+    @ManyToOne
+    @JoinColumn(name = "created_by", nullable = false)
+    private Person createdBy;
 }

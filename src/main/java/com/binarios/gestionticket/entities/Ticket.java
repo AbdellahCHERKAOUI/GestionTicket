@@ -30,7 +30,7 @@ public class Ticket {
     @Column(nullable = false)
     private TicketStatus status;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
     private Person client;
 
@@ -40,11 +40,7 @@ public class Ticket {
 
     @ManyToOne
     @JoinColumn(name = "admin_id", nullable = false)
-    private Person admin; // The User representing the admin overseeing the ticket
-
-
-    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
-    private List<Comment> comments;
+    private Person admin;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "ticket_id")

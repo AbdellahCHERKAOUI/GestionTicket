@@ -52,7 +52,7 @@ public class PersonService {
             return createdPersonDTO;
         }
 
-        //Username CreationLogic (Le nom complet + 4 chiffres)
+        //Username Creation Logic (fullName + 4-digits (Randomly generated))
 
     private String generateUsername(String fullName) {
         // Remove any spaces from the full name and convert to lowercase
@@ -78,6 +78,7 @@ public class PersonService {
             createdPersonDTO.setPhoneNumber(person.getPhoneNumber());
             createdPersonDTO.setBirthDate(person.getBirthDate());
             createdPersonDTO.setFullName(person.getFullName());
+            createdPersonDTO.setSpecialite(person.getSpecialite());
             personResponseDTOS.add(createdPersonDTO);
         }
         return personResponseDTOS;
@@ -85,9 +86,8 @@ public class PersonService {
 
     public PersonResponseDTO editPerson(Long id, PersonDTO personDTO) {
         Optional<Person> optionalPerson = personRepository.findById(id);
+        //If the personDTO is empty we will throw an exception
         if (optionalPerson.isEmpty()) {
-            // Handle the case when the person with the given ID is not found
-            // You can throw an exception or return an appropriate response
             throw new EntityNotFoundException("Person with ID " + id + " not found.");
         }
 
@@ -95,6 +95,7 @@ public class PersonService {
         // Update the person with the new data
         existingPerson.setFullName(personDTO.getFullName());
         existingPerson.setRole(PersonRole.valueOf(personDTO.getRole()));
+        existingPerson.setPassword(personDTO.getPassword());
         existingPerson.setEmail(personDTO.getEmail());
         existingPerson.setPhoneNumber(personDTO.getPhoneNumber());
         existingPerson.setBirthDate(personDTO.getBirthDate());
@@ -102,7 +103,7 @@ public class PersonService {
 
         Person updatedPerson = personRepository.save(existingPerson);
 
-        // Create a new PersonResponseDTO and set the updated details
+        // Create a new PersonResponseDTO to give it back as a response
         PersonResponseDTO updatedPersonResponseDTO = new PersonResponseDTO();
         updatedPersonResponseDTO.setId(updatedPerson.getId());
         updatedPersonResponseDTO.setUsername(updatedPerson.getUsername());
@@ -129,6 +130,7 @@ public class PersonService {
         updatedPersonResponseDTO.setPhoneNumber(person.getPhoneNumber());
         updatedPersonResponseDTO.setBirthDate(person.getBirthDate());
         updatedPersonResponseDTO.setFullName(person.getFullName());
+        updatedPersonResponseDTO.setSpecialite(person.getSpecialite());
 
         return updatedPersonResponseDTO;
     }
@@ -183,7 +185,7 @@ public class PersonService {
 
         Person updatedTech = personRepository.save(existingPerson);
 
-        // Create a new PersonResponseDTO and set the updated details
+        // Create a new PersonResponseDTO to give it back as a response
         TechResponseDTO updatedTechResponseDTO = new TechResponseDTO();
         updatedTechResponseDTO.setId(updatedTech.getId());
         updatedTechResponseDTO.setUsername(updatedTech.getUsername());

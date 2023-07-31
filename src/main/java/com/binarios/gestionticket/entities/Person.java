@@ -1,6 +1,7 @@
 package com.binarios.gestionticket.entities;
 
 import com.binarios.gestionticket.enums.PersonRole;
+import com.binarios.gestionticket.enums.Specialite;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,5 +41,10 @@ public class Person {
 
     @Column(nullable = false)
     private String fullName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
+    private Specialite specialite;
+
 
 }

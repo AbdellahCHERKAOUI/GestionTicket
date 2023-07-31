@@ -1,7 +1,9 @@
 package com.binarios.gestionticket.service;
 
 import com.binarios.gestionticket.dto.request.PersonDTO;
+import com.binarios.gestionticket.dto.request.TechDTO;
 import com.binarios.gestionticket.dto.response.PersonResponseDTO;
+import com.binarios.gestionticket.dto.response.TechResponseDTO;
 import com.binarios.gestionticket.entities.Person;
 import com.binarios.gestionticket.enums.PersonRole;
 import com.binarios.gestionticket.repositories.PersonRepository;
@@ -130,5 +132,70 @@ public class PersonService {
 
         return updatedPersonResponseDTO;
     }
+
+    public TechResponseDTO createTech(TechDTO techDTO) {
+        Person person = new Person();
+        person.setFullName(techDTO.getFullName());
+        person.setPassword(techDTO.getPassword());
+        person.setRole(PersonRole.valueOf(techDTO.getRole()));
+        person.setEmail(techDTO.getEmail());
+        person.setPhoneNumber(techDTO.getPhoneNumber());
+        person.setBirthDate(techDTO.getBirthDate());
+        person.setSpecialite(techDTO.getSpecialite());
+
+        // Generate the username automatically based on fullName and a random 4-digit number
+        String generatedUsername = generateUsername(techDTO.getFullName());
+        person.setUsername(generatedUsername);
+
+        Person savedPerson = personRepository.save(person);
+
+        // Create a new PersonDTO and set the ID and generated username
+        TechResponseDTO createdTechDTO = new TechResponseDTO();
+        createdTechDTO.setId(savedPerson.getId());
+        createdTechDTO.setUsername(savedPerson.getUsername());
+        createdTechDTO.setRole(savedPerson.getRole().name());
+        createdTechDTO.setEmail(savedPerson.getEmail());
+        createdTechDTO.setPhoneNumber(savedPerson.getPhoneNumber());
+        createdTechDTO.setBirthDate(savedPerson.getBirthDate());
+        createdTechDTO.setFullName(savedPerson.getFullName());
+        createdTechDTO.setSpecialite(savedPerson.getSpecialite().name());
+
+        return createdTechDTO;
+    }
+
+    public TechResponseDTO editTech(Long id, TechDTO techDTO) {
+        Optional<Person> optionalPerson = personRepository.findById(id);
+        if (optionalPerson.isEmpty()) {
+            // Handle the case when the person with the given ID is not found
+            // You can throw an exception or return an appropriate response
+            throw new EntityNotFoundException("Person with ID " + id + " not found.");
+        }
+
+        Person existingPerson = optionalPerson.get();
+        // Update the person with the new data
+        existingPerson.setFullName(techDTO.getFullName());
+        existingPerson.setRole(PersonRole.valueOf(techDTO.getRole()));
+        existingPerson.setEmail(techDTO.getEmail());
+        existingPerson.setPhoneNumber(techDTO.getPhoneNumber());
+        existingPerson.setBirthDate(techDTO.getBirthDate());
+        existingPerson.setSpecialite(techDTO.getSpecialite());
+
+
+        Person updatedTech = personRepository.save(existingPerson);
+
+        // Create a new PersonResponseDTO and set the updated details
+        TechResponseDTO updatedTechResponseDTO = new TechResponseDTO();
+        updatedTechResponseDTO.setId(updatedTech.getId());
+        updatedTechResponseDTO.setUsername(updatedTech.getUsername());
+        updatedTechResponseDTO.setRole(updatedTech.getRole().name());
+        updatedTechResponseDTO.setEmail(updatedTech.getEmail());
+        updatedTechResponseDTO.setPhoneNumber(updatedTech.getPhoneNumber());
+        updatedTechResponseDTO.setBirthDate(updatedTech.getBirthDate());
+        updatedTechResponseDTO.setFullName(updatedTech.getFullName());
+        updatedTechResponseDTO.setSpecialite(updatedTech.getSpecialite().name());
+
+        return updatedTechResponseDTO;
+    }
+
 }
 

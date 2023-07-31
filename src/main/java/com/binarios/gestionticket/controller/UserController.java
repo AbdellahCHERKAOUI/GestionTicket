@@ -1,4 +1,4 @@
 package com.binarios.gestionticket.controller;
 
-public class ClientController {
+public class UserController {
 }

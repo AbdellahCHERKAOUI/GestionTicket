@@ -1,5 +1,6 @@
 package com.binarios.gestionticket.entities;
 
+import com.binarios.gestionticket.enums.TicketStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,17 +26,17 @@ public class Ticket {
     private String description;
 
 
-    @ManyToOne
-    @JoinColumn(name = "status_id", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private TicketStatus status;
 
     @OneToOne
     @JoinColumn(name = "client_id", nullable = false)
-    private Person client; // The User who created the ticket
+    private Person client;
 
     @ManyToOne
     @JoinColumn(name = "assigned_tech_id")
-    private Person assignedTech; // The User representing the tech assigned to the ticket
+    private Person assignedTech;
 
     @ManyToOne
     @JoinColumn(name = "admin_id", nullable = false)

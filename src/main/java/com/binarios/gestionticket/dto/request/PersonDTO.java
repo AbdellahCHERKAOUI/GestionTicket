@@ -3,34 +3,31 @@ package com.binarios.gestionticket.dto.request;
 import java.time.LocalDate;
 
 public class PersonDTO {
-    private String username;
+    private String fullName;
     private String password;
-    private Long roleId;
+    private String role;
     private String email;
     private String phoneNumber;
     private LocalDate birthDate;
-    private String fullName;
-
 
     public PersonDTO() {
     }
 
-    public PersonDTO(String username, String password, Long roleId, String email, String phoneNumber, LocalDate birthDate, String fullName) {
-        this.username = username;
+    public PersonDTO(String fullName, String password, String role, String email, String phoneNumber, LocalDate birthDate) {
+        this.fullName = fullName;
         this.password = password;
-        this.roleId = roleId;
+        this.role = role;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.birthDate = birthDate;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
         this.fullName = fullName;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {
@@ -41,12 +38,12 @@ public class PersonDTO {
         this.password = password;
     }
 
-    public Long getRoleId() {
-        return roleId;
+    public String getRole() {
+        return role;
     }
 
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getEmail() {
@@ -71,13 +68,5 @@ public class PersonDTO {
 
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
     }
 }

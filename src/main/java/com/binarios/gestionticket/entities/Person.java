@@ -25,10 +25,6 @@ public class Person {
     @Column(nullable = false)
     private String password;
 
-//    @ManyToOne
-//    @JoinColumn(name = "role_id")
-//    private PersonRole role;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PersonRole role;

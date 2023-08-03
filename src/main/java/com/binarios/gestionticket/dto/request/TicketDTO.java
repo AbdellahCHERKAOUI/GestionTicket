@@ -14,23 +14,23 @@ public class TicketDTO {
 
     private TicketStatus status;
 
-    private Person client;
+    private Long client_id;
 
-    private Person assignedTech;
+    private Long assignedTech_id;
 
-    private Person admin;
+    private Long admin_id;
 
     public TicketDTO() {
     }
 
-    public TicketDTO(Long id, String name, String description, TicketStatus status, Person client, Person assignedTech, Person admin) {
+    public TicketDTO(Long id, String name, String description, TicketStatus status, Long client_id, Long assignedTech_id, Long admin_id) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
-        this.client = client;
-        this.assignedTech = assignedTech;
-        this.admin = admin;
+        this.client_id = client_id;
+        this.assignedTech_id = assignedTech_id;
+        this.admin_id = admin_id;
     }
 
     public Long getId() {
@@ -65,28 +65,27 @@ public class TicketDTO {
         this.status = status;
     }
 
-    public Person getClient() {
-        return client;
+    public Long getClient_id() {
+        return client_id;
     }
 
-    public void setClient(Person client) {
-        this.client = client;
+    public void setClient_id(Long client_id) {
+        this.client_id = client_id;
     }
 
-    public Person getAssignedTech() {
-        return assignedTech;
+    public Long getAssignedTech_id() {
+        return assignedTech_id;
     }
 
-    public void setAssignedTech(Person assignedTech) {
-        this.assignedTech = assignedTech;
+    public void setAssignedTech_id(Long assignedTech_id) {
+        this.assignedTech_id = assignedTech_id;
     }
 
-    public Person getAdmin() {
-        return admin;
+    public Long getAdmin_id() {
+        return admin_id;
     }
 
-    public void setAdmin(Person admin) {
-        this.admin = admin;
+    public void setAdmin_id(Long admin_id) {
+        this.admin_id = admin_id;
     }
-
 }

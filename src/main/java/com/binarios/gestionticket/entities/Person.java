@@ -47,8 +47,12 @@ public class Person {
     private Specialite specialite;
 
     @OneToMany
-    @Column()
     @JoinColumn(name = "ticket_id")
     private List<Ticket> tickets;
+
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private Group group;
+
 
 }

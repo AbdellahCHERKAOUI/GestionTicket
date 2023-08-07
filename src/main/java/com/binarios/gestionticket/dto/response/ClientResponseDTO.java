@@ -1,25 +1,47 @@
-package com.binarios.gestionticket.dto.request;
+package com.binarios.gestionticket.dto.response;
 
 import java.time.LocalDate;
 
-public class PersonDTO {
+public class ClientResponseDTO {
+    private Long id;
+    private String username;
     private String fullName;
     private String password;
     private String role;
     private String email;
     private String phoneNumber;
-    private LocalDate birthDate; 
+    private LocalDate birthDate;
+    private Long group;
 
-    public PersonDTO() {
+    public ClientResponseDTO() {
     }
 
-    public PersonDTO(String fullName, String password, String role, String email, String phoneNumber, LocalDate birthDate) {
+    public ClientResponseDTO(Long id, String username, String fullName, String password, String role, String email, String phoneNumber, LocalDate birthDate, Long group) {
+        this.id = id;
+        this.username = username;
         this.fullName = fullName;
         this.password = password;
         this.role = role;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.birthDate = birthDate;
+        this.group = group;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getFullName() {
@@ -68,5 +90,13 @@ public class PersonDTO {
 
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public Long getGroup() {
+        return group;
+    }
+
+    public void setGroup(Long group) {
+        this.group = group;
     }
 }

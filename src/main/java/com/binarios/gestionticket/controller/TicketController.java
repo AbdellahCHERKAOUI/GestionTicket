@@ -30,10 +30,6 @@ public class TicketController {
         return new ResponseEntity<>(ticketService.saveTicket(ticketDTO,file), HttpStatus.CREATED);
     }
 
-//    @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-//    public ResponseEntity<TicketResponseDTO>  createTicket(@RequestParam("file") MultipartFile file, @RequestPart TicketDTO ticketDTO){
-//        return new ResponseEntity<>(ticketService.saveTicket(ticketDTO,file), HttpStatus.CREATED);
-//    }
 
     @GetMapping(value = "/tickets")
     public ResponseEntity<Collection<TicketResponseDTO>>  showAllTickets(){

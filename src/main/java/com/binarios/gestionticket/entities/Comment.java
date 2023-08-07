@@ -16,6 +16,8 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
@@ -25,5 +27,5 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
-    private Person createdBy;
+    private Person person;
 }

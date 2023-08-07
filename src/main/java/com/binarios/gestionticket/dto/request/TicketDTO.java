@@ -1,5 +1,6 @@
 package com.binarios.gestionticket.dto.request;
 
+import com.binarios.gestionticket.dto.response.TicketResponseDTO;
 import com.binarios.gestionticket.entities.Person;
 import com.binarios.gestionticket.enums.TicketStatus;
 
@@ -88,4 +89,5 @@ public class TicketDTO {
     public void setAdmin_id(Long admin_id) {
         this.admin_id = admin_id;
     }
+
 }

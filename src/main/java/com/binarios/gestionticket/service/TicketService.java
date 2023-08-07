@@ -79,7 +79,7 @@ public class TicketService {
         Collection<Ticket> tickets = ticketRepository.findAll();
         Collection<TicketResponseDTO> ticketResponseDTOS = new ArrayList<>();
 
-        for (Ticket ticket : tickets){
+        for (Ticket ticket : tickets) {
             TicketResponseDTO createdTicketDTO = new TicketResponseDTO();
             createdTicketDTO.setId(ticket.getId());
             createdTicketDTO.setName(ticket.getName());
@@ -133,13 +133,13 @@ public class TicketService {
         ticketRepository.deleteById(id);
     }
 
-    public TicketResponseDTO assignTicket(Long ticketId, Long techId) throws Exception{
+    public TicketResponseDTO assignTicket(Long ticketId, Long techId) throws Exception {
         Ticket ticket = ticketRepository.findById(ticketId).orElse(null);
         Person tech = personRepository.findById(techId).orElse(null);
-        if (ticket == null){
+        if (ticket == null) {
             throw new Exception("There is now ticket with this id");
         }
-        if (tech == null || !tech.getRole().name().equals(PersonRole.TECH.name())){
+        if (tech == null || !tech.getRole().name().equals(PersonRole.TECH.name())) {
             throw new Exception("There is now tech with this id");
         }
 
@@ -159,4 +159,44 @@ public class TicketService {
 
         return createdTicketDTO;
     }
+
+
+
+    //updateTicketStatus
+
+    public TicketResponseDTO updateTicketStatus(Long ticketId, TicketStatus newStatus) throws Exception {
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new Exception("Ticket not found with ID: " + ticketId));
+
+        // Ensure the status transition is valid (optional step, based on your business rules)
+        if (!isValidStatusTransition(ticket.getStatus(), newStatus)) {
+            throw new Exception("Invalid status transition.");
+        }
+
+        ticket.setStatus(newStatus);
+        Ticket updatedTicket = ticketRepository.save(ticket);
+
+        // Create a new TicketResponseDTO and set the fields to return in the response
+        TicketResponseDTO responseDTO = new TicketResponseDTO();
+        responseDTO.setId(updatedTicket.getId());
+        responseDTO.setName(updatedTicket.getName());
+        responseDTO.setDescription(updatedTicket.getDescription());
+        responseDTO.setStatus(updatedTicket.getStatus());
+        responseDTO.setAdmin(updatedTicket.getAdmin());
+        responseDTO.setAssignedTech(updatedTicket.getAssignedTech());
+        responseDTO.setClient(updatedTicket.getClient());
+        responseDTO.setAttachments(updatedTicket.getAttachments());
+
+        return responseDTO;
+    }
+
+    // Helper method to check if the status transition is valid (optional)
+    private boolean isValidStatusTransition(TicketStatus currentStatus, TicketStatus newStatus) {
+        // Implement your business logic to determine whether the transition is valid
+        // For example, you might define specific allowed transitions based on business rules.
+        // You can also consider using an enum method to handle this validation.
+        // For demonstration purposes, we'll allow any status transitions here.
+        return true;
+    }
 }
+
+

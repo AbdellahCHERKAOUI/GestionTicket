@@ -2,24 +2,26 @@ package com.binarios.gestionticket.dto.request;
 
 import java.time.LocalDate;
 
-public class PersonDTO {
+public class ClientDTO {
     private String fullName;
     private String password;
     private String role;
     private String email;
     private String phoneNumber;
-    private LocalDate birthDate; 
+    private LocalDate birthDate;
+    private Long group;
 
-    public PersonDTO() {
+    public ClientDTO() {
     }
 
-    public PersonDTO(String fullName, String password, String role, String email, String phoneNumber, LocalDate birthDate) {
+    public ClientDTO(String fullName, String password, String role, String email, String phoneNumber, LocalDate birthDate, Long group) {
         this.fullName = fullName;
         this.password = password;
         this.role = role;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.birthDate = birthDate;
+        this.group = group;
     }
 
     public String getFullName() {
@@ -68,5 +70,13 @@ public class PersonDTO {
 
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public Long getGroup() {
+        return group;
+    }
+
+    public void setGroup(Long group) {
+        this.group = group;
     }
 }

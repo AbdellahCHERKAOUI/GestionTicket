@@ -1,11 +1,15 @@
 package com.binarios.gestionticket.service;
 
+import com.binarios.gestionticket.dto.request.ClientDTO;
 import com.binarios.gestionticket.dto.request.PersonDTO;
 import com.binarios.gestionticket.dto.request.TechDTO;
+import com.binarios.gestionticket.dto.response.ClientResponseDTO;
 import com.binarios.gestionticket.dto.response.PersonResponseDTO;
 import com.binarios.gestionticket.dto.response.TechResponseDTO;
+import com.binarios.gestionticket.entities.Group;
 import com.binarios.gestionticket.entities.Person;
 import com.binarios.gestionticket.enums.PersonRole;
+import com.binarios.gestionticket.repositories.GroupRepository;
 import com.binarios.gestionticket.repositories.PersonRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +23,19 @@ import java.util.Random;
 @Service
 public class PersonService {
     private final PersonRepository personRepository;
+    private final GroupRepository groupRepository;
 
     @Autowired
-    public PersonService(PersonRepository personRepository) {
+    public PersonService(PersonRepository personRepository,
+                         GroupRepository groupRepository) {
         this.personRepository = personRepository;
+        this.groupRepository = groupRepository;
     }
-    public PersonResponseDTO createUser(PersonDTO personDTO) {
+    public PersonResponseDTO createAdmin(PersonDTO personDTO) {
             Person person = new Person();
             person.setFullName(personDTO.getFullName());
             person.setPassword(personDTO.getPassword());
-            person.setRole(PersonRole.valueOf(personDTO.getRole()));
+            person.setRole(PersonRole.ADMIN);
             person.setEmail(personDTO.getEmail());
             person.setPhoneNumber(personDTO.getPhoneNumber());
             person.setBirthDate(personDTO.getBirthDate());
@@ -84,7 +91,7 @@ public class PersonService {
         return personResponseDTOS;
     }
 
-    public PersonResponseDTO editPerson(Long id, PersonDTO personDTO) {
+    public PersonResponseDTO editAdmin(Long id, PersonDTO personDTO) {
         Optional<Person> optionalPerson = personRepository.findById(id);
         //If the personDTO is empty we will throw an exception
         if (optionalPerson.isEmpty()) {
@@ -94,7 +101,7 @@ public class PersonService {
         Person existingPerson = optionalPerson.get();
         // Update the person with the new data
         existingPerson.setFullName(personDTO.getFullName());
-        existingPerson.setRole(PersonRole.valueOf(personDTO.getRole()));
+        existingPerson.setRole(PersonRole.ADMIN);
         existingPerson.setPassword(personDTO.getPassword());
         existingPerson.setEmail(personDTO.getEmail());
         existingPerson.setPhoneNumber(personDTO.getPhoneNumber());
@@ -131,6 +138,7 @@ public class PersonService {
         updatedPersonResponseDTO.setBirthDate(person.getBirthDate());
         updatedPersonResponseDTO.setFullName(person.getFullName());
         updatedPersonResponseDTO.setSpecialite(person.getSpecialite());
+        updatedPersonResponseDTO.setGroup(person.getGroup());
 
         return updatedPersonResponseDTO;
     }
@@ -139,7 +147,7 @@ public class PersonService {
         Person person = new Person();
         person.setFullName(techDTO.getFullName());
         person.setPassword(techDTO.getPassword());
-        person.setRole(PersonRole.valueOf(techDTO.getRole()));
+        person.setRole(PersonRole.TECH);
         person.setEmail(techDTO.getEmail());
         person.setPhoneNumber(techDTO.getPhoneNumber());
         person.setBirthDate(techDTO.getBirthDate());
@@ -199,5 +207,78 @@ public class PersonService {
         return updatedTechResponseDTO;
     }
 
+    public ClientResponseDTO createClient(ClientDTO clientDTO) throws Exception {
+
+        Group group = groupRepository.findById(clientDTO.getGroup()).orElseThrow(() ->new Exception("There is no group with this id : "+ clientDTO.getGroup()));
+
+        Person person = new Person();
+        person.setFullName(clientDTO.getFullName());
+        person.setPassword(clientDTO.getPassword());
+        person.setRole(PersonRole.CLIENT);
+        person.setEmail(clientDTO.getEmail());
+        person.setPhoneNumber(clientDTO.getPhoneNumber());
+        person.setBirthDate(clientDTO.getBirthDate());
+        person.setGroup(group);
+
+        // Generate the username automatically based on fullName and a random 4-digit number
+        String generatedUsername = generateUsername(clientDTO.getFullName());
+        person.setUsername(generatedUsername);
+
+        Person savedPerson = personRepository.save(person);
+
+        // Create a new PersonDTO and set the ID and generated username
+        ClientResponseDTO createdClientDTO = new ClientResponseDTO();
+        createdClientDTO.setId(savedPerson.getId());
+        createdClientDTO.setUsername(savedPerson.getUsername());
+        createdClientDTO.setRole(savedPerson.getRole().name());
+        createdClientDTO.setEmail(savedPerson.getEmail());
+        createdClientDTO.setPhoneNumber(savedPerson.getPhoneNumber());
+        createdClientDTO.setBirthDate(savedPerson.getBirthDate());
+        createdClientDTO.setFullName(savedPerson.getFullName());
+        createdClientDTO.setGroup(group.getId());
+
+        return createdClientDTO;
+    }
+
+    public ClientResponseDTO editClient(Long id, ClientDTO clientDTO) {
+        Optional<Person> optionalPerson = personRepository.findById(id);
+        Optional<Group> optionalGroup = groupRepository.findById(clientDTO.getGroup());
+        if (optionalPerson.isEmpty()) {
+            // Handle the case when the person with the given ID is not found
+            // You can throw an exception or return an appropriate response
+            throw new EntityNotFoundException("Client with ID " + id + " not found.");
+        }
+
+        if (optionalGroup.isEmpty()) {
+            // Handle the case when the person with the given ID is not found
+            // You can throw an exception or return an appropriate response
+            throw new EntityNotFoundException("Group with ID " + id + " not found.");
+        }
+
+
+        Person existingClient = optionalPerson.get();
+        // Update the person with the new data
+        existingClient.setFullName(clientDTO.getFullName());
+        existingClient.setEmail(clientDTO.getEmail());
+        existingClient.setPhoneNumber(clientDTO.getPhoneNumber());
+        existingClient.setBirthDate(clientDTO.getBirthDate());
+        existingClient.setGroup(optionalGroup.get());
+
+
+        Person updatedClient = personRepository.save(existingClient);
+
+        // Create a new PersonDTO and set the ID and generated username
+        ClientResponseDTO createdClientDTO = new ClientResponseDTO();
+        createdClientDTO.setId(updatedClient.getId());
+        createdClientDTO.setUsername(updatedClient.getUsername());
+        createdClientDTO.setRole(updatedClient.getRole().name());
+        createdClientDTO.setEmail(updatedClient.getEmail());
+        createdClientDTO.setPhoneNumber(updatedClient.getPhoneNumber());
+        createdClientDTO.setBirthDate(updatedClient.getBirthDate());
+        createdClientDTO.setFullName(updatedClient.getFullName());
+        createdClientDTO.setGroup(optionalGroup.get().getId());
+
+        return createdClientDTO;
+    }
 }
 

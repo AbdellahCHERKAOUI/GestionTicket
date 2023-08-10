@@ -32,7 +32,7 @@ public class TicketService {
         this.personRepository = personRepository;
     }
 
-    public TicketResponseDTO saveTicket(TicketDTO ticketDTO, MultipartFile file) {
+    public TicketResponseDTO saveTicket(TicketDTO ticketDTO, MultipartFile file) throws Exception {
 
         Ticket ticket = new Ticket();
         ticket.setName(ticketDTO.getName());
@@ -188,6 +188,15 @@ public class TicketService {
 
         return responseDTO;
     }
+
+    public List<Attachment> getAttachmentsByTicketId(Long ticketId) throws Exception{
+        Ticket ticket = ticketRepository.findById(ticketId).orElse(null);
+        if (ticket == null){
+            throw new Exception("There is no ticket with this id : "+ ticketId);
+        }
+        return ticket.getAttachments();
+    }
+
 
     // Helper method to check if the status transition is valid (optional)
     private boolean isValidStatusTransition(TicketStatus currentStatus, TicketStatus newStatus) {

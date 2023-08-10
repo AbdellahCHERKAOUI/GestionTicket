@@ -100,9 +100,16 @@ public class CommentService {
             commentRepository.deleteById(commentId);
 
     }
-//show comment
+    private CommentResponseDTO createResponseDTO(Comment comment) {
+        CommentResponseDTO responseDTO = new CommentResponseDTO();
+        responseDTO.setId(comment.getId());
+        responseDTO.setContent(comment.getContent());
+        responseDTO.setTicket(comment.getTicket().getId());
+        responseDTO.setPerson(comment.getPerson().getId());
 
-
+        return responseDTO;
+    }
+    //show comment
     public List<CommentResponseDTO> getCommentsByTicketId(Long ticketId) throws  Exception{
         List<Comment> comments = commentRepository.findByTicketId(ticketId);
 
@@ -118,14 +125,6 @@ public class CommentService {
        return commentResponseDTOS;
     }
 
-    private CommentResponseDTO createResponseDTO(Comment comment) {
-        CommentResponseDTO responseDTO = new CommentResponseDTO();
-        responseDTO.setId(comment.getId());
-        responseDTO.setContent(comment.getContent());
-        responseDTO.setTicket(comment.getTicket().getId());
-        responseDTO.setPerson(comment.getPerson().getId());
 
-        return responseDTO;
-    }
 }
 

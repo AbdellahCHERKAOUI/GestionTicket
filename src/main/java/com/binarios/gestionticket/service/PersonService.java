@@ -3,6 +3,7 @@ package com.binarios.gestionticket.service;
 import com.binarios.gestionticket.dto.request.ClientDTO;
 import com.binarios.gestionticket.dto.request.PersonDTO;
 import com.binarios.gestionticket.dto.request.TechDTO;
+import com.binarios.gestionticket.dto.request.UpdatePasswordDTO;
 import com.binarios.gestionticket.dto.response.ClientResponseDTO;
 import com.binarios.gestionticket.dto.response.PersonResponseDTO;
 import com.binarios.gestionticket.dto.response.TechResponseDTO;
@@ -25,11 +26,16 @@ public class PersonService {
     private final PersonRepository personRepository;
     private final GroupRepository groupRepository;
 
+
+
+
+
     @Autowired
     public PersonService(PersonRepository personRepository,
                          GroupRepository groupRepository) {
         this.personRepository = personRepository;
         this.groupRepository = groupRepository;
+
     }
     public PersonResponseDTO createAdmin(PersonDTO personDTO) {
             Person person = new Person();
@@ -86,6 +92,12 @@ public class PersonService {
             createdPersonDTO.setBirthDate(person.getBirthDate());
             createdPersonDTO.setFullName(person.getFullName());
             createdPersonDTO.setSpecialite(person.getSpecialite());
+            //createdPersonDTO.setGroup(person.getGroup().getId());
+            if (person.getGroup() != null) {
+                createdPersonDTO.setGroup(person.getGroup().getId());
+            } else {
+                createdPersonDTO.setGroup(null);
+            }
             personResponseDTOS.add(createdPersonDTO);
         }
         return personResponseDTOS;
@@ -138,7 +150,7 @@ public class PersonService {
         updatedPersonResponseDTO.setBirthDate(person.getBirthDate());
         updatedPersonResponseDTO.setFullName(person.getFullName());
         updatedPersonResponseDTO.setSpecialite(person.getSpecialite());
-        updatedPersonResponseDTO.setGroup(person.getGroup());
+        updatedPersonResponseDTO.setGroup(person.getGroup().getId());
 
         return updatedPersonResponseDTO;
     }
@@ -280,5 +292,24 @@ public class PersonService {
 
         return createdClientDTO;
     }
+
+
+//update Password
+public void changePassword(Long personId, UpdatePasswordDTO requestDTO) throws Exception {
+    Person person = personRepository.findById(personId)
+            .orElseThrow(() -> new Exception("User not found"));
+
+    if (!person.getPassword().equals(requestDTO.getOldPassword())) {
+        throw new Exception("Old password is incorrect");
+    }
+
+    if (!requestDTO.getNewPassword().equals(requestDTO.getConfirmPassword())) {
+        throw new Exception("New passwords do not match");
+    }
+
+    // Update the password
+    person.setPassword(requestDTO.getNewPassword());
+    personRepository.save(person);
+}
 }
 

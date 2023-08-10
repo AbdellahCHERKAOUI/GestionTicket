@@ -205,6 +205,7 @@ public class TicketService {
         // You can also consider using an enum method to handle this validation.
         // For demonstration purposes, we'll allow any status transitions here.
         return true;
+
     }
 
     public Collection<TicketResponseDTO> getCreatedTickets(Long personId) throws Exception {
@@ -227,7 +228,6 @@ public class TicketService {
 
 
         return ticketResponseDTOS;
-    }
-}
+}}
 
 

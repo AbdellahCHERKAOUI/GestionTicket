@@ -3,6 +3,7 @@ package com.binarios.gestionticket.service;
 import com.binarios.gestionticket.dto.request.ClientDTO;
 import com.binarios.gestionticket.dto.request.PersonDTO;
 import com.binarios.gestionticket.dto.request.TechDTO;
+import com.binarios.gestionticket.dto.request.UpdatePasswordDTO;
 import com.binarios.gestionticket.dto.response.ClientResponseDTO;
 import com.binarios.gestionticket.dto.response.PersonResponseDTO;
 import com.binarios.gestionticket.dto.response.TechResponseDTO;
@@ -31,7 +32,6 @@ public class PersonService {
         this.personRepository = personRepository;
         this.groupRepository = groupRepository;
     }
-
     public PersonResponseDTO createAdmin(PersonDTO personDTO) {
         Person person = new Person();
         person.setFullName(personDTO.getFullName());
@@ -46,7 +46,7 @@ public class PersonService {
         String generatedUsername = generateUsername(personDTO.getFullName());
         person.setUsername(generatedUsername);
 
-        Person savedPerson = personRepository.save(person);
+            Person savedPerson = personRepository.save(person);
 
         // Create a new PersonDTO and set the ID and generated username
         PersonResponseDTO createdPersonDTO = new PersonResponseDTO();
@@ -59,10 +59,10 @@ public class PersonService {
         createdPersonDTO.setFullName(savedPerson.getFullName());
         createdPersonDTO.setActive(savedPerson.isActive());
 
-        return createdPersonDTO;
-    }
+            return createdPersonDTO;
+        }
 
-    //Username Creation Logic (fullName + 4-digits (Randomly generated))
+        //Username Creation Logic (fullName + 4-digits (Randomly generated))
 
     private String generateUsername(String fullName) {
         // Remove any spaces from the full name and convert to lowercase
@@ -322,5 +322,24 @@ public class PersonService {
         return personResponseDTO;
 
     }
+
+
+//update Password
+public void changePassword(Long personId, UpdatePasswordDTO requestDTO) throws Exception {
+    Person person = personRepository.findById(personId)
+            .orElseThrow(() -> new Exception("User not found"));
+
+    if (!person.getPassword().equals(requestDTO.getOldPassword())) {
+        throw new Exception("Old password is incorrect");
+    }
+
+    if (!requestDTO.getNewPassword().equals(requestDTO.getConfirmPassword())) {
+        throw new Exception("New passwords do not match");
+    }
+
+    // Update the password
+    person.setPassword(requestDTO.getNewPassword());
+    personRepository.save(person);
+}
 }
 

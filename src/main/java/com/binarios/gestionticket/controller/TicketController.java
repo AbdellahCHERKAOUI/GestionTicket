@@ -1,6 +1,7 @@
 package com.binarios.gestionticket.controller;
 
 import com.binarios.gestionticket.dto.request.TicketDTO;
+import com.binarios.gestionticket.dto.request.TicketStatusUpdateDTO;
 import com.binarios.gestionticket.dto.response.TicketResponseDTO;
 import com.binarios.gestionticket.entities.Attachment;
 import com.binarios.gestionticket.service.AttachmentService;
@@ -65,5 +66,18 @@ public class TicketController {
     public ResponseEntity<List<Attachment>> getAttachmentsByTicketId(@PathVariable("ticketId") Long ticketId) throws Exception{
         List<Attachment> attachments = ticketService.getAttachmentsByTicketId(ticketId);
         return new ResponseEntity<>(attachments, HttpStatus.OK);
+    }
+
+    //updateTicketStatus
+    @PostMapping("/{ticketId}/updateStatus")
+    public ResponseEntity<TicketResponseDTO> updateTicketStatus(
+            @PathVariable Long ticketId,
+            @RequestBody TicketStatusUpdateDTO updateDTO) {
+        try {
+            TicketResponseDTO responseDTO = ticketService.updateTicketStatus(ticketId, updateDTO.getNewStatus());
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 }

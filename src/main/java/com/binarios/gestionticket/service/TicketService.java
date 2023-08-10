@@ -206,6 +206,28 @@ public class TicketService {
         // For demonstration purposes, we'll allow any status transitions here.
         return true;
     }
+
+    public Collection<TicketResponseDTO> getCreatedTickets(Long personId) throws Exception {
+        Person person = personRepository.findById(personId).orElseThrow(() -> new Exception("there is no Person with the id : "+personId));
+        Collection<Ticket> tickets = ticketRepository.findTicketsByPersonId(personId);
+        Collection<TicketResponseDTO> ticketResponseDTOS = new ArrayList<>();
+
+        for (Ticket ticket : tickets){
+            TicketResponseDTO ticketResponseDTO = new TicketResponseDTO();
+            ticketResponseDTO.setId(ticket.getId());
+            ticketResponseDTO.setName(ticket.getName());
+            ticketResponseDTO.setStatus(ticket.getStatus());
+            ticketResponseDTO.setDescription(ticket.getDescription());
+            ticketResponseDTO.setAdmin(ticket.getAdmin());
+            ticketResponseDTO.setClient(ticket.getClient());
+            ticketResponseDTO.setAssignedTech(ticket.getAssignedTech());
+            ticketResponseDTO.setAttachments(ticket.getAttachments());
+            ticketResponseDTOS.add(ticketResponseDTO);
+        }
+
+
+        return ticketResponseDTOS;
+    }
 }
 
 

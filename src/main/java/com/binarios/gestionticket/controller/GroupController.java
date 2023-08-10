@@ -21,7 +21,7 @@ public class GroupController {
 
     //Group (CRUD)
     @GetMapping("/group")
-    public ResponseEntity<Collection<Group>> showGroups(){
+    public ResponseEntity<Collection<Group>> showGroups() {
         return new ResponseEntity<>(groupService.allGroups(), HttpStatus.OK);
     }
 
@@ -44,9 +44,9 @@ public class GroupController {
         return new ResponseEntity<>(editedGroupResponseDTO, HttpStatus.OK);
     }
 
-    @DeleteMapping ("/group/delete/{id}")
+    @DeleteMapping("/group/delete/{id}")
     public ResponseEntity<String> deleteGroup(@PathVariable Long id) {
         groupService.deleteGroup(id);
-        return new ResponseEntity<>("Group  number "+id+" deleted successfully", HttpStatus.OK);
+        return new ResponseEntity<>("Group  number " + id + " deleted successfully", HttpStatus.OK);
     }
 }

@@ -78,21 +78,6 @@ public class AttachmentService {
     }
 
 
-    public Collection<AttachmentResponseDTO> getAllAttachments() {
-        Collection<Attachment> attachments = attachmentRepository.findAll();
-        Collection<AttachmentResponseDTO> attachmentResponseDTOS = new ArrayList<>();
-
-        for (Attachment attachment : attachments){
-            AttachmentResponseDTO createdAttachmentDTO = new AttachmentResponseDTO();
-            createdAttachmentDTO.setFilePath(attachment.getFilePath());
-            createdAttachmentDTO.setFileName(attachment.getFileName());
-            createdAttachmentDTO.setFileType(attachment.getFileType());
-            attachmentResponseDTOS.add(createdAttachmentDTO);
-        }
-        return attachmentResponseDTOS;
-
-
-    }
 
     public Attachment addFileToTicket(MultipartFile file, Long ticketId) throws Exception{
         Attachment attachmentToSend = new Attachment();

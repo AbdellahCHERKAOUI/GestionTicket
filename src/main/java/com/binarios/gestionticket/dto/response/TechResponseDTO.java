@@ -1,6 +1,7 @@
 package com.binarios.gestionticket.dto.response;
 
 import com.binarios.gestionticket.enums.Specialite;
+import lombok.Getter;
 
 import java.time.LocalDate;
 
@@ -13,11 +14,13 @@ public class TechResponseDTO {
     private LocalDate birthDate;
     private String fullName;
     private Specialite specialite;
+    @Getter
+    private boolean active;
 
     public TechResponseDTO() {
     }
 
-    public TechResponseDTO(Long id, String username, String role, String email, String phoneNumber, LocalDate birthDate, String fullName, Specialite specialite) {
+    public TechResponseDTO(Long id, String username, String role, String email, String phoneNumber, LocalDate birthDate, String fullName, Specialite specialite, boolean active) {
         this.id = id;
         this.username = username;
         this.role = role;
@@ -26,6 +29,7 @@ public class TechResponseDTO {
         this.birthDate = birthDate;
         this.fullName = fullName;
         this.specialite = specialite;
+        this.active = active;
     }
 
     public Long getId() {
@@ -90,5 +94,13 @@ public class TechResponseDTO {
 
     public void setSpecialite(String specialite) {
         this.specialite = Specialite.valueOf(specialite);
+    }
+
+    public void setSpecialite(Specialite specialite) {
+        this.specialite = specialite;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

@@ -21,9 +21,9 @@ public class AttachmentController {
 
     //Add an attachment to a ticket
     @PostMapping("/addToTicket/{ticketId}")
-    private ResponseEntity<String> fileStoringHandler(@RequestParam("file") MultipartFile file, @PathVariable("ticketId") Long ticketId) throws Exception{
+    private ResponseEntity<String> fileStoringHandler(@RequestParam("file") MultipartFile file, @PathVariable("ticketId") Long ticketId) throws Exception {
 
-        attachmentService.addFileToTicket(file,ticketId);
+        attachmentService.addFileToTicket(file, ticketId);
 
         return new ResponseEntity<>("The file has been saved", HttpStatus.CREATED);
     }
@@ -32,14 +32,7 @@ public class AttachmentController {
     @DeleteMapping("/delete/{attachmentId}")
     public ResponseEntity<String> deleteAttachment(@PathVariable("attachmentId") Long attachmentId) throws Exception {
         attachmentService.deleteAttachmentById(attachmentId);
-        return new ResponseEntity<>("The attachment with the id "+attachmentId+" has been deleted successfully",HttpStatus.OK);
-    }
-
-    //Show all the attachments that we have in the DB
-    @GetMapping("/attachments")
-    public ResponseEntity<Collection<AttachmentResponseDTO>> showAttachments(){
-
-        return new ResponseEntity<>(attachmentService.getAllAttachments(), HttpStatus.OK);
+        return new ResponseEntity<>("The attachment with the id " + attachmentId + " has been deleted successfully", HttpStatus.OK);
     }
 
 }

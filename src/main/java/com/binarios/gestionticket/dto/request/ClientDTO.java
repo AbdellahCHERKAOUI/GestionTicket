@@ -79,4 +79,5 @@ public class ClientDTO {
     public void setGroup(Long group) {
         this.group = group;
     }
+
 }

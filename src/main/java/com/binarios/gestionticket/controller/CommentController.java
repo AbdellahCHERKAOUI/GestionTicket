@@ -45,11 +45,11 @@ public class CommentController {
     }
 
 
-    //supprimer commentaire
+    //Delete comment
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable Long commentId) throws Exception {
         commentService.deleteComment(commentId);
-        return new ResponseEntity<>("comments  name " + commentId + " deleted successfully", HttpStatus.OK);
+        return new ResponseEntity<>("The comment number" + commentId + " deleted successfully", HttpStatus.OK);
     }
 
 

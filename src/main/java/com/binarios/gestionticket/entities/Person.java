@@ -43,6 +43,9 @@ public class Person {
     @Column(nullable = false)
     private String fullName;
 
+    @Column(nullable = false)
+    private boolean active;
+
     @Enumerated(EnumType.STRING)
     private Specialite specialite;
 

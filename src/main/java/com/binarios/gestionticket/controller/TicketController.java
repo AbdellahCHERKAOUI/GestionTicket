@@ -3,6 +3,7 @@ package com.binarios.gestionticket.controller;
 import com.binarios.gestionticket.dto.request.TicketDTO;
 import com.binarios.gestionticket.dto.request.TicketStatusUpdateDTO;
 import com.binarios.gestionticket.dto.response.TicketResponseDTO;
+import com.binarios.gestionticket.entities.Attachment;
 import com.binarios.gestionticket.service.AttachmentService;
 import com.binarios.gestionticket.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/ticket")
@@ -27,7 +29,7 @@ public class TicketController {
 
 
     @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<TicketResponseDTO> createTicket(@RequestParam("file") MultipartFile file, @RequestPart TicketDTO ticketDTO){
+    public ResponseEntity<TicketResponseDTO> createTicket(@RequestParam("file") MultipartFile file, @RequestPart TicketDTO ticketDTO) throws Exception {
         return new ResponseEntity<>(ticketService.saveTicket(ticketDTO,file), HttpStatus.CREATED);
     }
 
@@ -57,6 +59,13 @@ public class TicketController {
     public ResponseEntity<TicketResponseDTO> assignTicket(@PathVariable(name = "ticketId") Long ticketId, @PathVariable(name = "techId") Long techId) throws Exception {
         TicketResponseDTO ticketResponseDTO = ticketService.assignTicket(ticketId,techId);
         return new ResponseEntity<>(ticketResponseDTO,HttpStatus.OK);
+    }
+
+    //Get the attachments of a certain ticket
+    @GetMapping("/{ticketId}/attachments")
+    public ResponseEntity<List<Attachment>> getAttachmentsByTicketId(@PathVariable("ticketId") Long ticketId) throws Exception{
+        List<Attachment> attachments = ticketService.getAttachmentsByTicketId(ticketId);
+        return new ResponseEntity<>(attachments, HttpStatus.OK);
     }
 
     //updateTicketStatus

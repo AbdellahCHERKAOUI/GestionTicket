@@ -1,6 +1,5 @@
 package com.binarios.gestionticket.dto.response;
 
-import com.binarios.gestionticket.entities.Group;
 import com.binarios.gestionticket.enums.Specialite;
 
 import java.time.LocalDate;
@@ -15,11 +14,12 @@ public class PersonResponseDTO {
     private String fullName;
     private Specialite specialite;
     private Long group;
+    private boolean active;
 
     public PersonResponseDTO() {
     }
 
-    public PersonResponseDTO(Long id, String username, String role, String email, String phoneNumber, LocalDate birthDate, String fullName, Specialite specialite, Long group) {
+    public PersonResponseDTO(Long id, String username, String role, String email, String phoneNumber, LocalDate birthDate, String fullName, Specialite specialite, Long group, boolean active) {
         this.id = id;
         this.username = username;
         this.role = role;
@@ -101,5 +101,13 @@ public class PersonResponseDTO {
 
     public void setGroup(Long group) {
         this.group = group;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

@@ -2,26 +2,26 @@ package com.binarios.gestionticket.controller;
 
 import com.binarios.gestionticket.dto.request.TechDTO;
 import com.binarios.gestionticket.dto.response.TechResponseDTO;
+import com.binarios.gestionticket.dto.response.TicketResponseDTO;
 import com.binarios.gestionticket.service.PersonService;
+import com.binarios.gestionticket.service.TicketService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/api")
 public class TechController {
     private final PersonService personService;
+    private final TicketService ticketService;
 
-    public TechController(PersonService personService) {
+    public TechController(PersonService personService, TicketService ticketService) {
         this.personService = personService;
+        this.ticketService = ticketService;
     }
 
-    //Create Tech
-    @PostMapping("/tech/create")
-    public ResponseEntity<TechResponseDTO> createTech(@RequestBody TechDTO techDTO) {
-        TechResponseDTO createdTechDTO = personService.createTech(techDTO);
-        return new ResponseEntity<>(createdTechDTO, HttpStatus.CREATED);
-    }
 
     //Update Tech
     @PutMapping("/tech/edit/{id}")
@@ -29,5 +29,6 @@ public class TechController {
         TechResponseDTO techResponseDTO = personService.editTech(id, techDTO);
         return new ResponseEntity<>(techResponseDTO, HttpStatus.OK);
     }
+
 
 }

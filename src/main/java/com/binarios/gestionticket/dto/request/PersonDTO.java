@@ -8,7 +8,7 @@ public class PersonDTO {
     private String role;
     private String email;
     private String phoneNumber;
-    private LocalDate birthDate; 
+    private LocalDate birthDate;
 
     public PersonDTO() {
     }
@@ -69,4 +69,6 @@ public class PersonDTO {
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
+
+
 }

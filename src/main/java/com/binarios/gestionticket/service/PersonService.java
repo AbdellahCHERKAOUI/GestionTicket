@@ -26,41 +26,38 @@ public class PersonService {
     private final PersonRepository personRepository;
     private final GroupRepository groupRepository;
 
-
-
-
-
     @Autowired
     public PersonService(PersonRepository personRepository,
                          GroupRepository groupRepository) {
         this.personRepository = personRepository;
         this.groupRepository = groupRepository;
-
     }
     public PersonResponseDTO createAdmin(PersonDTO personDTO) {
-            Person person = new Person();
-            person.setFullName(personDTO.getFullName());
-            person.setPassword(personDTO.getPassword());
-            person.setRole(PersonRole.ADMIN);
-            person.setEmail(personDTO.getEmail());
-            person.setPhoneNumber(personDTO.getPhoneNumber());
-            person.setBirthDate(personDTO.getBirthDate());
+        Person person = new Person();
+        person.setFullName(personDTO.getFullName());
+        person.setPassword(personDTO.getPassword());
+        person.setRole(PersonRole.ADMIN);
+        person.setEmail(personDTO.getEmail());
+        person.setPhoneNumber(personDTO.getPhoneNumber());
+        person.setBirthDate(personDTO.getBirthDate());
+        person.setActive(false);
 
-            // Generate the username automatically based on fullName and a random 4-digit number
-            String generatedUsername = generateUsername(personDTO.getFullName());
-            person.setUsername(generatedUsername);
+        // Generate the username automatically based on fullName and a random 4-digit number
+        String generatedUsername = generateUsername(personDTO.getFullName());
+        person.setUsername(generatedUsername);
 
             Person savedPerson = personRepository.save(person);
 
-            // Create a new PersonDTO and set the ID and generated username
-            PersonResponseDTO createdPersonDTO = new PersonResponseDTO();
-            createdPersonDTO.setId(savedPerson.getId());
-            createdPersonDTO.setUsername(savedPerson.getUsername());
-            createdPersonDTO.setRole(savedPerson.getRole().name());
-            createdPersonDTO.setEmail(savedPerson.getEmail());
-            createdPersonDTO.setPhoneNumber(savedPerson.getPhoneNumber());
-            createdPersonDTO.setBirthDate(savedPerson.getBirthDate());
-            createdPersonDTO.setFullName(savedPerson.getFullName());
+        // Create a new PersonDTO and set the ID and generated username
+        PersonResponseDTO createdPersonDTO = new PersonResponseDTO();
+        createdPersonDTO.setId(savedPerson.getId());
+        createdPersonDTO.setUsername(savedPerson.getUsername());
+        createdPersonDTO.setRole(savedPerson.getRole().name());
+        createdPersonDTO.setEmail(savedPerson.getEmail());
+        createdPersonDTO.setPhoneNumber(savedPerson.getPhoneNumber());
+        createdPersonDTO.setBirthDate(savedPerson.getBirthDate());
+        createdPersonDTO.setFullName(savedPerson.getFullName());
+        createdPersonDTO.setActive(savedPerson.isActive());
 
             return createdPersonDTO;
         }
@@ -82,7 +79,7 @@ public class PersonService {
         Collection<Person> people = personRepository.findAll();
         Collection<PersonResponseDTO> personResponseDTOS = new ArrayList<>();
 
-        for (Person person : people){
+        for (Person person : people) {
             PersonResponseDTO createdPersonDTO = new PersonResponseDTO();
             createdPersonDTO.setId(person.getId());
             createdPersonDTO.setUsername(person.getUsername());
@@ -164,6 +161,7 @@ public class PersonService {
         person.setPhoneNumber(techDTO.getPhoneNumber());
         person.setBirthDate(techDTO.getBirthDate());
         person.setSpecialite(techDTO.getSpecialite());
+        person.setActive(false);
 
         // Generate the username automatically based on fullName and a random 4-digit number
         String generatedUsername = generateUsername(techDTO.getFullName());
@@ -181,6 +179,7 @@ public class PersonService {
         createdTechDTO.setBirthDate(savedPerson.getBirthDate());
         createdTechDTO.setFullName(savedPerson.getFullName());
         createdTechDTO.setSpecialite(savedPerson.getSpecialite().name());
+        createdTechDTO.setActive(savedPerson.isActive());
 
         return createdTechDTO;
     }
@@ -221,7 +220,7 @@ public class PersonService {
 
     public ClientResponseDTO createClient(ClientDTO clientDTO) throws Exception {
 
-        Group group = groupRepository.findById(clientDTO.getGroup()).orElseThrow(() ->new Exception("There is no group with this id : "+ clientDTO.getGroup()));
+        Group group = groupRepository.findById(clientDTO.getGroup()).orElseThrow(() -> new Exception("There is no group with this id : " + clientDTO.getGroup()));
 
         Person person = new Person();
         person.setFullName(clientDTO.getFullName());
@@ -231,6 +230,7 @@ public class PersonService {
         person.setPhoneNumber(clientDTO.getPhoneNumber());
         person.setBirthDate(clientDTO.getBirthDate());
         person.setGroup(group);
+        person.setActive(false);
 
         // Generate the username automatically based on fullName and a random 4-digit number
         String generatedUsername = generateUsername(clientDTO.getFullName());
@@ -248,6 +248,7 @@ public class PersonService {
         createdClientDTO.setBirthDate(savedPerson.getBirthDate());
         createdClientDTO.setFullName(savedPerson.getFullName());
         createdClientDTO.setGroup(group.getId());
+        createdClientDTO.setActive(savedPerson.isActive());
 
         return createdClientDTO;
     }
@@ -291,6 +292,35 @@ public class PersonService {
         createdClientDTO.setGroup(optionalGroup.get().getId());
 
         return createdClientDTO;
+    }
+
+    public PersonResponseDTO activateOrDeactivate(Long id) throws Exception {
+        Person person = personRepository.findById(id).orElseThrow(() -> new Exception("There is no account with the id : " + id));
+        person.setActive(!person.isActive());
+
+        personRepository.save(person);
+        //The personResponseDTO to return in the response
+        PersonResponseDTO personResponseDTO = new PersonResponseDTO();
+        personResponseDTO.setId(person.getId());
+        personResponseDTO.setFullName(person.getFullName());
+        personResponseDTO.setUsername(person.getUsername());
+        personResponseDTO.setRole(person.getRole().name());
+        personResponseDTO.setPhoneNumber(person.getPhoneNumber());
+        personResponseDTO.setEmail(person.getEmail());
+        personResponseDTO.setActive(person.isActive());
+        personResponseDTO.setBirthDate(person.getBirthDate());
+
+        if (person.getSpecialite() != null) {
+            personResponseDTO.setSpecialite(person.getSpecialite());
+        }
+
+        if (person.getGroup() != null) {
+            personResponseDTO.setGroup(person.getGroup().getId());
+        }
+
+
+        return personResponseDTO;
+
     }
 
 

@@ -63,7 +63,7 @@ public class TicketController {
 
     //Get the attachments of a certain ticket
     @GetMapping("/{ticketId}/attachments")
-    public ResponseEntity<List<Attachment>> getAttachmentsByTicketId(@PathVariable("ticketId") Long ticketId) throws Exception{
+    public ResponseEntity<List<Attachment>> getAttachmentsByTicketId(@PathVariable("ticketId") Long ticketId) throws Exception {
         List<Attachment> attachments = ticketService.getAttachmentsByTicketId(ticketId);
         return new ResponseEntity<>(attachments, HttpStatus.OK);
     }
@@ -79,5 +79,7 @@ public class TicketController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(null);
         }
-    }
-}
+    }}
+
+
+

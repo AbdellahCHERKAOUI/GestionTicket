@@ -12,11 +12,12 @@ public class ClientResponseDTO {
     private String phoneNumber;
     private LocalDate birthDate;
     private Long group;
+    private boolean active;
 
     public ClientResponseDTO() {
     }
 
-    public ClientResponseDTO(Long id, String username, String fullName, String password, String role, String email, String phoneNumber, LocalDate birthDate, Long group) {
+    public ClientResponseDTO(Long id, String username, String fullName, String password, String role, String email, String phoneNumber, LocalDate birthDate, Long group, boolean active) {
         this.id = id;
         this.username = username;
         this.fullName = fullName;
@@ -26,6 +27,7 @@ public class ClientResponseDTO {
         this.phoneNumber = phoneNumber;
         this.birthDate = birthDate;
         this.group = group;
+        this.active = active;
     }
 
     public Long getId() {
@@ -98,5 +100,13 @@ public class ClientResponseDTO {
 
     public void setGroup(Long group) {
         this.group = group;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

@@ -20,7 +20,7 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @PostMapping("/comments")
+    @PostMapping("/comments/create")
     public ResponseEntity<CommentResponseDTO> writeComment(@RequestBody CommentRequestDTO requestDTO) {
         CommentResponseDTO responseDTO = commentService.writeComment(requestDTO);
         if (responseDTO != null) {
@@ -45,18 +45,18 @@ public class CommentController {
     }
 
 
-//supprimer commentaire
+    //supprimer commentaire
     @DeleteMapping("/comments/{commentId}")
-    public ResponseEntity<String> deleteComment(@PathVariable Long commentId) throws Exception{
+    public ResponseEntity<String> deleteComment(@PathVariable Long commentId) throws Exception {
         commentService.deleteComment(commentId);
-        return new ResponseEntity<>("comments  name "+commentId+" deleted successfully", HttpStatus.OK);
+        return new ResponseEntity<>("comments  name " + commentId + " deleted successfully", HttpStatus.OK);
     }
 
 
     @GetMapping("/tickets/{ticketId}/comments")
     public ResponseEntity<List<CommentResponseDTO>> getCommentsByTicketId(@PathVariable Long ticketId) throws Exception {
         List<CommentResponseDTO> comments = commentService.getCommentsByTicketId(ticketId);
-            return ResponseEntity.ok(comments);
+        return ResponseEntity.ok(comments);
 
     }
 }

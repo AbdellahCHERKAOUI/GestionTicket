@@ -86,6 +86,12 @@ public class PersonService {
             createdPersonDTO.setBirthDate(person.getBirthDate());
             createdPersonDTO.setFullName(person.getFullName());
             createdPersonDTO.setSpecialite(person.getSpecialite());
+            //createdPersonDTO.setGroup(person.getGroup().getId());
+            if (person.getGroup() != null) {
+                createdPersonDTO.setGroup(person.getGroup().getId());
+            } else {
+                createdPersonDTO.setGroup(null);
+            }
             personResponseDTOS.add(createdPersonDTO);
         }
         return personResponseDTOS;
@@ -138,7 +144,7 @@ public class PersonService {
         updatedPersonResponseDTO.setBirthDate(person.getBirthDate());
         updatedPersonResponseDTO.setFullName(person.getFullName());
         updatedPersonResponseDTO.setSpecialite(person.getSpecialite());
-        updatedPersonResponseDTO.setGroup(person.getGroup());
+        updatedPersonResponseDTO.setGroup(person.getGroup().getId());
 
         return updatedPersonResponseDTO;
     }

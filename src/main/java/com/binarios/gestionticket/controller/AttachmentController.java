@@ -19,14 +19,23 @@ public class AttachmentController {
         this.attachmentService = attachmentService;
     }
 
-    @PostMapping("/create")
-    private ResponseEntity<String> fileStoringHandler(@RequestParam("file") MultipartFile file) {
+    //Add an attachment to a ticket
+    @PostMapping("/addToTicket/{ticketId}")
+    private ResponseEntity<String> fileStoringHandler(@RequestParam("file") MultipartFile file, @PathVariable("ticketId") Long ticketId) throws Exception{
 
-        attachmentService.saveFile(file);
+        attachmentService.addFileToTicket(file,ticketId);
 
         return new ResponseEntity<>("The file has been saved", HttpStatus.CREATED);
     }
 
+    //Delete an attachment of a ticket -There is a parallel deletion from the attachment DB, and the list of the Ticket-
+    @DeleteMapping("/delete/{attachmentId}")
+    public ResponseEntity<String> deleteAttachment(@PathVariable("attachmentId") Long attachmentId) throws Exception {
+        attachmentService.deleteAttachmentById(attachmentId);
+        return new ResponseEntity<>("The attachment with the id "+attachmentId+" has been deleted successfully",HttpStatus.OK);
+    }
+
+    //Show all the attachments that we have in the DB
     @GetMapping("/attachments")
     public ResponseEntity<Collection<AttachmentResponseDTO>> showAttachments(){
 

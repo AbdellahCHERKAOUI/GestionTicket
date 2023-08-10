@@ -14,12 +14,12 @@ public class PersonResponseDTO {
     private LocalDate birthDate;
     private String fullName;
     private Specialite specialite;
-    private Group group;
+    private Long group;
 
     public PersonResponseDTO() {
     }
 
-    public PersonResponseDTO(Long id, String username, String role, String email, String phoneNumber, LocalDate birthDate, String fullName, Specialite specialite, Group group) {
+    public PersonResponseDTO(Long id, String username, String role, String email, String phoneNumber, LocalDate birthDate, String fullName, Specialite specialite, Long group) {
         this.id = id;
         this.username = username;
         this.role = role;
@@ -95,11 +95,11 @@ public class PersonResponseDTO {
         this.specialite = specialite;
     }
 
-    public Group getGroup() {
+    public Long getGroup() {
         return group;
     }
 
-    public void setGroup(Group group) {
+    public void setGroup(Long group) {
         this.group = group;
     }
 }

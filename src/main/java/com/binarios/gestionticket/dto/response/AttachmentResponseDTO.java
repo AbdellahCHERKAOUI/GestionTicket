@@ -1,7 +1,5 @@
 package com.binarios.gestionticket.dto.response;
 
-import jakarta.persistence.Column;
-
 public class AttachmentResponseDTO {
 
 

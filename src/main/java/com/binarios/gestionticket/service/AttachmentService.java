@@ -1,11 +1,9 @@
 package com.binarios.gestionticket.service;
 
-import com.binarios.gestionticket.dto.response.AttachmentResponseDTO;
 import com.binarios.gestionticket.entities.Attachment;
 import com.binarios.gestionticket.entities.Ticket;
 import com.binarios.gestionticket.repositories.AttachmentRepository;
 import com.binarios.gestionticket.repositories.TicketRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,9 +17,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service

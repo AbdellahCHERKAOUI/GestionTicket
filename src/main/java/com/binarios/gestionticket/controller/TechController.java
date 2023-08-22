@@ -2,14 +2,11 @@ package com.binarios.gestionticket.controller;
 
 import com.binarios.gestionticket.dto.request.TechDTO;
 import com.binarios.gestionticket.dto.response.TechResponseDTO;
-import com.binarios.gestionticket.dto.response.TicketResponseDTO;
 import com.binarios.gestionticket.service.PersonService;
 import com.binarios.gestionticket.service.TicketService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collection;
 
 @RestController
 @RequestMapping("/api")

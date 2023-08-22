@@ -16,9 +16,7 @@ public class PersonController {
     }
 
     @PostMapping("/{personId}/change-password")
-    public ResponseEntity<String> changePassword(
-            @PathVariable Long personId,
-            @RequestBody UpdatePasswordDTO requestDTO) {
+    public ResponseEntity<String> changePassword(@PathVariable Long personId, @RequestBody UpdatePasswordDTO requestDTO) {
 
         try {
             personService.changePassword(personId, requestDTO);

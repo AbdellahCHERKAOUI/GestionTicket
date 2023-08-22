@@ -12,7 +12,7 @@ import com.binarios.gestionticket.entities.Person;
 import com.binarios.gestionticket.enums.PersonRole;
 import com.binarios.gestionticket.repositories.GroupRepository;
 import com.binarios.gestionticket.repositories.PersonRepository;
-import jakarta.persistence.EntityNotFoundException;
+import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +32,7 @@ public class PersonService {
         this.personRepository = personRepository;
         this.groupRepository = groupRepository;
     }
+
     public PersonResponseDTO createAdmin(PersonDTO personDTO) {
         Person person = new Person();
         person.setFullName(personDTO.getFullName());
@@ -40,13 +41,13 @@ public class PersonService {
         person.setEmail(personDTO.getEmail());
         person.setPhoneNumber(personDTO.getPhoneNumber());
         person.setBirthDate(personDTO.getBirthDate());
-        person.setActive(false);
+        person.setActive(true);
 
         // Generate the username automatically based on fullName and a random 4-digit number
         String generatedUsername = generateUsername(personDTO.getFullName());
         person.setUsername(generatedUsername);
 
-            Person savedPerson = personRepository.save(person);
+        Person savedPerson = personRepository.save(person);
 
         // Create a new PersonDTO and set the ID and generated username
         PersonResponseDTO createdPersonDTO = new PersonResponseDTO();
@@ -59,10 +60,10 @@ public class PersonService {
         createdPersonDTO.setFullName(savedPerson.getFullName());
         createdPersonDTO.setActive(savedPerson.isActive());
 
-            return createdPersonDTO;
-        }
+        return createdPersonDTO;
+    }
 
-        //Username Creation Logic (fullName + 4-digits (Randomly generated))
+    //Username Creation Logic (fullName + 4-digits (Randomly generated))
 
     private String generateUsername(String fullName) {
         // Remove any spaces from the full name and convert to lowercase
@@ -161,7 +162,7 @@ public class PersonService {
         person.setPhoneNumber(techDTO.getPhoneNumber());
         person.setBirthDate(techDTO.getBirthDate());
         person.setSpecialite(techDTO.getSpecialite());
-        person.setActive(false);
+        person.setActive(true);
 
         // Generate the username automatically based on fullName and a random 4-digit number
         String generatedUsername = generateUsername(techDTO.getFullName());
@@ -230,7 +231,7 @@ public class PersonService {
         person.setPhoneNumber(clientDTO.getPhoneNumber());
         person.setBirthDate(clientDTO.getBirthDate());
         person.setGroup(group);
-        person.setActive(false);
+        person.setActive(true);
 
         // Generate the username automatically based on fullName and a random 4-digit number
         String generatedUsername = generateUsername(clientDTO.getFullName());
@@ -324,22 +325,22 @@ public class PersonService {
     }
 
 
-//update Password
-public void changePassword(Long personId, UpdatePasswordDTO requestDTO) throws Exception {
-    Person person = personRepository.findById(personId)
-            .orElseThrow(() -> new Exception("User not found"));
+    //update Password
+    public void changePassword(Long personId, UpdatePasswordDTO requestDTO) throws Exception {
+        Person person = personRepository.findById(personId)
+                .orElseThrow(() -> new Exception("User not found"));
 
-    if (!person.getPassword().equals(requestDTO.getOldPassword())) {
-        throw new Exception("Old password is incorrect");
+        if (!person.getPassword().equals(requestDTO.getOldPassword())) {
+            throw new Exception("Old password is incorrect");
+        }
+
+        if (!requestDTO.getNewPassword().equals(requestDTO.getConfirmPassword())) {
+            throw new Exception("New passwords do not match");
+        }
+
+        // Update the password
+        person.setPassword(requestDTO.getNewPassword());
+        personRepository.save(person);
     }
-
-    if (!requestDTO.getNewPassword().equals(requestDTO.getConfirmPassword())) {
-        throw new Exception("New passwords do not match");
-    }
-
-    // Update the password
-    person.setPassword(requestDTO.getNewPassword());
-    personRepository.save(person);
-}
 }
 

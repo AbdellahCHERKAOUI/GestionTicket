@@ -2,7 +2,7 @@ package com.binarios.gestionticket.entities;
 
 import com.binarios.gestionticket.enums.PersonRole;
 import com.binarios.gestionticket.enums.Specialite;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

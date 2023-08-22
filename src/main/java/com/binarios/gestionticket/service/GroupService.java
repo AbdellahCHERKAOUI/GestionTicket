@@ -4,7 +4,7 @@ import com.binarios.gestionticket.dto.request.GroupDTO;
 import com.binarios.gestionticket.dto.response.GroupResponseDTO;
 import com.binarios.gestionticket.entities.Group;
 import com.binarios.gestionticket.repositories.GroupRepository;
-import jakarta.persistence.EntityNotFoundException;
+import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

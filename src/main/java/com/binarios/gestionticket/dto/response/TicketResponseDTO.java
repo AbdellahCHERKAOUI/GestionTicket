@@ -73,53 +73,56 @@ public class TicketResponseDTO {
         return client;
     }
 
-    public void setClient(Person client) {
-        this.client = new PersonResponseDTO();
-        this.client.setId(client.getId());
-        this.client.setFullName(client.getFullName());
-        this.client.setEmail(client.getEmail());
-        this.client.setBirthDate(client.getBirthDate());
-        this.client.setRole(client.getRole().name());
-        this.client.setUsername(client.getUsername());
-        this.client.setPhoneNumber(client.getPhoneNumber());
-    }
+//    public void setClient(Person client) {
+//        this.client = new PersonResponseDTO();
+//        this.client.setId(client.getId());
+//        this.client.setFullName(client.getFullName());
+//        this.client.setEmail(client.getEmail());
+//        this.client.setBirthDate(client.getBirthDate());
+//        this.client.setRole(client.getRole().name());
+//        this.client.setUsername(client.getUsername());
+//        this.client.setPhoneNumber(client.getPhoneNumber());
+//    }
 
     public PersonResponseDTO getAssignedTech() {
         return assignedTech;
     }
 
-    public void setAssignedTech(Person assignedTech) {
-        if (assignedTech == null){
-            this.assignedTech = new PersonResponseDTO();
-            this.assignedTech = null;
-        }
-        else {
-            this.assignedTech = new PersonResponseDTO();
-            this.assignedTech.setId(assignedTech.getId());
-            this.assignedTech.setFullName(assignedTech.getFullName());
-            this.assignedTech.setEmail(assignedTech.getEmail());
-            this.assignedTech.setBirthDate(assignedTech.getBirthDate());
-            this.assignedTech.setRole(assignedTech.getRole().name());
-            this.assignedTech.setUsername(assignedTech.getUsername());
-            this.assignedTech.setPhoneNumber(assignedTech.getPhoneNumber());
-            this.assignedTech.setSpecialite(assignedTech.getSpecialite());
-        }
-    }
+//    public void setAssignedTech(Person assignedTech) {
+//        if (assignedTech == null){
+//            this.assignedTech = new PersonResponseDTO();
+//            this.assignedTech = null;
+//        }
+//        else {
+//            this.assignedTech = new PersonResponseDTO();
+//            this.assignedTech.setId(assignedTech.getId());
+//            this.assignedTech.setFullName(assignedTech.getFullName());
+//            this.assignedTech.setEmail(assignedTech.getEmail());
+//            this.assignedTech.setBirthDate(assignedTech.getBirthDate());
+//            this.assignedTech.setRole(assignedTech.getRole().name());
+//            this.assignedTech.setUsername(assignedTech.getUsername());
+//            this.assignedTech.setPhoneNumber(assignedTech.getPhoneNumber());
+//            this.assignedTech.setSpecialite(assignedTech.getSpecialite());
+//        }
+//    }
 
     public PersonResponseDTO getAdmin() {
         return admin;
     }
 
-    public void setAdmin(Person admin) {
-        this.admin = new PersonResponseDTO();
-        this.admin.setId(admin.getId());
-        this.admin.setFullName(admin.getFullName());
-        this.admin.setEmail(admin.getEmail());
-        this.admin.setBirthDate(admin.getBirthDate());
-        this.admin.setRole(admin.getRole().name());
-        this.admin.setUsername(admin.getUsername());
-        this.admin.setPhoneNumber(admin.getPhoneNumber());
-    }
+//    public void setAdmin(Person admin) {
+//        this.admin = new PersonResponseDTO();
+//        this.admin.setId(admin.getId());
+//        this.admin.setFullName(admin.getFullName());
+//        this.admin.setEmail(admin.getEmail());
+//        this.admin.setBirthDate(admin.getBirthDate());
+//        this.admin.setRole(admin.getRole().name());
+//        this.admin.setUsername(admin.getUsername());
+//        this.admin.setPhoneNumber(admin.getPhoneNumber());
+//        this.admin.setActive(admin.isActive());
+//    }
+
+
 
     public List<Attachment> getAttachments() {
         return attachments;
@@ -127,5 +130,17 @@ public class TicketResponseDTO {
 
     public void setAttachments(List<Attachment> attachments) {
         this.attachments = attachments;
+    }
+
+    public void setClient(PersonResponseDTO client) {
+        this.client = client;
+    }
+
+    public void setAssignedTech(PersonResponseDTO assignedTech) {
+        this.assignedTech = assignedTech;
+    }
+
+    public void setAdmin(PersonResponseDTO admin) {
+        this.admin = admin;
     }
 }

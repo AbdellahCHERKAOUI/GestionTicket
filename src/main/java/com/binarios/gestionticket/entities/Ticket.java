@@ -1,7 +1,7 @@
 package com.binarios.gestionticket.entities;
 
 import com.binarios.gestionticket.enums.TicketStatus;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

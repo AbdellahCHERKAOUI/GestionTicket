@@ -7,10 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("")
 public class CommentController {
 
     private final CommentService commentService;
@@ -21,6 +23,7 @@ public class CommentController {
     }
 
     @PostMapping("/comments/create")
+    @PreAuthorize("hasAnyAuthority('TECH', 'CLIENT')")
     public ResponseEntity<CommentResponseDTO> writeComment(@RequestBody CommentRequestDTO requestDTO) {
         CommentResponseDTO responseDTO = commentService.writeComment(requestDTO);
         if (responseDTO != null) {
@@ -32,6 +35,7 @@ public class CommentController {
     }
 
     @PutMapping("/comments/{commentId}")
+    @PreAuthorize("hasAnyAuthority('TECH', 'CLIENT')")
     public ResponseEntity<String> updateComment(@PathVariable Long commentId,
                                                 @RequestBody CommentRequestDTO requestDTO) {
         String responseMessage = String.valueOf(commentService.updateComment(commentId, requestDTO));
@@ -40,23 +44,18 @@ public class CommentController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseMessage);
         } else {
             // Return a 200 OK status for successful updates
-            return ResponseEntity.ok(responseMessage);
+            return new ResponseEntity<>("Updated successfully", HttpStatus.OK);
         }
     }
 
 
     //Delete comment
     @DeleteMapping("/comments/{commentId}")
+    @PreAuthorize("hasAnyAuthority('TECH', 'CLIENT')")
     public ResponseEntity<String> deleteComment(@PathVariable Long commentId) throws Exception {
         commentService.deleteComment(commentId);
         return new ResponseEntity<>("The comment number" + commentId + " deleted successfully", HttpStatus.OK);
     }
 
 
-    @GetMapping("/tickets/{ticketId}/comments")
-    public ResponseEntity<List<CommentResponseDTO>> getCommentsByTicketId(@PathVariable Long ticketId) throws Exception {
-        List<CommentResponseDTO> comments = commentService.getCommentsByTicketId(ticketId);
-        return ResponseEntity.ok(comments);
-
-    }
 }

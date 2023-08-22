@@ -1,92 +1,106 @@
 package com.binarios.gestionticket.controller;
 
 import com.binarios.gestionticket.dto.request.ClientDTO;
+import com.binarios.gestionticket.dto.request.GroupDTO;
 import com.binarios.gestionticket.dto.request.PersonDTO;
 import com.binarios.gestionticket.dto.request.TechDTO;
-import com.binarios.gestionticket.dto.response.ClientResponseDTO;
-import com.binarios.gestionticket.dto.response.PersonResponseDTO;
-import com.binarios.gestionticket.dto.response.TechResponseDTO;
-import com.binarios.gestionticket.dto.response.TicketResponseDTO;
-import com.binarios.gestionticket.service.PersonService;
-import com.binarios.gestionticket.service.TicketService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.binarios.gestionticket.dto.response.*;
+import com.binarios.gestionticket.entities.Person;
+import com.binarios.gestionticket.entities.Role;
+import com.binarios.gestionticket.enums.PersonRole;
+import com.binarios.gestionticket.repositories.PersonRepository;
+import com.binarios.gestionticket.service.*;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
+import java.time.LocalDate;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/person")
+@AllArgsConstructor
 public class AdminController {
     private final PersonService personService;
-    private final TicketService ticketService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PersonRepository personRepository;
 
-    public AdminController(PersonService personService, TicketService ticketService) {
-        this.personService = personService;
-        this.ticketService = ticketService;
+
+    @PostConstruct
+    public void init() {
+        boolean existed = personService.existByRole(PersonRole.ADMIN);
+        if (!existed) {
+            Person person = new Person();
+            person.setFullName("admin");
+            person.setPassword(bCryptPasswordEncoder.encode("root"));
+            Set<Role> roles = new HashSet<>();
+            roles.add(new Role("ADMIN"));
+            person.setRoles(roles);
+            person.setRole(PersonRole.ADMIN);
+            person.setEmail("admin@gmail.com");
+            person.setPhoneNumber("0000000");
+            person.setBirthDate(LocalDate.parse("2000-11-01"));
+            person.setActive(true);
+
+            // Generate the username automatically based on fullName and a random 4-digit number
+            String generatedUsername = personService.generateUsername("admin");
+            person.setUsername(generatedUsername);
+
+            personRepository.save(person);
+        }
+
     }
 
     //Person (CRUD)
 
     //Show Users
-    @GetMapping("/person")
+    @GetMapping()
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Collection<PersonResponseDTO>> showPeople() {
 
         return new ResponseEntity<>(personService.allUsers(), HttpStatus.OK);
     }
 
     //Get Person by id
-    @GetMapping("/person/{id}")
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<PersonResponseDTO> showPerson(@PathVariable Long id) {
 
         return new ResponseEntity<>(personService.getUserById(id), HttpStatus.OK);
     }
-
-    //Create Person
-    @PostMapping("/person/create")
+    //Create Admin
+    @PostMapping("/create")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<PersonResponseDTO> createAdmin(@RequestBody PersonDTO personDTO) {
         PersonResponseDTO createdUserDTO = personService.createAdmin(personDTO);
         return new ResponseEntity<>(createdUserDTO, HttpStatus.CREATED);
     }
 
-    //Create Client
-    @PostMapping("/client/create")
-    public ResponseEntity<ClientResponseDTO> createTech(@RequestBody ClientDTO clientDTO) throws Exception {
-        ClientResponseDTO createdClientDTO = personService.createClient(clientDTO);
-        return new ResponseEntity<>(createdClientDTO, HttpStatus.CREATED);
-    }
-
-    //Create Tech
-    @PostMapping("/tech/create")
-    public ResponseEntity<TechResponseDTO> createTech(@RequestBody TechDTO techDTO) {
-        TechResponseDTO createdTechDTO = personService.createTech(techDTO);
-        return new ResponseEntity<>(createdTechDTO, HttpStatus.CREATED);
-    }
-
-    //Update Person
-    @PutMapping("/person/edit/{id}")
+    //Update Admin
+    @PutMapping("/admin/edit/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<PersonResponseDTO> updateAdmin(@PathVariable Long id, @RequestBody PersonDTO personDTO) {
         PersonResponseDTO personResponseDTO = personService.editAdmin(id, personDTO);
         return new ResponseEntity<>(personResponseDTO, HttpStatus.OK);
     }
 
     //Delete Person
-    @DeleteMapping("/person/delete/{id}")
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> deletePerson(@PathVariable Long id) {
         personService.deletePerson(id);
-        return new ResponseEntity<>("User  number " + id + " deleted successfully", HttpStatus.OK);
-    }
-
-    //Get all tickets
-    @GetMapping("/person/{personId}/tickets")
-    public ResponseEntity<Collection<TicketResponseDTO>> getCreatedTickets(@PathVariable("personId") Long personId) throws Exception {
-        Collection<TicketResponseDTO> ticketResponseDTOS = ticketService.getCreatedTickets(personId);
-        return new ResponseEntity<>(ticketResponseDTOS, HttpStatus.OK);
+        return new ResponseEntity<>("MyCustomUserDetails  number " + id + " deleted successfully", HttpStatus.OK);
     }
 
     //Deactivate or activate an account
-    @GetMapping("/person/active/{id}")
+    @GetMapping("/active/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<PersonResponseDTO> activateOrDeactivate(@PathVariable("id") Long id) throws Exception {
         PersonResponseDTO personResponseDTO = personService.activateOrDeactivate(id);
         return new ResponseEntity<>(personResponseDTO, HttpStatus.OK);

@@ -5,7 +5,6 @@ import java.time.LocalDate;
 public class PersonDTO {
     private String fullName;
     private String password;
-    private String role;
     private String email;
     private String phoneNumber;
     private LocalDate birthDate;
@@ -13,13 +12,10 @@ public class PersonDTO {
     public PersonDTO() {
     }
 
-    public PersonDTO(String fullName, String password, String role, String email, String phoneNumber, LocalDate birthDate) {
+    public PersonDTO(String fullName, String password, String email) {
         this.fullName = fullName;
         this.password = password;
-        this.role = role;
         this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.birthDate = birthDate;
     }
 
     public String getFullName() {
@@ -36,14 +32,6 @@ public class PersonDTO {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public String getEmail() {

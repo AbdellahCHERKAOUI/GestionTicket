@@ -1,6 +1,7 @@
 package com.binarios.gestionticket.service;
 
 import com.binarios.gestionticket.dto.request.TicketDTO;
+import com.binarios.gestionticket.dto.response.PersonResponseDTO;
 import com.binarios.gestionticket.dto.response.TicketResponseDTO;
 import com.binarios.gestionticket.entities.Attachment;
 import com.binarios.gestionticket.entities.Person;
@@ -12,10 +13,7 @@ import com.binarios.gestionticket.repositories.TicketRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class TicketService {
@@ -67,9 +65,9 @@ public class TicketService {
         createdTicketDTO.setName(savedTicket.getName());
         createdTicketDTO.setDescription(savedTicket.getDescription());
         createdTicketDTO.setStatus(savedTicket.getStatus());
-        createdTicketDTO.setAdmin(savedTicket.getAdmin());
-        createdTicketDTO.setAssignedTech(savedTicket.getAssignedTech());
-        createdTicketDTO.setClient(savedTicket.getClient());
+        createdTicketDTO.setAdmin(mapPersonToPersonResponseDTO(savedTicket.getAdmin()));
+        createdTicketDTO.setAssignedTech(mapPersonToPersonResponseDTO(savedTicket.getAssignedTech()));
+        createdTicketDTO.setClient(mapPersonToPersonResponseDTO(savedTicket.getClient()));
         createdTicketDTO.setAttachments(savedTicket.getAttachments());
 
         return createdTicketDTO;
@@ -85,9 +83,9 @@ public class TicketService {
             createdTicketDTO.setName(ticket.getName());
             createdTicketDTO.setDescription(ticket.getDescription());
             createdTicketDTO.setStatus(ticket.getStatus());
-            createdTicketDTO.setClient(ticket.getClient());
-            createdTicketDTO.setAssignedTech(ticket.getAssignedTech());
-            createdTicketDTO.setAdmin(ticket.getAdmin());
+            createdTicketDTO.setClient(mapPersonToPersonResponseDTO(ticket.getClient()));
+            createdTicketDTO.setAssignedTech(mapPersonToPersonResponseDTO(ticket.getAssignedTech()));
+            createdTicketDTO.setAdmin(mapPersonToPersonResponseDTO(ticket.getAdmin()));
             createdTicketDTO.setAttachments(ticket.getAttachments());
             ticketResponseDTOS.add(createdTicketDTO);
         }
@@ -121,9 +119,9 @@ public class TicketService {
         createdTicketDTO.setName(savedTicket.getName());
         createdTicketDTO.setDescription(savedTicket.getDescription());
         createdTicketDTO.setStatus(savedTicket.getStatus());
-        createdTicketDTO.setAdmin(savedTicket.getAdmin());
-        createdTicketDTO.setAssignedTech(savedTicket.getAssignedTech());
-        createdTicketDTO.setClient(savedTicket.getClient());
+        createdTicketDTO.setAdmin(mapPersonToPersonResponseDTO(savedTicket.getAdmin()));
+        createdTicketDTO.setAssignedTech(mapPersonToPersonResponseDTO(savedTicket.getAssignedTech()));
+        createdTicketDTO.setClient(mapPersonToPersonResponseDTO(savedTicket.getClient()));
         createdTicketDTO.setAttachments(savedTicket.getAttachments());
 
         return createdTicketDTO;
@@ -142,7 +140,9 @@ public class TicketService {
         if (tech == null || !tech.getRole().name().equals(PersonRole.TECH.name())) {
             throw new Exception("There is now tech with this id");
         }
+        if (Objects.nonNull(ticket.getAssignedTech())){
 
+        }
         ticket.setAssignedTech(tech);
         ticketRepository.save(ticket);
 
@@ -152,9 +152,9 @@ public class TicketService {
         createdTicketDTO.setName(ticket.getName());
         createdTicketDTO.setDescription(ticket.getDescription());
         createdTicketDTO.setStatus(ticket.getStatus());
-        createdTicketDTO.setAdmin(ticket.getAdmin());
-        createdTicketDTO.setAssignedTech(ticket.getAssignedTech());
-        createdTicketDTO.setClient(ticket.getClient());
+        createdTicketDTO.setAdmin(mapPersonToPersonResponseDTO(ticket.getAdmin()));
+        createdTicketDTO.setAssignedTech(mapPersonToPersonResponseDTO(ticket.getAssignedTech()));
+        createdTicketDTO.setClient(mapPersonToPersonResponseDTO(ticket.getClient()));
         createdTicketDTO.setAttachments(ticket.getAttachments());
 
         return createdTicketDTO;
@@ -175,15 +175,18 @@ public class TicketService {
         ticket.setStatus(newStatus);
         Ticket updatedTicket = ticketRepository.save(ticket);
 
+
         // Create a new TicketResponseDTO and set the fields to return in the response
         TicketResponseDTO responseDTO = new TicketResponseDTO();
         responseDTO.setId(updatedTicket.getId());
         responseDTO.setName(updatedTicket.getName());
         responseDTO.setDescription(updatedTicket.getDescription());
         responseDTO.setStatus(updatedTicket.getStatus());
-        responseDTO.setAdmin(updatedTicket.getAdmin());
-        responseDTO.setAssignedTech(updatedTicket.getAssignedTech());
-        responseDTO.setClient(updatedTicket.getClient());
+        responseDTO.setAdmin(mapPersonToPersonResponseDTO(updatedTicket.getAdmin()));
+        if (Objects.nonNull(updatedTicket.getAssignedTech())){
+            responseDTO.setAssignedTech(mapPersonToPersonResponseDTO(updatedTicket.getAssignedTech()));
+        }
+        responseDTO.setClient(mapPersonToPersonResponseDTO(updatedTicket.getClient()));
         responseDTO.setAttachments(updatedTicket.getAttachments());
 
         return responseDTO;
@@ -219,15 +222,31 @@ public class TicketService {
             ticketResponseDTO.setName(ticket.getName());
             ticketResponseDTO.setStatus(ticket.getStatus());
             ticketResponseDTO.setDescription(ticket.getDescription());
-            ticketResponseDTO.setAdmin(ticket.getAdmin());
-            ticketResponseDTO.setClient(ticket.getClient());
-            ticketResponseDTO.setAssignedTech(ticket.getAssignedTech());
+            ticketResponseDTO.setAdmin(mapPersonToPersonResponseDTO(ticket.getAdmin()));
+            ticketResponseDTO.setClient(mapPersonToPersonResponseDTO(ticket.getClient()));
+            ticketResponseDTO.setAssignedTech(mapPersonToPersonResponseDTO(ticket.getAssignedTech()));
             ticketResponseDTO.setAttachments(ticket.getAttachments());
             ticketResponseDTOS.add(ticketResponseDTO);
         }
 
 
         return ticketResponseDTOS;
-}}
+}
+    private PersonResponseDTO mapPersonToPersonResponseDTO(Person person) {
+        PersonResponseDTO personResponseDTO = new PersonResponseDTO();
+        personResponseDTO.setId(person.getId());
+        personResponseDTO.setUsername(person.getUsername());
+        personResponseDTO.setRole(person.getRole().toString()); // Assuming you want to convert the enum to a string
+        personResponseDTO.setEmail(person.getEmail());
+        personResponseDTO.setPhoneNumber(person.getPhoneNumber());
+        personResponseDTO.setBirthDate(person.getBirthDate());
+        personResponseDTO.setFullName(person.getFullName());
+        personResponseDTO.setSpecialite(person.getSpecialite()); // Assuming this is an enum
+        personResponseDTO.setActive(person.isActive());
+        // ... any other properties you want to map
+
+        return personResponseDTO;
+    }
 
 
+}

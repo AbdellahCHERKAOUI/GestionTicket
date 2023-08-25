@@ -9,34 +9,41 @@ import com.binarios.gestionticket.dto.response.PersonResponseDTO;
 import com.binarios.gestionticket.dto.response.TechResponseDTO;
 import com.binarios.gestionticket.entities.Group;
 import com.binarios.gestionticket.entities.Person;
+import com.binarios.gestionticket.entities.Role;
 import com.binarios.gestionticket.enums.PersonRole;
 import com.binarios.gestionticket.repositories.GroupRepository;
 import com.binarios.gestionticket.repositories.PersonRepository;
-import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Random;
+import javax.persistence.EntityNotFoundException;
+import java.util.*;
 
 @Service
+//@AllArgsConstructor
 public class PersonService {
     private final PersonRepository personRepository;
     private final GroupRepository groupRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
     @Autowired
     public PersonService(PersonRepository personRepository,
-                         GroupRepository groupRepository) {
+                         GroupRepository groupRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.personRepository = personRepository;
         this.groupRepository = groupRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public PersonResponseDTO createAdmin(PersonDTO personDTO) {
         Person person = new Person();
         person.setFullName(personDTO.getFullName());
-        person.setPassword(personDTO.getPassword());
+        person.setPassword(bCryptPasswordEncoder.encode(personDTO.getPassword()));
+        Set<Role> roles = new HashSet<>();
+        roles.add(new Role("ADMIN"));
+        person.setRoles(roles);
+        //person.setRoles(roles);
         person.setRole(PersonRole.ADMIN);
         person.setEmail(personDTO.getEmail());
         person.setPhoneNumber(personDTO.getPhoneNumber());
@@ -65,7 +72,7 @@ public class PersonService {
 
     //Username Creation Logic (fullName + 4-digits (Randomly generated))
 
-    private String generateUsername(String fullName) {
+    public String generateUsername(String fullName) {
         // Remove any spaces from the full name and convert to lowercase
         String fullNameWithoutSpace = fullName.replaceAll("\\s", "").toLowerCase();
 
@@ -90,6 +97,7 @@ public class PersonService {
             createdPersonDTO.setBirthDate(person.getBirthDate());
             createdPersonDTO.setFullName(person.getFullName());
             createdPersonDTO.setSpecialite(person.getSpecialite());
+            createdPersonDTO.setActive(person.isActive());
             //createdPersonDTO.setGroup(person.getGroup().getId());
             if (person.getGroup() != null) {
                 createdPersonDTO.setGroup(person.getGroup().getId());
@@ -112,7 +120,11 @@ public class PersonService {
         // Update the person with the new data
         existingPerson.setFullName(personDTO.getFullName());
         existingPerson.setRole(PersonRole.ADMIN);
-        existingPerson.setPassword(personDTO.getPassword());
+        Set<Role> roles = new HashSet<>();
+        roles.add(new Role("ADMIN"));
+        existingPerson.setRoles(roles);
+        //existingPerson.setRoles(roles);
+        existingPerson.setPassword(bCryptPasswordEncoder.encode(personDTO.getPassword()));
         existingPerson.setEmail(personDTO.getEmail());
         existingPerson.setPhoneNumber(personDTO.getPhoneNumber());
         existingPerson.setBirthDate(personDTO.getBirthDate());
@@ -156,7 +168,11 @@ public class PersonService {
     public TechResponseDTO createTech(TechDTO techDTO) {
         Person person = new Person();
         person.setFullName(techDTO.getFullName());
-        person.setPassword(techDTO.getPassword());
+        person.setPassword(bCryptPasswordEncoder.encode(techDTO.getPassword()));
+        Set<Role> roles = new HashSet<>();
+        roles.add(new Role("TECH"));
+        person.setRoles(roles);
+        //person.setRoles(roles);
         person.setRole(PersonRole.TECH);
         person.setEmail(techDTO.getEmail());
         person.setPhoneNumber(techDTO.getPhoneNumber());
@@ -196,6 +212,10 @@ public class PersonService {
         Person existingPerson = optionalPerson.get();
         // Update the person with the new data
         existingPerson.setFullName(techDTO.getFullName());
+        Set<Role> roles = new HashSet<>();
+        roles.add(new Role("TECH"));
+        existingPerson.setRoles(roles);
+        //existingPerson.setRoles(roles);
         existingPerson.setRole(PersonRole.valueOf(techDTO.getRole()));
         existingPerson.setEmail(techDTO.getEmail());
         existingPerson.setPhoneNumber(techDTO.getPhoneNumber());
@@ -225,7 +245,11 @@ public class PersonService {
 
         Person person = new Person();
         person.setFullName(clientDTO.getFullName());
-        person.setPassword(clientDTO.getPassword());
+        person.setPassword(bCryptPasswordEncoder.encode(clientDTO.getPassword()));
+        Set<Role> roles = new HashSet<>();
+        roles.add(new Role("CLIENT"));
+        person.setRoles(roles);
+        //person.setRoles(roles);
         person.setRole(PersonRole.CLIENT);
         person.setEmail(clientDTO.getEmail());
         person.setPhoneNumber(clientDTO.getPhoneNumber());
@@ -274,6 +298,11 @@ public class PersonService {
         // Update the person with the new data
         existingClient.setFullName(clientDTO.getFullName());
         existingClient.setEmail(clientDTO.getEmail());
+        Set<Role> roles = new HashSet<>();
+        roles.add(new Role("TECH"));
+        existingClient.setRoles(roles);
+        //existingClient.setRoles(roles);
+        existingClient.setRole(PersonRole.valueOf(clientDTO.getRole()));
         existingClient.setPhoneNumber(clientDTO.getPhoneNumber());
         existingClient.setBirthDate(clientDTO.getBirthDate());
         existingClient.setGroup(optionalGroup.get());
@@ -328,9 +357,9 @@ public class PersonService {
     //update Password
     public void changePassword(Long personId, UpdatePasswordDTO requestDTO) throws Exception {
         Person person = personRepository.findById(personId)
-                .orElseThrow(() -> new Exception("User not found"));
+                .orElseThrow(() -> new Exception("MyCustomUserDetails not found"));
 
-        if (!person.getPassword().equals(requestDTO.getOldPassword())) {
+        if (!bCryptPasswordEncoder.matches(requestDTO.getOldPassword(), person.getPassword())) {
             throw new Exception("Old password is incorrect");
         }
 
@@ -339,8 +368,14 @@ public class PersonService {
         }
 
         // Update the password
-        person.setPassword(requestDTO.getNewPassword());
+        person.setPassword(bCryptPasswordEncoder.encode(requestDTO.getNewPassword()));
         personRepository.save(person);
+    }
+
+
+    public boolean existByRole(PersonRole personRole) {
+        Optional<Person> person = personRepository.findByRole(PersonRole.ADMIN);
+        return person.isPresent();
     }
 }
 

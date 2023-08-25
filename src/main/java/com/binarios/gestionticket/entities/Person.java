@@ -2,6 +2,10 @@ package com.binarios.gestionticket.entities;
 
 import com.binarios.gestionticket.enums.PersonRole;
 import com.binarios.gestionticket.enums.Specialite;
+
+import javax.persistence.*;
+import javax.validation.constraints.Size;
+
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +14,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -22,9 +27,11 @@ public class Person {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @Size(min = 5, max = 30, message = "Username should be between 5 and 30 characters in length")
     private String username;
 
     @Column(nullable = false)
+    @Size(min = 10, message = "Username should be less than 10 characters in length")
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -56,6 +63,12 @@ public class Person {
     @ManyToOne
     @JoinColumn(name = "group_id")
     private Group group;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.EAGER)
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
 
 
 }

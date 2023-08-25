@@ -6,6 +6,7 @@ import com.binarios.gestionticket.enums.Specialite;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

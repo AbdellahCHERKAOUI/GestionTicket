@@ -1,15 +1,12 @@
 package com.binarios.gestionticket.controller;
 
-import com.binarios.gestionticket.dto.request.ClientDTO;
-import com.binarios.gestionticket.dto.request.GroupDTO;
 import com.binarios.gestionticket.dto.request.PersonDTO;
-import com.binarios.gestionticket.dto.request.TechDTO;
-import com.binarios.gestionticket.dto.response.*;
+import com.binarios.gestionticket.dto.response.PersonResponseDTO;
 import com.binarios.gestionticket.entities.Person;
 import com.binarios.gestionticket.entities.Role;
 import com.binarios.gestionticket.enums.PersonRole;
 import com.binarios.gestionticket.repositories.PersonRepository;
-import com.binarios.gestionticket.service.*;
+import com.binarios.gestionticket.service.PersonService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +19,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
 
 @RestController
 @RequestMapping("/api/person")

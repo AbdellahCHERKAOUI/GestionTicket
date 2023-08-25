@@ -13,22 +13,28 @@ import com.binarios.gestionticket.entities.Role;
 import com.binarios.gestionticket.enums.PersonRole;
 import com.binarios.gestionticket.repositories.GroupRepository;
 import com.binarios.gestionticket.repositories.PersonRepository;
-import javax.persistence.EntityNotFoundException;
-
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.*;
 
 @Service
-@AllArgsConstructor
 //@AllArgsConstructor
 public class PersonService {
     private final PersonRepository personRepository;
     private final GroupRepository groupRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+
+    @Autowired
+    public PersonService(PersonRepository personRepository,
+                         GroupRepository groupRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.personRepository = personRepository;
+        this.groupRepository = groupRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
 
     public PersonResponseDTO createAdmin(PersonDTO personDTO) {
         Person person = new Person();
@@ -352,8 +358,6 @@ public class PersonService {
     public void changePassword(Long personId, UpdatePasswordDTO requestDTO) throws Exception {
         Person person = personRepository.findById(personId)
                 .orElseThrow(() -> new Exception("MyCustomUserDetails not found"));
-
-        Boolean encodeOldPassword = bCryptPasswordEncoder.matches(requestDTO.getOldPassword(), person.getPassword());
 
         if (!bCryptPasswordEncoder.matches(requestDTO.getOldPassword(), person.getPassword())) {
             throw new Exception("Old password is incorrect");

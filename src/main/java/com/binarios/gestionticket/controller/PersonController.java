@@ -20,6 +20,7 @@ public class PersonController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'TECH', 'CLIENT')")
     public ResponseEntity<String> changePassword(@PathVariable Long personId, @RequestBody UpdatePasswordDTO requestDTO) {
 
+
         try {
             personService.changePassword(personId, requestDTO);
             return ResponseEntity.ok("Password changed successfully.");

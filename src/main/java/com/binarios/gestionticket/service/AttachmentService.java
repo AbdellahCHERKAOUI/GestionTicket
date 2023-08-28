@@ -4,6 +4,7 @@ import com.binarios.gestionticket.entities.Attachment;
 import com.binarios.gestionticket.entities.Ticket;
 import com.binarios.gestionticket.repositories.AttachmentRepository;
 import com.binarios.gestionticket.repositories.TicketRepository;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;

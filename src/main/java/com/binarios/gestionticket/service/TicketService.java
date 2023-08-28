@@ -8,6 +8,7 @@ import com.binarios.gestionticket.entities.Person;
 import com.binarios.gestionticket.entities.Ticket;
 import com.binarios.gestionticket.enums.PersonRole;
 import com.binarios.gestionticket.enums.TicketStatus;
+import com.binarios.gestionticket.repositories.AttachmentRepository;
 import com.binarios.gestionticket.repositories.PersonRepository;
 import com.binarios.gestionticket.repositories.TicketRepository;
 import org.springframework.stereotype.Service;
@@ -22,12 +23,15 @@ public class TicketService {
     private final AttachmentService attachmentService;
 
     private final PersonRepository personRepository;
+    private final AttachmentRepository attachmentRepository;
 
 
-    public TicketService(TicketRepository ticketRepository, AttachmentService attachmentService, PersonRepository personRepository) {
+    public TicketService(TicketRepository ticketRepository, AttachmentService attachmentService, PersonRepository personRepository,
+                         AttachmentRepository attachmentRepository) {
         this.ticketRepository = ticketRepository;
         this.attachmentService = attachmentService;
         this.personRepository = personRepository;
+        this.attachmentRepository = attachmentRepository;
     }
 
     public TicketResponseDTO saveTicket(TicketDTO ticketDTO, MultipartFile file) throws Exception {
@@ -66,7 +70,9 @@ public class TicketService {
         createdTicketDTO.setDescription(savedTicket.getDescription());
         createdTicketDTO.setStatus(savedTicket.getStatus());
         createdTicketDTO.setAdmin(mapPersonToPersonResponseDTO(savedTicket.getAdmin()));
-        createdTicketDTO.setAssignedTech(mapPersonToPersonResponseDTO(savedTicket.getAssignedTech()));
+        if (Objects.nonNull(savedTicket.getAssignedTech())) {
+            createdTicketDTO.setAssignedTech(mapPersonToPersonResponseDTO(savedTicket.getAssignedTech()));
+        }
         createdTicketDTO.setClient(mapPersonToPersonResponseDTO(savedTicket.getClient()));
         createdTicketDTO.setAttachments(savedTicket.getAttachments());
 
@@ -84,7 +90,10 @@ public class TicketService {
             createdTicketDTO.setDescription(ticket.getDescription());
             createdTicketDTO.setStatus(ticket.getStatus());
             createdTicketDTO.setClient(mapPersonToPersonResponseDTO(ticket.getClient()));
-            createdTicketDTO.setAssignedTech(mapPersonToPersonResponseDTO(ticket.getAssignedTech()));
+            if (Objects.nonNull(ticket.getAssignedTech())) {
+                createdTicketDTO.setAssignedTech(mapPersonToPersonResponseDTO(ticket.getAssignedTech()));
+            }
+            //createdTicketDTO.setAssignedTech(mapPersonToPersonResponseDTO(ticket.getAssignedTech()));
             createdTicketDTO.setAdmin(mapPersonToPersonResponseDTO(ticket.getAdmin()));
             createdTicketDTO.setAttachments(ticket.getAttachments());
             ticketResponseDTOS.add(createdTicketDTO);
@@ -120,7 +129,10 @@ public class TicketService {
         createdTicketDTO.setDescription(savedTicket.getDescription());
         createdTicketDTO.setStatus(savedTicket.getStatus());
         createdTicketDTO.setAdmin(mapPersonToPersonResponseDTO(savedTicket.getAdmin()));
-        createdTicketDTO.setAssignedTech(mapPersonToPersonResponseDTO(savedTicket.getAssignedTech()));
+        if (Objects.nonNull(savedTicket.getAssignedTech())) {
+            createdTicketDTO.setAssignedTech(mapPersonToPersonResponseDTO(savedTicket.getAssignedTech()));
+        }
+        //createdTicketDTO.setAssignedTech(mapPersonToPersonResponseDTO(savedTicket.getAssignedTech()));
         createdTicketDTO.setClient(mapPersonToPersonResponseDTO(savedTicket.getClient()));
         createdTicketDTO.setAttachments(savedTicket.getAttachments());
 
@@ -128,7 +140,17 @@ public class TicketService {
     }
 
     public void deleteTicket(Long id) {
-        ticketRepository.deleteById(id);
+        Ticket ticket = ticketRepository.findById(id).orElse(null); // Use orElse(null) to handle the case where the ticket doesn't exist
+
+        if (ticket != null) {
+            // Delete the attachments associated with the ticket
+            // Delete each attachment here (implementation depends on your Attachment class and repository)
+            // Replace with your actual attachment repository method
+            attachmentRepository.deleteAll(ticket.getAttachments());
+
+            // Now, delete the ticket itself
+            ticketRepository.delete(ticket);
+        }
     }
 
     public TicketResponseDTO assignTicket(Long ticketId, Long techId) throws Exception {
@@ -140,7 +162,7 @@ public class TicketService {
         if (tech == null || !tech.getRole().name().equals(PersonRole.TECH.name())) {
             throw new Exception("There is now tech with this id");
         }
-        if (Objects.nonNull(ticket.getAssignedTech())){
+        if (Objects.nonNull(ticket.getAssignedTech())) {
 
         }
         ticket.setAssignedTech(tech);
@@ -153,13 +175,15 @@ public class TicketService {
         createdTicketDTO.setDescription(ticket.getDescription());
         createdTicketDTO.setStatus(ticket.getStatus());
         createdTicketDTO.setAdmin(mapPersonToPersonResponseDTO(ticket.getAdmin()));
-        createdTicketDTO.setAssignedTech(mapPersonToPersonResponseDTO(ticket.getAssignedTech()));
+        if (Objects.nonNull(ticket.getAssignedTech())) {
+            createdTicketDTO.setAssignedTech(mapPersonToPersonResponseDTO(ticket.getAssignedTech()));
+        }
+        //createdTicketDTO.setAssignedTech(mapPersonToPersonResponseDTO(ticket.getAssignedTech()));
         createdTicketDTO.setClient(mapPersonToPersonResponseDTO(ticket.getClient()));
         createdTicketDTO.setAttachments(ticket.getAttachments());
 
         return createdTicketDTO;
     }
-
 
 
     //updateTicketStatus
@@ -183,7 +207,7 @@ public class TicketService {
         responseDTO.setDescription(updatedTicket.getDescription());
         responseDTO.setStatus(updatedTicket.getStatus());
         responseDTO.setAdmin(mapPersonToPersonResponseDTO(updatedTicket.getAdmin()));
-        if (Objects.nonNull(updatedTicket.getAssignedTech())){
+        if (Objects.nonNull(updatedTicket.getAssignedTech())) {
             responseDTO.setAssignedTech(mapPersonToPersonResponseDTO(updatedTicket.getAssignedTech()));
         }
         responseDTO.setClient(mapPersonToPersonResponseDTO(updatedTicket.getClient()));
@@ -192,10 +216,10 @@ public class TicketService {
         return responseDTO;
     }
 
-    public List<Attachment> getAttachmentsByTicketId(Long ticketId) throws Exception{
+    public List<Attachment> getAttachmentsByTicketId(Long ticketId) throws Exception {
         Ticket ticket = ticketRepository.findById(ticketId).orElse(null);
-        if (ticket == null){
-            throw new Exception("There is no ticket with this id : "+ ticketId);
+        if (ticket == null) {
+            throw new Exception("There is no ticket with this id : " + ticketId);
         }
         return ticket.getAttachments();
     }
@@ -212,11 +236,11 @@ public class TicketService {
     }
 
     public Collection<TicketResponseDTO> getCreatedTickets(Long personId) throws Exception {
-        Person person = personRepository.findById(personId).orElseThrow(() -> new Exception("there is no Person with the id : "+personId));
+        Person person = personRepository.findById(personId).orElseThrow(() -> new Exception("there is no Person with the id : " + personId));
         Collection<Ticket> tickets = ticketRepository.findTicketsByPersonId(personId);
         Collection<TicketResponseDTO> ticketResponseDTOS = new ArrayList<>();
 
-        for (Ticket ticket : tickets){
+        for (Ticket ticket : tickets) {
             TicketResponseDTO ticketResponseDTO = new TicketResponseDTO();
             ticketResponseDTO.setId(ticket.getId());
             ticketResponseDTO.setName(ticket.getName());
@@ -224,14 +248,18 @@ public class TicketService {
             ticketResponseDTO.setDescription(ticket.getDescription());
             ticketResponseDTO.setAdmin(mapPersonToPersonResponseDTO(ticket.getAdmin()));
             ticketResponseDTO.setClient(mapPersonToPersonResponseDTO(ticket.getClient()));
-            ticketResponseDTO.setAssignedTech(mapPersonToPersonResponseDTO(ticket.getAssignedTech()));
+            if (Objects.nonNull(ticket.getAssignedTech())) {
+                ticketResponseDTO.setAssignedTech(mapPersonToPersonResponseDTO(ticket.getAssignedTech()));
+            }
+            //ticketResponseDTO.setAssignedTech(mapPersonToPersonResponseDTO(ticket.getAssignedTech()));
             ticketResponseDTO.setAttachments(ticket.getAttachments());
             ticketResponseDTOS.add(ticketResponseDTO);
         }
 
 
         return ticketResponseDTOS;
-}
+    }
+
     private PersonResponseDTO mapPersonToPersonResponseDTO(Person person) {
         PersonResponseDTO personResponseDTO = new PersonResponseDTO();
         personResponseDTO.setId(person.getId());
@@ -241,9 +269,13 @@ public class TicketService {
         personResponseDTO.setPhoneNumber(person.getPhoneNumber());
         personResponseDTO.setBirthDate(person.getBirthDate());
         personResponseDTO.setFullName(person.getFullName());
-        personResponseDTO.setSpecialite(person.getSpecialite()); // Assuming this is an enum
+        if (Objects.nonNull(person.getGroup())) {
+            personResponseDTO.setGroup(person.getGroup().getId());
+        }
+        if (Objects.nonNull(person.getSpecialite())) {
+            personResponseDTO.setSpecialite(person.getSpecialite());
+        }
         personResponseDTO.setActive(person.isActive());
-        // ... any other properties you want to map
 
         return personResponseDTO;
     }

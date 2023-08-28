@@ -1,6 +1,7 @@
 package com.binarios.gestionticket.controller;
 
 import com.binarios.gestionticket.service.AttachmentService;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/attachment")
 public class AttachmentController {
 
-    private final AttachmentService attachmentService;
+    private  AttachmentService attachmentService;
 
     public AttachmentController(AttachmentService attachmentService) {
         this.attachmentService = attachmentService;
@@ -20,7 +21,7 @@ public class AttachmentController {
     //Add an attachment to a ticket
     @PostMapping("/addToTicket/{ticketId}")
     @PreAuthorize("hasAnyAuthority('TECH', 'CLIENT')")
-    private ResponseEntity<String> fileStoringHandler(@RequestParam("file") MultipartFile file, @PathVariable("ticketId") Long ticketId) throws Exception {
+    public ResponseEntity<String> fileStoringHandler(@RequestParam("file") MultipartFile file, @PathVariable("ticketId") Long ticketId) throws Exception {
 
         attachmentService.addFileToTicket(file, ticketId);
 

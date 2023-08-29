@@ -287,8 +287,15 @@ public class PersonService {
     }
 
     public ClientResponseDTO editClient(Long id, ClientDTO clientDTO) {
-        Person optionalPerson = personRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Client with ID " + id + " not found."));
+        Optional<Person> optionalPerson = personRepository.findById(id);
         Optional<Group> optionalGroup = groupRepository.findById(clientDTO.getGroup());
+
+
+        if (optionalPerson.isEmpty()) {
+            // Handle the case when the person with the given ID is not found
+            // You can throw an exception or return an appropriate response
+            throw new EntityNotFoundException("Person with ID " + id + " not found.");
+        }
 
 
         if (optionalGroup.isEmpty()) {

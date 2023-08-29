@@ -39,7 +39,7 @@ public class AuthController {
     @PostMapping("/token")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         try {
-            Person person = personRepository.findByEmail(loginRequest.getUsername()).get();
+            Person person = personRepository.findByEmail(loginRequest.getUsername()).orElseThrow(() -> new BadCredentialsException("Invalid username or password."));
             if (!person.isActive()) {
                 throw new AccountDisabledException("The account is disabled.");
             }

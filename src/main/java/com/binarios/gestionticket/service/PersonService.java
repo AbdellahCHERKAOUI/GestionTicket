@@ -11,6 +11,7 @@ import com.binarios.gestionticket.entities.Group;
 import com.binarios.gestionticket.entities.Person;
 import com.binarios.gestionticket.entities.Role;
 import com.binarios.gestionticket.enums.PersonRole;
+import com.binarios.gestionticket.exception.ResourceNotFoundException;
 import com.binarios.gestionticket.repositories.GroupRepository;
 import com.binarios.gestionticket.repositories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,7 +151,7 @@ public class PersonService {
     }
 
     public PersonResponseDTO getUserById(Long id) {
-        Person person = personRepository.findById(id).get();
+        Person person = personRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("User Id : %d is not found", id)));
         PersonResponseDTO updatedPersonResponseDTO = new PersonResponseDTO();
         updatedPersonResponseDTO.setId(person.getId());
         updatedPersonResponseDTO.setUsername(person.getUsername());
@@ -159,8 +160,15 @@ public class PersonService {
         updatedPersonResponseDTO.setPhoneNumber(person.getPhoneNumber());
         updatedPersonResponseDTO.setBirthDate(person.getBirthDate());
         updatedPersonResponseDTO.setFullName(person.getFullName());
-        updatedPersonResponseDTO.setSpecialite(person.getSpecialite());
-        updatedPersonResponseDTO.setGroup(person.getGroup().getId());
+        updatedPersonResponseDTO.setActive(person.isActive());
+        if (Objects.nonNull(person.getSpecialite())){
+            updatedPersonResponseDTO.setSpecialite(person.getSpecialite());
+        }
+        //updatedPersonResponseDTO.setSpecialite(person.getSpecialite());
+        if (Objects.nonNull(person.getGroup())){
+            updatedPersonResponseDTO.setGroup(person.getGroup().getId());
+        }
+        //updatedPersonResponseDTO.setGroup(person.getGroup().getId());
 
         return updatedPersonResponseDTO;
     }
@@ -279,13 +287,9 @@ public class PersonService {
     }
 
     public ClientResponseDTO editClient(Long id, ClientDTO clientDTO) {
-        Optional<Person> optionalPerson = personRepository.findById(id);
+        Person optionalPerson = personRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Client with ID " + id + " not found."));
         Optional<Group> optionalGroup = groupRepository.findById(clientDTO.getGroup());
-        if (optionalPerson.isEmpty()) {
-            // Handle the case when the person with the given ID is not found
-            // You can throw an exception or return an appropriate response
-            throw new EntityNotFoundException("Client with ID " + id + " not found.");
-        }
+
 
         if (optionalGroup.isEmpty()) {
             // Handle the case when the person with the given ID is not found

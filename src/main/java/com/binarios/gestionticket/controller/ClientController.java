@@ -10,7 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/client")
 @AllArgsConstructor
 public class ClientController {
     private final PersonService personService;
@@ -18,14 +18,14 @@ public class ClientController {
 
 
     //Create Client
-    @PostMapping("/client/create")
+    @PostMapping("/create")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ClientResponseDTO> createTech(@RequestBody ClientDTO clientDTO) throws Exception {
         ClientResponseDTO createdClientDTO = personService.createClient(clientDTO);
         return new ResponseEntity<>(createdClientDTO, HttpStatus.CREATED);
     }
     //Create Client
-    @PutMapping("/client/edit/{id}")
+    @PutMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ClientResponseDTO> editClient(@RequestBody ClientDTO clientDTO, @PathVariable(name = "id") Long id) {
         ClientResponseDTO createdClientDTO = personService.editClient(id, clientDTO);

@@ -10,14 +10,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/tech/")
+@RequestMapping("/api/tech")
 @AllArgsConstructor
 public class TechController {
     private final PersonService personService;
 
 
     //Create Tech
-    @PostMapping("create")
+    @PostMapping("/create")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<TechResponseDTO> createTech(@RequestBody TechDTO techDTO) {
         TechResponseDTO createdTechDTO = personService.createTech(techDTO);
@@ -25,7 +25,7 @@ public class TechController {
     }
 
     //Update Tech
-    @PutMapping("edit/{id}")
+    @PutMapping("/edit/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<TechResponseDTO> updateTech(@PathVariable Long id, @RequestBody TechDTO techDTO) {
         TechResponseDTO techResponseDTO = personService.editTech(id, techDTO);

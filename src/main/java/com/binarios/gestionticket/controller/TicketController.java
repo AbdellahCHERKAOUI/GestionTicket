@@ -57,7 +57,7 @@ public class TicketController {
     }
 
     //Assign ticket
-    @PutMapping(value = "/assign/{ticketId}/{techId}")
+    @PutMapping(value = "/assign-ticket-to-tech/{ticketId}/{techId}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<TicketResponseDTO> assignTicket(@PathVariable(name = "ticketId") Long ticketId, @PathVariable(name = "techId") Long techId) {
         TicketResponseDTO ticketResponseDTO = ticketService.assignTicket(ticketId, techId);

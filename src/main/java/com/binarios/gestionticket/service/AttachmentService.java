@@ -2,9 +2,10 @@ package com.binarios.gestionticket.service;
 
 import com.binarios.gestionticket.entities.Attachment;
 import com.binarios.gestionticket.entities.Ticket;
+import com.binarios.gestionticket.exception.ResourceNotFoundException;
+import com.binarios.gestionticket.exception.UnexpectedProblemException;
 import com.binarios.gestionticket.repositories.AttachmentRepository;
 import com.binarios.gestionticket.repositories.TicketRepository;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -77,10 +78,8 @@ public class AttachmentService {
 
     public Attachment addFileToTicket(MultipartFile file, Long ticketId) throws Exception{
         Attachment attachmentToSend = new Attachment();
-        Ticket ticket = ticketRepository.findById(ticketId).orElse(null);
-        if (ticket == null){
-            throw new Exception("There is no ticket with this id : "+ticketId);
-        }
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new ResourceNotFoundException("There is no ticket with the id : "+ ticketId));
+
         if (!file.isEmpty()) {
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
             String fileType = file.getContentType();
@@ -114,17 +113,15 @@ public class AttachmentService {
                 }
 
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new UnexpectedProblemException("There was a problem while saving the file");
             }
         }
         return attachmentToSend;
     }
 
-    public void deleteAttachmentById(Long attachmentId) throws Exception{
-        Attachment attachment = attachmentRepository.findById(attachmentId).orElse(null);
-        if(attachment == null){
-            throw new Exception("There is no attachment with this id "+attachmentId);
-        }
+    public void deleteAttachmentById(Long attachmentId) {
+        Attachment attachment = attachmentRepository.findById(attachmentId).orElseThrow(() -> new ResourceNotFoundException("There is no attachment with this id "+attachmentId));
+
         attachmentRepository.deleteById(attachmentId);
     }
 }

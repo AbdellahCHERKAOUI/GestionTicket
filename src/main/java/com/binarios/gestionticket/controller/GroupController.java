@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/group")
 public class GroupController {
     private final GroupService groupService;
 
@@ -21,35 +21,34 @@ public class GroupController {
     }
 
     //Group (CRUD)
-    @GetMapping("/group")
+    @GetMapping("/groups")
     @PreAuthorize("hasAnyAuthority('ADMIN','TECH')")
     public ResponseEntity<Collection<Group>> showGroups() {
         return new ResponseEntity<>(groupService.allGroups(), HttpStatus.OK);
     }
 
     //Get Group by id
-    @GetMapping("/group/{id}")
+    @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'TECH')")
-    public ResponseEntity<GroupResponseDTO> showGroup(@PathVariable Long id, @RequestBody GroupDTO groupDTO) {
+    public ResponseEntity<GroupResponseDTO> showGroup(@PathVariable Long id) {
 
         return new ResponseEntity<>(groupService.getGroupById(id), HttpStatus.OK);
     }
 
-    @PostMapping("/group/create")
+    @PostMapping("/create")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<GroupResponseDTO> createGroup(@RequestBody GroupDTO groupDTO) {
         GroupResponseDTO createdGroupResponseDTO = groupService.createGroup(groupDTO);
         return new ResponseEntity<>(createdGroupResponseDTO, HttpStatus.CREATED);
     }
 
-    @PutMapping("/group/edit/{id}")
+    @PutMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<GroupResponseDTO> updateGroup(@PathVariable Long id, @RequestBody GroupDTO groupDTO) {
-        GroupResponseDTO editedGroupResponseDTO = groupService.editGroup(id, groupDTO);
-        return new ResponseEntity<>(editedGroupResponseDTO, HttpStatus.OK);
+        return new ResponseEntity<>(groupService.editGroup(id, groupDTO), HttpStatus.OK);
     }
 
-    @DeleteMapping("/group/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<String> deleteGroup(@PathVariable Long id) {
         groupService.deleteGroup(id);

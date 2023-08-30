@@ -75,7 +75,7 @@ public class AdminController {
     //Create Admin
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<PersonResponseDTO> createAdmin(@RequestBody PersonDTO personDTO) {
+    public ResponseEntity<PersonResponseDTO> createAdmin(@RequestBody PersonDTO personDTO) throws Exception{
         PersonResponseDTO createdUserDTO = personService.createAdmin(personDTO);
         return new ResponseEntity<>(createdUserDTO, HttpStatus.CREATED);
     }
@@ -99,7 +99,7 @@ public class AdminController {
     //Deactivate or activate an account
     @GetMapping("/active/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<PersonResponseDTO> activateOrDeactivate(@PathVariable("id") Long id) throws Exception {
+    public ResponseEntity<PersonResponseDTO> activateOrDeactivate(@PathVariable("id") Long id) {
         PersonResponseDTO personResponseDTO = personService.activateOrDeactivate(id);
         return new ResponseEntity<>(personResponseDTO, HttpStatus.OK);
     }

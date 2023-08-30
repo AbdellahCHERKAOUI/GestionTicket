@@ -8,7 +8,7 @@ import com.binarios.gestionticket.exception.ExceptionResponse;
 import com.binarios.gestionticket.jwt.JwtUtils;
 import com.binarios.gestionticket.repositories.PersonRepository;
 import com.binarios.gestionticket.service.MyCustomUserDetails;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,15 +26,13 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
+@AllArgsConstructor
 public class AuthController {
 
-    @Autowired
-    AuthenticationManager authenticationManager;
 
-    @Autowired
-    JwtUtils jwtUtils;
-    @Autowired
-    private PersonRepository personRepository;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtils jwtUtils;
+    private final PersonRepository personRepository;
 
     @PostMapping("/token")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -52,7 +50,6 @@ public class AuthController {
             MyCustomUserDetails userDetails = (MyCustomUserDetails) authentication.getPrincipal();
 
 
-
             List<String> roles = userDetails.getAuthorities()
                     .stream().map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toList());
@@ -63,7 +60,7 @@ public class AuthController {
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                     new ExceptionResponse(HttpStatus.UNAUTHORIZED.value(), "Bad Credentials", "Invalid username or password."));
-        }  catch (AccountDisabledException e) {
+        } catch (AccountDisabledException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                     new ExceptionResponse(HttpStatus.UNAUTHORIZED.value(), "Account Disabled", e.getMessage()));
 //        } catch (Exception e) {

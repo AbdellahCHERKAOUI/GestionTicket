@@ -11,10 +11,13 @@ import com.binarios.gestionticket.entities.Group;
 import com.binarios.gestionticket.entities.Person;
 import com.binarios.gestionticket.entities.Role;
 import com.binarios.gestionticket.enums.PersonRole;
+import com.binarios.gestionticket.exception.DuplicateResource;
 import com.binarios.gestionticket.exception.ResourceNotFoundException;
 import com.binarios.gestionticket.repositories.GroupRepository;
 import com.binarios.gestionticket.repositories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +40,10 @@ public class PersonService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    public PersonResponseDTO createAdmin(PersonDTO personDTO) {
+    public PersonResponseDTO createAdmin(PersonDTO personDTO) throws Exception {
+        if (personRepository.findByEmail(personDTO.getEmail()).isPresent()) {
+            throw new DuplicateResource(String.format("Email : %s is duplicated", personDTO.getEmail()));
+        }
         Person person = new Person();
         person.setFullName(personDTO.getFullName());
         person.setPassword(bCryptPasswordEncoder.encode(personDTO.getPassword()));
@@ -114,7 +120,7 @@ public class PersonService {
         Optional<Person> optionalPerson = personRepository.findById(id);
         //If the personDTO is empty we will throw an exception
         if (optionalPerson.isEmpty()) {
-            throw new EntityNotFoundException("Person with ID " + id + " not found.");
+            throw new ResourceNotFoundException("Person with ID " + id + " not found.");
         }
 
         Person existingPerson = optionalPerson.get();
@@ -147,6 +153,7 @@ public class PersonService {
     }
 
     public void deletePerson(Long id) {
+        Person person = personRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("User Id : %d is not found", id)));
         personRepository.deleteById(id);
     }
 
@@ -161,19 +168,21 @@ public class PersonService {
         updatedPersonResponseDTO.setBirthDate(person.getBirthDate());
         updatedPersonResponseDTO.setFullName(person.getFullName());
         updatedPersonResponseDTO.setActive(person.isActive());
-        if (Objects.nonNull(person.getSpecialite())){
+        if (Objects.nonNull(person.getSpecialite())) {
             updatedPersonResponseDTO.setSpecialite(person.getSpecialite());
         }
         //updatedPersonResponseDTO.setSpecialite(person.getSpecialite());
-        if (Objects.nonNull(person.getGroup())){
+        if (Objects.nonNull(person.getGroup())) {
             updatedPersonResponseDTO.setGroup(person.getGroup().getId());
         }
-        //updatedPersonResponseDTO.setGroup(person.getGroup().getId());
 
         return updatedPersonResponseDTO;
     }
 
     public TechResponseDTO createTech(TechDTO techDTO) {
+        if (personRepository.findByEmail(techDTO.getEmail()).isPresent()){
+            throw new DuplicateResource("There already a user with the same email");
+        }
         Person person = new Person();
         person.setFullName(techDTO.getFullName());
         person.setPassword(bCryptPasswordEncoder.encode(techDTO.getPassword()));
@@ -210,14 +219,8 @@ public class PersonService {
     }
 
     public TechResponseDTO editTech(Long id, TechDTO techDTO) {
-        Optional<Person> optionalPerson = personRepository.findById(id);
-        if (optionalPerson.isEmpty()) {
-            // Handle the case when the person with the given ID is not found
-            // You can throw an exception or return an appropriate response
-            throw new EntityNotFoundException("Person with ID " + id + " not found.");
-        }
+        Person existingPerson = personRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("There is no tech with this id" + id));
 
-        Person existingPerson = optionalPerson.get();
         // Update the person with the new data
         existingPerson.setFullName(techDTO.getFullName());
         Set<Role> roles = new HashSet<>();
@@ -249,7 +252,10 @@ public class PersonService {
 
     public ClientResponseDTO createClient(ClientDTO clientDTO) throws Exception {
 
-        Group group = groupRepository.findById(clientDTO.getGroup()).orElseThrow(() -> new Exception("There is no group with this id : " + clientDTO.getGroup()));
+        Group group = groupRepository.findById(clientDTO.getGroup()).orElseThrow(() -> new ResourceNotFoundException("There is no group with this id : " + clientDTO.getGroup()));
+        if (personRepository.findByEmail(clientDTO.getEmail()).isPresent()) {
+            throw new DuplicateResource("There is already an account with this email " + clientDTO.getEmail());
+        }
 
         Person person = new Person();
         person.setFullName(clientDTO.getFullName());
@@ -287,25 +293,12 @@ public class PersonService {
     }
 
     public ClientResponseDTO editClient(Long id, ClientDTO clientDTO) {
-        Optional<Person> optionalPerson = personRepository.findById(id);
-        Optional<Group> optionalGroup = groupRepository.findById(clientDTO.getGroup());
+
+        Person existingClient = personRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("There is no client with this id " + id));
+        Group existingGroup = groupRepository.findById(clientDTO.getGroup()).orElseThrow(() -> new ResourceNotFoundException("There is no group with this id " + id));
 
 
-        if (optionalPerson.isEmpty()) {
-            // Handle the case when the person with the given ID is not found
-            // You can throw an exception or return an appropriate response
-            throw new EntityNotFoundException("Person with ID " + id + " not found.");
-        }
 
-
-        if (optionalGroup.isEmpty()) {
-            // Handle the case when the person with the given ID is not found
-            // You can throw an exception or return an appropriate response
-            throw new EntityNotFoundException("Group with ID " + id + " not found.");
-        }
-
-
-        Person existingClient = optionalPerson.get();
         // Update the person with the new data
         existingClient.setFullName(clientDTO.getFullName());
         existingClient.setEmail(clientDTO.getEmail());
@@ -316,7 +309,7 @@ public class PersonService {
         existingClient.setRole(PersonRole.valueOf(clientDTO.getRole()));
         existingClient.setPhoneNumber(clientDTO.getPhoneNumber());
         existingClient.setBirthDate(clientDTO.getBirthDate());
-        existingClient.setGroup(optionalGroup.get());
+        existingClient.setGroup(existingGroup);
 
 
         Person updatedClient = personRepository.save(existingClient);
@@ -330,13 +323,13 @@ public class PersonService {
         createdClientDTO.setPhoneNumber(updatedClient.getPhoneNumber());
         createdClientDTO.setBirthDate(updatedClient.getBirthDate());
         createdClientDTO.setFullName(updatedClient.getFullName());
-        createdClientDTO.setGroup(optionalGroup.get().getId());
+        createdClientDTO.setGroup(existingGroup.getId());
 
         return createdClientDTO;
     }
 
-    public PersonResponseDTO activateOrDeactivate(Long id) throws Exception {
-        Person person = personRepository.findById(id).orElseThrow(() -> new Exception("There is no account with the id : " + id));
+    public PersonResponseDTO activateOrDeactivate(Long id) {
+        Person person = personRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("There is no account with the id : " + id));
         person.setActive(!person.isActive());
 
         personRepository.save(person);
@@ -366,16 +359,20 @@ public class PersonService {
 
 
     //update Password
-    public void changePassword(Long personId, UpdatePasswordDTO requestDTO) throws Exception {
-        Person person = personRepository.findById(personId)
-                .orElseThrow(() -> new Exception("MyCustomUserDetails not found"));
+    public void changePassword(UpdatePasswordDTO requestDTO) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        MyCustomUserDetails principal = (MyCustomUserDetails) authentication.getPrincipal();
+
+        Person person = personRepository.findById(principal.getPerson().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("There is no person with this id"));
+
 
         if (!bCryptPasswordEncoder.matches(requestDTO.getOldPassword(), person.getPassword())) {
             throw new Exception("Old password is incorrect");
         }
 
         if (!requestDTO.getNewPassword().equals(requestDTO.getConfirmPassword())) {
-            throw new Exception("New passwords do not match");
+            throw new Exception("New passwords does not match");
         }
 
         // Update the password

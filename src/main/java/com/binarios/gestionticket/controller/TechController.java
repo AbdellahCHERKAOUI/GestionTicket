@@ -17,8 +17,6 @@ public class TechController {
 
 
     //Create Tech
-
-
     @PostMapping("create")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<TechResponseDTO> createTech(@RequestBody TechDTO techDTO) {

@@ -3,8 +3,11 @@ package com.binarios.gestionticket.service;
 import com.binarios.gestionticket.dto.request.GroupDTO;
 import com.binarios.gestionticket.dto.response.GroupResponseDTO;
 import com.binarios.gestionticket.entities.Group;
+import com.binarios.gestionticket.exception.ResourceNotFoundException;
 import com.binarios.gestionticket.repositories.GroupRepository;
+
 import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,15 +40,18 @@ public class GroupService {
     }
 
     //Show
-    public Collection<Group> allGroups(){
-        return groupRepository.findAll();
+    public Collection<Group> allGroups() {
+        Collection<Group> groups = groupRepository.findAll();
+        if (groups.isEmpty()) {
+            throw new ResourceNotFoundException("There is no groups, try to create some.");
+        }
+        return groups;
     }
 
     //Update
     public GroupResponseDTO editGroup(Long groupId, GroupDTO groupDTO) {
         // Check if the group with the given groupId exists
-        Group existingGroup = groupRepository.findById(groupId)
-                .orElseThrow(() -> new EntityNotFoundException("Group not found with ID: " + groupId));
+        Group existingGroup = groupRepository.findById(groupId).orElseThrow(() -> new ResourceNotFoundException("There is no group with this id " + groupId));
 
         // Update the group with the new data
         existingGroup.setName(groupDTO.getName());
@@ -67,7 +73,7 @@ public class GroupService {
     }
 
     public GroupResponseDTO getGroupById(Long id) {
-        Group existingGroup = groupRepository.findById(id).get();
+        Group existingGroup = groupRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("There is no group with this id " + id));
         GroupResponseDTO editedGroupResponseDTO = new GroupResponseDTO();
         editedGroupResponseDTO.setId(existingGroup.getId());
         editedGroupResponseDTO.setName(existingGroup.getName());

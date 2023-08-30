@@ -5,11 +5,9 @@ import com.binarios.gestionticket.dto.request.TicketStatusUpdateDTO;
 import com.binarios.gestionticket.dto.response.CommentResponseDTO;
 import com.binarios.gestionticket.dto.response.TicketResponseDTO;
 import com.binarios.gestionticket.entities.Attachment;
-import com.binarios.gestionticket.service.AttachmentService;
 import com.binarios.gestionticket.service.CommentService;
 import com.binarios.gestionticket.service.TicketService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +19,7 @@ import java.util.Collection;
 import java.util.List;
 
 @RestController
-@RequestMapping("/ticket")
+@RequestMapping("/api/ticket")
 @AllArgsConstructor
 public class TicketController {
     private final TicketService ticketService;
@@ -30,7 +28,7 @@ public class TicketController {
 
     @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @PreAuthorize("hasAnyAuthority('CLIENT')")
-    public ResponseEntity<TicketResponseDTO> createTicket(@RequestParam("file") MultipartFile file, @RequestPart TicketDTO ticketDTO) throws Exception {
+    public ResponseEntity<TicketResponseDTO> createTicket(@RequestParam("file") MultipartFile file, @RequestPart TicketDTO ticketDTO) {
         return new ResponseEntity<>(ticketService.saveTicket(ticketDTO, file), HttpStatus.CREATED);
     }
 
@@ -45,7 +43,7 @@ public class TicketController {
     //Here we can update just the -name- and the -description- of the ticket
     @PutMapping(value = "/edit/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @PreAuthorize("hasAnyAuthority('CLIENT')")
-    public ResponseEntity<TicketResponseDTO> updateTicket(@RequestParam("file") MultipartFile file, @RequestPart TicketDTO ticketDTO, @PathVariable(name = "id") Long id) throws Exception {
+    public ResponseEntity<TicketResponseDTO> updateTicket(@RequestParam("file") MultipartFile file, @RequestPart TicketDTO ticketDTO, @PathVariable(name = "id") Long id) {
         TicketResponseDTO ticketResponseDTO = ticketService.editTicket(id, ticketDTO, file);
         return new ResponseEntity<>(ticketResponseDTO, HttpStatus.OK);
     }
@@ -61,7 +59,7 @@ public class TicketController {
     //Assign ticket
     @PutMapping(value = "/assign/{ticketId}/{techId}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<TicketResponseDTO> assignTicket(@PathVariable(name = "ticketId") Long ticketId, @PathVariable(name = "techId") Long techId) throws Exception {
+    public ResponseEntity<TicketResponseDTO> assignTicket(@PathVariable(name = "ticketId") Long ticketId, @PathVariable(name = "techId") Long techId) {
         TicketResponseDTO ticketResponseDTO = ticketService.assignTicket(ticketId, techId);
         return new ResponseEntity<>(ticketResponseDTO, HttpStatus.OK);
     }
@@ -69,7 +67,7 @@ public class TicketController {
     //Get the attachments of a certain ticket
     @GetMapping("/{ticketId}/attachments")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CLIENT', 'TECH')")
-    public ResponseEntity<List<Attachment>> getAttachmentsByTicketId(@PathVariable("ticketId") Long ticketId) throws Exception {
+    public ResponseEntity<List<Attachment>> getAttachmentsByTicketId(@PathVariable("ticketId") Long ticketId) {
         List<Attachment> attachments = ticketService.getAttachmentsByTicketId(ticketId);
         return new ResponseEntity<>(attachments, HttpStatus.OK);
     }
@@ -77,21 +75,17 @@ public class TicketController {
     //updateTicketStatus
     @PostMapping("/{ticketId}/updateStatus")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'TECH')")
-    public ResponseEntity<TicketResponseDTO> updateTicketStatus(
-            @PathVariable Long ticketId,
-            @RequestBody TicketStatusUpdateDTO updateDTO) {
-        try {
-            TicketResponseDTO responseDTO = ticketService.updateTicketStatus(ticketId, updateDTO.getNewStatus());
-            return ResponseEntity.ok(responseDTO);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
-        }
+    public ResponseEntity<TicketResponseDTO> updateTicketStatus(@PathVariable Long ticketId, @RequestBody TicketStatusUpdateDTO updateDTO) {
+
+        TicketResponseDTO responseDTO = ticketService.updateTicketStatus(ticketId, updateDTO.getNewStatus());
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
+
     @GetMapping("/{ticketId}/comments")
     @PreAuthorize("hasAnyAuthority('ADMIN','TECH', 'CLIENT')")
-    public ResponseEntity<List<CommentResponseDTO>> getCommentsByTicketId(@PathVariable Long ticketId) throws Exception {
+    public ResponseEntity<List<CommentResponseDTO>> getCommentsByTicketId(@PathVariable Long ticketId) {
         List<CommentResponseDTO> comments = commentService.getCommentsByTicketId(ticketId);
-        return ResponseEntity.ok(comments);
+        return new ResponseEntity<>(comments, HttpStatus.OK);
 
     }
 }

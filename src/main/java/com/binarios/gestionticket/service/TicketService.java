@@ -8,9 +8,12 @@ import com.binarios.gestionticket.entities.Person;
 import com.binarios.gestionticket.entities.Ticket;
 import com.binarios.gestionticket.enums.PersonRole;
 import com.binarios.gestionticket.enums.TicketStatus;
+import com.binarios.gestionticket.exception.ResourceNotFoundException;
 import com.binarios.gestionticket.repositories.AttachmentRepository;
 import com.binarios.gestionticket.repositories.PersonRepository;
 import com.binarios.gestionticket.repositories.TicketRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,18 +37,20 @@ public class TicketService {
         this.attachmentRepository = attachmentRepository;
     }
 
-    public TicketResponseDTO saveTicket(TicketDTO ticketDTO, MultipartFile file) throws Exception {
-
+    public TicketResponseDTO saveTicket(TicketDTO ticketDTO, MultipartFile file) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        MyCustomUserDetails principal = (MyCustomUserDetails) authentication.getPrincipal();
         Ticket ticket = new Ticket();
         ticket.setName(ticketDTO.getName());
         ticket.setDescription(ticketDTO.getDescription());
         ticket.setStatus(TicketStatus.CLOSED);
-        Optional<Person> client = personRepository.findById(ticketDTO.getClient_id());
+        personRepository.findById(principal.getPerson().getId()).orElseThrow();
+        ticket.setClient(principal.getPerson());
         //Optional<Person> assignedTech = personRepository.findById(ticketDTO.getAssignedTech_id());
 
         Optional<Person> admin = personRepository.findByRole(PersonRole.ADMIN);
 
-        ticket.setClient(client.orElse(null));
+        //ticket.setClient(client.orElse(null));
         //ticket.setAssignedTech(assignedTech.orElse(null));wha
         ticket.setAdmin(admin.orElse(null));
 
@@ -81,6 +86,9 @@ public class TicketService {
 
     public Collection<TicketResponseDTO> getAllTickets() {
         Collection<Ticket> tickets = ticketRepository.findAll();
+        if (tickets.isEmpty()) {
+            throw new ResourceNotFoundException("There is no tickets to show.");
+        }
         Collection<TicketResponseDTO> ticketResponseDTOS = new ArrayList<>();
 
         for (Ticket ticket : tickets) {
@@ -101,17 +109,19 @@ public class TicketService {
         return ticketResponseDTOS;
     }
 
-    public TicketResponseDTO editTicket(Long id, TicketDTO ticketDTO, MultipartFile file) throws Exception {
-        Ticket ticket = ticketRepository.findById(id).orElseThrow(() -> new Exception("There is no ticket with this id"));
+    public TicketResponseDTO editTicket(Long id, TicketDTO ticketDTO, MultipartFile file) {
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("There is no ticket with this id"));
 
         ticket.setName(ticketDTO.getName());
         ticket.setDescription(ticketDTO.getDescription());
         //ticket.setStatus(ticketDTO.getStatus());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        MyCustomUserDetails principal = (MyCustomUserDetails) authentication.getPrincipal();
 
-        Optional<Person> client = personRepository.findById(ticketDTO.getClient_id());
+        Person client = personRepository.findById(principal.getPerson().getId()).orElseThrow(() -> new ResourceNotFoundException("there is no person with this id"));
         //Optional<Person> admin = personRepository.findById(ticketDTO.getAdmin_id());
 
-        ticket.setClient(client.orElse(null));
+        ticket.setClient(client);
         //ticket.setAdmin(admin.orElse(null));
 
         // Save the attachment if it exists
@@ -140,31 +150,20 @@ public class TicketService {
     }
 
     public void deleteTicket(Long id) {
-        Ticket ticket = ticketRepository.findById(id).orElse(null); // Use orElse(null) to handle the case where the ticket doesn't exist
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("There is no ticket with this id")); // Use orElse(null) to handle the case where the ticket doesn't exist
 
-        if (ticket != null) {
-            // Delete the attachments associated with the ticket
-            // Delete each attachment here (implementation depends on your Attachment class and repository)
-            // Replace with your actual attachment repository method
-            attachmentRepository.deleteAll(ticket.getAttachments());
 
-            // Now, delete the ticket itself
-            ticketRepository.delete(ticket);
-        }
+        attachmentRepository.deleteAll(ticket.getAttachments());
+
+
+        ticketRepository.delete(ticket);
+
     }
 
-    public TicketResponseDTO assignTicket(Long ticketId, Long techId) throws Exception {
-        Ticket ticket = ticketRepository.findById(ticketId).orElse(null);
-        Person tech = personRepository.findById(techId).orElse(null);
-        if (ticket == null) {
-            throw new Exception("There is now ticket with this id");
-        }
-        if (tech == null || !tech.getRole().name().equals(PersonRole.TECH.name())) {
-            throw new Exception("There is now tech with this id");
-        }
-        if (Objects.nonNull(ticket.getAssignedTech())) {
+    public TicketResponseDTO assignTicket(Long ticketId, Long techId) {
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new ResourceNotFoundException("There is no ticket with this id "+ticketId));
+        Person tech = personRepository.findById(techId).orElseThrow(() -> new ResourceNotFoundException("There is no tech with this id "+techId));
 
-        }
         ticket.setAssignedTech(tech);
         ticketRepository.save(ticket);
 
@@ -188,13 +187,8 @@ public class TicketService {
 
     //updateTicketStatus
 
-    public TicketResponseDTO updateTicketStatus(Long ticketId, TicketStatus newStatus) throws Exception {
-        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new Exception("Ticket not found with ID: " + ticketId));
-
-        // Ensure the status transition is valid (optional step, based on your business rules)
-        if (!isValidStatusTransition(ticket.getStatus(), newStatus)) {
-            throw new Exception("Invalid status transition.");
-        }
+    public TicketResponseDTO updateTicketStatus(Long ticketId, TicketStatus newStatus) {
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new ResourceNotFoundException("Ticket not found with ID: " + ticketId));
 
         ticket.setStatus(newStatus);
         Ticket updatedTicket = ticketRepository.save(ticket);
@@ -216,24 +210,13 @@ public class TicketService {
         return responseDTO;
     }
 
-    public List<Attachment> getAttachmentsByTicketId(Long ticketId) throws Exception {
-        Ticket ticket = ticketRepository.findById(ticketId).orElse(null);
-        if (ticket == null) {
-            throw new Exception("There is no ticket with this id : " + ticketId);
-        }
+    public List<Attachment> getAttachmentsByTicketId(Long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new ResourceNotFoundException("There is no ticket with this id : " + ticketId));
+
         return ticket.getAttachments();
     }
 
 
-    // Helper method to check if the status transition is valid (optional)
-    private boolean isValidStatusTransition(TicketStatus currentStatus, TicketStatus newStatus) {
-        // Implement your business logic to determine whether the transition is valid
-        // For example, you might define specific allowed transitions based on business rules.
-        // You can also consider using an enum method to handle this validation.
-        // For demonstration purposes, we'll allow any status transitions here.
-        return true;
-
-    }
 
     public Collection<TicketResponseDTO> getCreatedTickets(Long personId) throws Exception {
         Person person = personRepository.findById(personId).orElseThrow(() -> new Exception("there is no Person with the id : " + personId));

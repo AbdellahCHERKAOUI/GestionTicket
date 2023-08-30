@@ -5,10 +5,16 @@ import com.binarios.gestionticket.dto.response.CommentResponseDTO;
 import com.binarios.gestionticket.entities.Comment;
 import com.binarios.gestionticket.entities.Person;
 import com.binarios.gestionticket.entities.Ticket;
+import com.binarios.gestionticket.enums.TicketStatus;
+import com.binarios.gestionticket.exception.NoAuthorithyException;
+import com.binarios.gestionticket.exception.ResourceNotFoundException;
 import com.binarios.gestionticket.repositories.CommentRepository;
 import com.binarios.gestionticket.repositories.PersonRepository;
 import com.binarios.gestionticket.repositories.TicketRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,31 +23,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class CommentService {
 
     private final CommentRepository commentRepository;
     private final TicketRepository ticketRepository;
     private final PersonRepository personRepository;
 
-    @Autowired
-    public CommentService(CommentRepository commentRepository,
-                          TicketRepository ticketRepository,
-                          PersonRepository personRepository) {
-        this.commentRepository = commentRepository;
-        this.ticketRepository = ticketRepository;
-        this.personRepository = personRepository;
-    }
 
     public CommentResponseDTO writeComment(CommentRequestDTO requestDTO) {
-        // Fetch the ticket and person entities based on their IDs from the database
-        Ticket ticket = ticketRepository.findById(requestDTO.getTicket()).orElse(null);
-        Person person = personRepository.findById(requestDTO.getPerson()).orElse(null);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        MyCustomUserDetails principal = (MyCustomUserDetails) authentication.getPrincipal();
 
-        // Handle the case when the ticket or person doesn't exist in the database
-        if (ticket == null || person == null) {
-            // You can throw an exception or return an error response here
-            return null;
-        }
+
+        Ticket ticket = ticketRepository.findById(requestDTO.getTicket()).orElseThrow(() -> new ResourceNotFoundException("There is no ticket with this id " + requestDTO.getTicket()));
+        Person person = personRepository.findById(principal.getPerson().getId()).orElseThrow(() -> new ResourceNotFoundException("There is no ticket with this id " + principal.getPerson().getId()));
+
 
         // Create a new Comment entity and set its attributes based on the requestDTO
         Comment comment = new Comment();
@@ -65,12 +62,13 @@ public class CommentService {
 
     //modifier un commentaire
     public CommentResponseDTO updateComment(Long commentId, CommentRequestDTO requestDTO) {
-        Comment commentToUpdate = commentRepository.findById(commentId).orElse(null);
+        Comment commentToUpdate = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("There is no comment to update"));
 
-        // Handle the case when the comment doesn't exist in the database
-        if (commentToUpdate == null) {
-            // Return an error response if the comment does not exist
-            return new CommentResponseDTO();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        MyCustomUserDetails principal = (MyCustomUserDetails) authentication.getPrincipal();
+
+        if (commentToUpdate.getPerson().getId() != principal.getPerson().getId()) {
+            throw new NoAuthorithyException("You do not have the right to modify this comment");
         }
 
         // Update the comment's content if provided in the requestDTO
@@ -92,14 +90,20 @@ public class CommentService {
     }
 
 
+    //delete comment
+    public void deleteComment(Long commentId) {
+        Comment commentToUpdate = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("there is no comment with this id " + commentId));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        MyCustomUserDetails principal = (MyCustomUserDetails) authentication.getPrincipal();
 
-//supprimer un Commentaire
-    public void deleteComment(Long commentId) throws Exception{
+        if (commentToUpdate.getPerson().getId() != principal.getPerson().getId()) {
+            throw new NoAuthorithyException("You do not have the right to delete this comment");
+        }
 
-        commentRepository.findById(commentId).orElseThrow(()-> new RuntimeException("there is no comment with this id " +  commentId));
-            commentRepository.deleteById(commentId);
+        commentRepository.deleteById(commentId);
 
     }
+
     private CommentResponseDTO createResponseDTO(Comment comment) {
         CommentResponseDTO responseDTO = new CommentResponseDTO();
         responseDTO.setId(comment.getId());
@@ -109,20 +113,17 @@ public class CommentService {
 
         return responseDTO;
     }
-    //show comment
-    public List<CommentResponseDTO> getCommentsByTicketId(Long ticketId) throws  Exception{
-        List<Comment> comments = commentRepository.findByTicketId(ticketId);
 
-        if (comments.isEmpty()){
-            throw new Exception("there is no comment");
+    //show comment
+    public List<CommentResponseDTO> getCommentsByTicketId(Long ticketId) {
+        List<CommentResponseDTO> commentResponseDTOS = commentRepository.findByTicketId(ticketId).stream().map(this::createResponseDTO).collect(Collectors.toList());
+
+        if (commentResponseDTOS.isEmpty()) {
+            throw new ResourceNotFoundException("there is no comment in this ticket");
         }
 
-        List<CommentResponseDTO> commentResponseDTOS = new ArrayList<>();
+        return commentResponseDTOS;
 
-       for (Comment comment: comments){
-           commentResponseDTOS.add(createResponseDTO(comment));
-       }
-       return commentResponseDTOS;
     }
 
 

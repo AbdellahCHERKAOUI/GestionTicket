@@ -293,8 +293,10 @@ public class PersonService {
     }
 
     public ClientResponseDTO editClient(Long id, ClientDTO clientDTO) {
+
         Person existingClient = personRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("There is no client with this id " + id));
         Group existingGroup = groupRepository.findById(clientDTO.getGroup()).orElseThrow(() -> new ResourceNotFoundException("There is no group with this id " + id));
+
 
 
         // Update the person with the new data

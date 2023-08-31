@@ -7,7 +7,6 @@ import java.time.LocalDate;
 public class TechDTO {
     private String fullName;
     private String password;
-    private String role;
     private String email;
     private String phoneNumber;
     private LocalDate birthDate;
@@ -16,10 +15,9 @@ public class TechDTO {
     public TechDTO() {
     }
 
-    public TechDTO(String fullName, String password, String role, String email, String phoneNumber, LocalDate birthDate, Specialite specialite) {
+    public TechDTO(String fullName, String password, String email, String phoneNumber, LocalDate birthDate, Specialite specialite) {
         this.fullName = fullName;
         this.password = password;
-        this.role = role;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.birthDate = birthDate;
@@ -42,13 +40,6 @@ public class TechDTO {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 
     public String getEmail() {
         return email;

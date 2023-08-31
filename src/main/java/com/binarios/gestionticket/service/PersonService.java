@@ -227,7 +227,7 @@ public class PersonService {
         roles.add(new Role("TECH"));
         existingPerson.setRoles(roles);
         //existingPerson.setRoles(roles);
-        existingPerson.setRole(PersonRole.valueOf(techDTO.getRole()));
+        existingPerson.setRole(PersonRole.TECH);
         existingPerson.setEmail(techDTO.getEmail());
         existingPerson.setPhoneNumber(techDTO.getPhoneNumber());
         existingPerson.setBirthDate(techDTO.getBirthDate());
@@ -306,7 +306,7 @@ public class PersonService {
         roles.add(new Role("TECH"));
         existingClient.setRoles(roles);
         //existingClient.setRoles(roles);
-        existingClient.setRole(PersonRole.valueOf(clientDTO.getRole()));
+        existingClient.setRole(PersonRole.TECH);
         existingClient.setPhoneNumber(clientDTO.getPhoneNumber());
         existingClient.setBirthDate(clientDTO.getBirthDate());
         existingClient.setGroup(existingGroup);

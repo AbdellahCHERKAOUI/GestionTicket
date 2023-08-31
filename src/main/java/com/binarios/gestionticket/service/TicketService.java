@@ -8,6 +8,7 @@ import com.binarios.gestionticket.entities.Person;
 import com.binarios.gestionticket.entities.Ticket;
 import com.binarios.gestionticket.enums.PersonRole;
 import com.binarios.gestionticket.enums.TicketStatus;
+import com.binarios.gestionticket.exception.NoAuthorithyException;
 import com.binarios.gestionticket.exception.ResourceNotFoundException;
 import com.binarios.gestionticket.repositories.AttachmentRepository;
 import com.binarios.gestionticket.repositories.PersonRepository;
@@ -163,6 +164,9 @@ public class TicketService {
     public TicketResponseDTO assignTicket(Long ticketId, Long techId) {
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new ResourceNotFoundException("There is no ticket with this id "+ticketId));
         Person tech = personRepository.findById(techId).orElseThrow(() -> new ResourceNotFoundException("There is no tech with this id "+techId));
+        if (!tech.getRole().equals(PersonRole.TECH)){
+            throw new NoAuthorithyException("This user that you're trying ro assign the ticket to is not a tech, try someone else.");
+        }
 
         ticket.setAssignedTech(tech);
         ticketRepository.save(ticket);

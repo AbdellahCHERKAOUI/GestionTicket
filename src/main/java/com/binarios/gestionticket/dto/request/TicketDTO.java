@@ -11,8 +11,6 @@ public class TicketDTO {
 
     private String description;
 
-    private TicketStatus status;
-
     private Long client_id;
 
     private Long assignedTech_id;
@@ -22,11 +20,10 @@ public class TicketDTO {
     public TicketDTO() {
     }
 
-    public TicketDTO(Long id, String name, String description, TicketStatus status, Long client_id, Long assignedTech_id, Long admin_id) {
+    public TicketDTO(Long id, String name, String description, Long client_id, Long assignedTech_id, Long admin_id) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.status = status;
         this.client_id = client_id;
         this.assignedTech_id = assignedTech_id;
         this.admin_id = admin_id;
@@ -54,14 +51,6 @@ public class TicketDTO {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public TicketStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(TicketStatus status) {
-        this.status = status;
     }
 
     public Long getClient_id() {

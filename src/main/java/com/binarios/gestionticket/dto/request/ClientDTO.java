@@ -5,7 +5,6 @@ import java.time.LocalDate;
 public class ClientDTO {
     private String fullName;
     private String password;
-    private String role;
     private String email;
     private String phoneNumber;
     private LocalDate birthDate;
@@ -14,10 +13,9 @@ public class ClientDTO {
     public ClientDTO() {
     }
 
-    public ClientDTO(String fullName, String password, String role, String email, String phoneNumber, LocalDate birthDate, Long group) {
+    public ClientDTO(String fullName, String password, String email, String phoneNumber, LocalDate birthDate, Long group) {
         this.fullName = fullName;
         this.password = password;
-        this.role = role;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.birthDate = birthDate;
@@ -40,13 +38,6 @@ public class ClientDTO {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 
     public String getEmail() {
         return email;

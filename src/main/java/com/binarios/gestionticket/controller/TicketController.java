@@ -34,7 +34,7 @@ public class TicketController {
 
 
     @GetMapping(value = "/tickets")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','TECH','CLIENT')")
     public ResponseEntity<Collection<TicketResponseDTO>> showAllTickets() {
         return new ResponseEntity<>(ticketService.getAllTickets(), HttpStatus.OK);
     }

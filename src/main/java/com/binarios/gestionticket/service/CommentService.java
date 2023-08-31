@@ -5,20 +5,16 @@ import com.binarios.gestionticket.dto.response.CommentResponseDTO;
 import com.binarios.gestionticket.entities.Comment;
 import com.binarios.gestionticket.entities.Person;
 import com.binarios.gestionticket.entities.Ticket;
-import com.binarios.gestionticket.enums.TicketStatus;
 import com.binarios.gestionticket.exception.NoAuthorithyException;
 import com.binarios.gestionticket.exception.ResourceNotFoundException;
 import com.binarios.gestionticket.repositories.CommentRepository;
 import com.binarios.gestionticket.repositories.PersonRepository;
 import com.binarios.gestionticket.repositories.TicketRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,12 +27,12 @@ public class CommentService {
     private final PersonRepository personRepository;
 
 
-    public CommentResponseDTO writeComment(CommentRequestDTO requestDTO) {
+    public CommentResponseDTO writeComment(CommentRequestDTO requestDTO, Long ticketId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         MyCustomUserDetails principal = (MyCustomUserDetails) authentication.getPrincipal();
 
 
-        Ticket ticket = ticketRepository.findById(requestDTO.getTicket()).orElseThrow(() -> new ResourceNotFoundException("There is no ticket with this id " + requestDTO.getTicket()));
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new ResourceNotFoundException("There is no ticket with this id " + ticketId));
         Person person = personRepository.findById(principal.getPerson().getId()).orElseThrow(() -> new ResourceNotFoundException("There is no ticket with this id " + principal.getPerson().getId()));
 
 

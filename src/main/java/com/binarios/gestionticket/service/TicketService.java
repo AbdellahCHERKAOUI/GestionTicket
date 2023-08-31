@@ -49,11 +49,11 @@ public class TicketService {
         ticket.setClient(principal.getPerson());
         //Optional<Person> assignedTech = personRepository.findById(ticketDTO.getAssignedTech_id());
 
-        Optional<Person> admin = personRepository.findByRole(PersonRole.ADMIN);
+        Person admin = personRepository.findByRole(PersonRole.ADMIN).orElseThrow(() -> new ResourceNotFoundException("There is no admin in the app"));
 
         //ticket.setClient(client.orElse(null));
         //ticket.setAssignedTech(assignedTech.orElse(null));wha
-        ticket.setAdmin(admin.orElse(null));
+        ticket.setAdmin(admin);
 
 
         //Save the attachment
@@ -68,6 +68,14 @@ public class TicketService {
 
 
         Ticket savedTicket = ticketRepository.save(ticket);
+
+        //add the ticket to the list of the client
+        List<Ticket> tickets = new ArrayList<>();
+        tickets.add(savedTicket);
+        principal.getPerson().setTickets(tickets);
+
+        //add the ticket to the list of the admin
+        admin.setTickets(tickets);
 
         // Create a new PersonDTO and set the ID and generated username
         TicketResponseDTO createdTicketDTO = new TicketResponseDTO();
@@ -86,13 +94,32 @@ public class TicketService {
     }
 
     public Collection<TicketResponseDTO> getAllTickets() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        MyCustomUserDetails principal = (MyCustomUserDetails) authentication.getPrincipal();
+
+        Long principalPerson = principal.getPerson().getId();
+
         Collection<Ticket> tickets = ticketRepository.findAll();
-        if (tickets.isEmpty()) {
-            throw new ResourceNotFoundException("There is no tickets to show.");
-        }
-        Collection<TicketResponseDTO> ticketResponseDTOS = new ArrayList<>();
+
+
+        List<Ticket> properList = new ArrayList<>();
 
         for (Ticket ticket : tickets) {
+            if (ticket.getAssignedTech() != null && Objects.equals(ticket.getAssignedTech().getId(), principalPerson)) {
+                properList.add(ticket);
+            } else if (ticket.getClient() != null && Objects.equals(ticket.getClient().getId(), principalPerson)) {
+                properList.add(ticket);
+            } else if (ticket.getAdmin() != null && Objects.equals(ticket.getAdmin().getId(), principalPerson)) {
+                properList.add(ticket);
+            }
+        }
+        if (properList.isEmpty()) {
+            throw new ResourceNotFoundException("There is no tickets to show.");
+        }
+
+        Collection<TicketResponseDTO> ticketResponseDTOS = new ArrayList<>();
+
+        for (Ticket ticket : properList) {
             TicketResponseDTO createdTicketDTO = new TicketResponseDTO();
             createdTicketDTO.setId(ticket.getId());
             createdTicketDTO.setName(ticket.getName());
@@ -162,14 +189,19 @@ public class TicketService {
     }
 
     public TicketResponseDTO assignTicket(Long ticketId, Long techId) {
-        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new ResourceNotFoundException("There is no ticket with this id "+ticketId));
-        Person tech = personRepository.findById(techId).orElseThrow(() -> new ResourceNotFoundException("There is no tech with this id "+techId));
-        if (!tech.getRole().equals(PersonRole.TECH)){
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new ResourceNotFoundException("There is no ticket with this id " + ticketId));
+        Person tech = personRepository.findById(techId).orElseThrow(() -> new ResourceNotFoundException("There is no tech with this id " + techId));
+        if (!tech.getRole().equals(PersonRole.TECH)) {
             throw new NoAuthorithyException("This user that you're trying ro assign the ticket to is not a tech, try someone else.");
         }
 
         ticket.setAssignedTech(tech);
         ticketRepository.save(ticket);
+
+        //add the ticket to the list of the tech
+        List<Ticket> tickets = new ArrayList<>();
+        tickets.add(ticket);
+        tech.setTickets(tickets);
 
         // Create a new TicketResponseDTO and set the fields to give back in response
         TicketResponseDTO createdTicketDTO = new TicketResponseDTO();
@@ -219,7 +251,6 @@ public class TicketService {
 
         return ticket.getAttachments();
     }
-
 
 
     public Collection<TicketResponseDTO> getCreatedTickets(Long personId) throws Exception {

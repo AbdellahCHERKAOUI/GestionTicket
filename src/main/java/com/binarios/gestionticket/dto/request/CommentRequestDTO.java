@@ -2,12 +2,13 @@ package com.binarios.gestionticket.dto.request;
 
 public class CommentRequestDTO {
     private String content;
-    private Long ticket;
 
 
-    public CommentRequestDTO(String content, Long ticket) {
+    public CommentRequestDTO() {
+    }
+
+    public CommentRequestDTO(String content) {
         this.content = content;
-        this.ticket = ticket;
     }
 
     public String getContent() {
@@ -16,14 +17,6 @@ public class CommentRequestDTO {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public Long getTicket() {
-        return ticket;
-    }
-
-    public void setTicket(Long ticket) {
-        this.ticket = ticket;
     }
 
 }

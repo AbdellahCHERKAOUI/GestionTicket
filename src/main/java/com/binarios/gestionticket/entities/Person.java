@@ -56,7 +56,7 @@ public class Person {
     @Enumerated(EnumType.STRING)
     private Specialite specialite;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "ticket_id")
     private List<Ticket> tickets;
 

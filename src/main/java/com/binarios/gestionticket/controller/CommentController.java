@@ -16,16 +16,11 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/create")
+    @PostMapping("/create/{ticketId}")
     @PreAuthorize("hasAnyAuthority('TECH', 'CLIENT')")
-    public ResponseEntity<CommentResponseDTO> writeComment(@RequestBody CommentRequestDTO requestDTO) {
-        CommentResponseDTO responseDTO = commentService.writeComment(requestDTO);
-        if (responseDTO != null) {
-            return ResponseEntity.ok(responseDTO);
-        } else {
-            // Handle the case when the comment creation failed (e.g., invalid ticketId or personId)
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<CommentResponseDTO> writeComment(@RequestBody CommentRequestDTO requestDTO, @PathVariable Long ticketId) {
+        CommentResponseDTO responseDTO = commentService.writeComment(requestDTO,ticketId);
+       return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     @PutMapping("/update/{commentId}")

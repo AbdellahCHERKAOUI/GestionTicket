@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Form</title>
+</head>
+<body>
+<form id="loginForm">
+    <input type="text" id="username" name="username" placeholder="Username">
+    <input type="password" id="password" name="password" placeholder="Password">
+    <button type="submit">Login</button>
+</form>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        const data = {
+            username: username,
+            password: password
+        };
+
+        fetch("http://localhost:8080/api/auth/token", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.token) {
+                    // Store the response in local storage
+                    localStorage.setItem('authResponse', JSON.stringify(result));
+
+                    // Check if the user has the role "ADMIN" in their roles
+                    const roles = result.roles;
+                    if (roles.includes('ADMIN')) {
+                        // User has the "ADMIN" role, redirect to adminPage.html
+                        window.location.href = "admin.html";
+                    } else if (roles.includes('TECH')){
+                        // User does not have the "ADMIN" role, redirect to dashboard.html
+                        window.location.href = "tech.html";
+                    }
+                    else if (roles.includes('CLIENT')){
+                        // User does not have the "ADMIN" role, redirect to dashboard.html
+                        window.location.href = "client.html";
+                    }else{
+                        // User does not have the "ADMIN" role, redirect to dashboard.html
+                        window.location.href = "dashboard.html";
+                    }
+                } else {
+                    // Authentication failed, stay on the login page
+                    console.log("Authentication failed");
+                }
+            })
+            .catch(error => {
+                // Handle errors
+                console.error("Error:", error);
+            });
+    });
+</script>
+</body>
+</html>

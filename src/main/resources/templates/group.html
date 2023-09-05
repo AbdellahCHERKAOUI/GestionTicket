@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Group Page</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+</head>
+<body>
+<h1>Welcome to the Group Page</h1>
+
+<!-- Form to add a new group -->
+<form id="addGroupForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br><br>
+
+    <label for="description">Description:</label>
+    <input type="text" id="description" name="description" required><br><br>
+
+    <input type="submit" value="Add Group">
+</form>
+
+<!-- Table to display group data -->
+<table >
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    <tbody id="groupTableBody">
+    <!-- Group data will be inserted here -->
+    </tbody>
+</table>
+
+<script>
+    const authToken = sessionStorage.getItem('authToken');
+    // Fetch group data and populate the table
+    fetch('http://localhost:8080/api/group/groups', {
+        method: 'GET', // Set the HTTP method to GET
+        headers: {
+            'Authorization': `Bearer ${authToken}` // Include the stored token in the Authorization header
+        }
+    })
+        .then(response => response.json())
+        .then(groups => {
+            const groupTableBody = document.getElementById('groupTableBody');
+
+            groups.forEach(group => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                <td>${group.id}</td>
+                <td>${group.name}</td>
+                <td>${group.description}</td>
+            `;
+                groupTableBody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching group data:', error);
+        });
+
+    // Handle form submission
+    const addGroupForm = document.getElementById('addGroupForm');
+    addGroupForm.addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const name = document.getElementById('name').value;
+        const description = document.getElementById('description').value;
+
+        // Construct the JSON data
+        const jsonData = {
+            "name": name,
+            "description": description
+        };
+
+        // Fetch options for the POST request
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        };
+
+        // Send the POST request
+        fetch('http://localhost:8080/api/group/create', requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to add the group');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Group added successfully, you can update the table with the new data here
+
+                // Clear the form fields
+                document.getElementById('name').value = '';
+                document.getElementById('description').value = '';
+            })
+            .catch(error => {
+                console.error('Error adding the group:', error);
+            });
+    });
+
+</script>
+</body>
+</html>

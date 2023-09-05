@@ -2,13 +2,35 @@
 <html>
 <head>
     <title>Login Form</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
 </head>
 <body>
-<form id="loginForm">
-    <input type="text" id="username" name="username" placeholder="Username">
-    <input type="password" id="password" name="password" placeholder="Password">
-    <button type="submit">Login</button>
-</form>
+<!--<form id="loginForm">-->
+<!--    <input type="text" id="username" name="username" placeholder="Username">-->
+<!--    <input type="password" id="password" name="password" placeholder="Password">-->
+<!--    <button type="submit">Login</button>-->
+<!--</form>-->
+
+<div style="margin-top: 50px; margin-left: 35%; margin-right: 35%">
+    <form id="loginForm">
+        <!-- Email input -->
+        <div class="form-outline mb-4">
+            <input type="email" id="username" class="form-control" />
+            <label class="form-label" for="username"  >Email address</label>
+        </div>
+
+        <!-- Password input -->
+        <div class="form-outline mb-4">
+            <input type="password" id="password" class="form-control" />
+            <label class="form-label" for="password" >Password</label>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
+
+    </form>
+</div>
 
 <script>
     document.getElementById("loginForm").addEventListener("submit", function(event) {
@@ -16,6 +38,9 @@
 
         const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;
+
+        // Clear localStorage before making the authentication request
+        localStorage.clear();
 
         const data = {
             username: username,
@@ -29,38 +54,42 @@
             },
             body: JSON.stringify(data)
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Authentication failed"); // Handle non-200 responses
+                }
+                return response.json();
+            })
             .then(result => {
-                if (result.token) {
-                    // Store the response in local storage
-                    localStorage.setItem('authResponse', JSON.stringify(result));
+                // Store the token securely (e.g., in sessionStorage)
+                sessionStorage.setItem('authToken', result.token);
 
-                    // Check if the user has the role "ADMIN" in their roles
-                    const roles = result.roles;
-                    if (roles.includes('ADMIN')) {
-                        // User has the "ADMIN" role, redirect to adminPage.html
-                        window.location.href = "admin.html";
-                    } else if (roles.includes('TECH')){
-                        // User does not have the "ADMIN" role, redirect to dashboard.html
-                        window.location.href = "tech.html";
-                    }
-                    else if (roles.includes('CLIENT')){
-                        // User does not have the "ADMIN" role, redirect to dashboard.html
-                        window.location.href = "client.html";
-                    }else{
-                        // User does not have the "ADMIN" role, redirect to dashboard.html
-                        window.location.href = "dashboard.html";
-                    }
-                } else {
-                    // Authentication failed, stay on the login page
+                // Store the JSON response under the name "authResponse"
+                localStorage.setItem('authResponse', JSON.stringify(result));
+
+
+                // Check if the user has the "ADMIN" or "TECH" role and redirect accordingly
+                const roles = result.roles;
+                if (roles.includes("ADMIN")){
+                    window.location.href = 'admin';
+                } else if (roles.includes("TECH")){
+                    window.location.href = 'tech';
+                } else if (roles.includes("CLIENT")){
+                    window.location.href = 'client';
+                }else{
                     console.log("Authentication failed");
                 }
+
+
             })
             .catch(error => {
-                // Handle errors
-                console.error("Error:", error);
+                // Handle authentication failure more gracefully (e.g., show an error message)
+                console.error("Authentication failed:", error);
+                // Display an error message on the login form
+                document.getElementById("error-message").textContent = "Invalid username or password";
             });
     });
 </script>
+
 </body>
 </html>

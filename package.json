@@ -1,0 +1,7 @@
+{
+  "name": "GestionTicketBinarios",
+  "version": "1.0.0",
+  "dependencies": {
+    "jwt-decode": "^3.1.2"
+  }
+}

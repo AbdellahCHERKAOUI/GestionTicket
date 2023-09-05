@@ -1,17 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Welcome Admin!</title>
+    <title>Welcome Page</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
 </head>
 <body>
-<h1>Hello, Admin!</h1>
-<p>Welcome to the admin panel</p>
+<h1>Welcome, </h1>
 
-<h2>Ticket Data:</h2>
+<div>
+    <strong>Full Name:</strong>
+    <span id="fullName"></span>
+</div>
+<div>
+    <strong>Email:</strong>
+    <span id="email"></span>
+</div>
+<div>
+    <strong>Phone Number:</strong>
+    <span id="phoneNumber"></span>
+</div>
+
+<h2>Tickets</h2>
 <ul id="ticketList"></ul>
+
+<!-- Button to navigate to the "group" page -->
+
+<button    id="admin" class="btn">admin</button>
+<button id="client" class="btn">client</button>
+
+
+<button id="group" class="btn">Go to Group Page</button>
 
 <script>
 
+    const authToken = sessionStorage.getItem('authToken');
+
+
+    const payload = decodeJwt(authToken);
+
+
+    const token = sessionStorage.getItem('authToken');
+    //const decoded = jwt_decode(token);
+    // Extract user information from the JSON response
+    //const jsonResponse = JSON.parse(localStorage.getItem('authResponse')); // Assuming you stored the response in localStorage
+    //const username = payload.username;
+    console.log(payload)
+    const fullName = payload.fullName;
+    const email = payload.email;
+    const phoneNumber = payload.phoneNumber;
+
+    // Display the user information
+    //document.getElementById('username').textContent = username;
+    document.getElementById('fullName').textContent = fullName;
+    document.getElementById('email').textContent = email;
+    document.getElementById('phoneNumber').textContent = phoneNumber;
+
+
+    // Fetch ticket data and display it
+    fetch('http://localhost:8080/api/ticket/tickets', {
+        method: 'GET', // Set the HTTP method to GET
+        headers: {
+            'Authorization': `Bearer ${authToken}` // Include the stored token in the Authorization header
+        }
+    })
+        .then(response => response.json())
+        .then(tickets => {
+            const ticketList = document.getElementById('ticketList');
+            tickets.forEach(ticket => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `Ticket ID: ${ticket.id}, Name: ${ticket.name}, Status: ${ticket.status}`;
+                ticketList.appendChild(listItem);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching ticket data:', error);
+        });
+    // Add a click event listener to the "Go to Group Page" button
+    const groupButton = document.getElementById('group');
+    groupButton.addEventListener('click', function () {
+        // Redirect to the "group" page when the button is clicked
+        window.location.href = 'group'; // Replace with the correct URL
+    });
+
+    function decodeJwt(token) {
+        const base64Payload = token.split(".")[1];
+        const decodedPayload = atob(base64Payload);
+        return JSON.parse(decodedPayload);
+    }
 </script>
 </body>
 </html>

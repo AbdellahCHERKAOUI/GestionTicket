@@ -28,7 +28,7 @@
 
     // Function to fetch group details and populate inputs
     function fetchGroupDetails() {
-        fetch(`http://localhost:8080/api/group/${groupId}`, {
+        fetch(`http://localhost:9090/api/group/${groupId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${authToken}`
@@ -62,7 +62,7 @@
         };
 
         // Construct the URL for the PUT request
-        const putUrl = `http://localhost:8080/api/group/edit/${groupId}`;
+        const putUrl = `http://localhost:9090/api/group/edit/${groupId}`;
 
         // Fetch options for the PUT request
         const requestOptions = {

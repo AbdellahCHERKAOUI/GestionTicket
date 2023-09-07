@@ -32,4 +32,9 @@ public class TicketWebController {
     public String clientPage() {
         return "client";
     }
+
+    @GetMapping(path = "/group-details.html")
+    public String groupDetails() {
+        return "group-details";
+    }
 }

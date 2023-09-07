@@ -23,9 +23,9 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin()
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/login")
 @AllArgsConstructor
 public class AuthController {
 
@@ -34,7 +34,7 @@ public class AuthController {
     private final JwtUtils jwtUtils;
     private final PersonRepository personRepository;
 
-    @PostMapping("/token")
+    @PostMapping("")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         try {
             Person person = personRepository.findByEmail(loginRequest.getUsername()).orElseThrow(() -> new BadCredentialsException("Invalid username or password."));

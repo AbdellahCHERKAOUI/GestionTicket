@@ -7,18 +7,20 @@ import com.binarios.gestionticket.dto.response.TicketResponseDTO;
 import com.binarios.gestionticket.entities.Attachment;
 import com.binarios.gestionticket.service.CommentService;
 import com.binarios.gestionticket.service.TicketService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/ticket")
 @AllArgsConstructor
 public class TicketController {
@@ -26,10 +28,16 @@ public class TicketController {
     private final CommentService commentService;
 
 
-    @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/create")
     @PreAuthorize("hasAnyAuthority('CLIENT')")
-    public ResponseEntity<TicketResponseDTO> createTicket(@RequestParam("file") MultipartFile file, @RequestPart TicketDTO ticketDTO) {
+    public ResponseEntity<TicketResponseDTO> createTicket(@RequestPart("file") MultipartFile file, @RequestPart("ticketDTO") TicketDTO ticketDTO) {
         return new ResponseEntity<>(ticketService.saveTicket(ticketDTO, file), HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/add")
+    @PreAuthorize("hasAnyAuthority('CLIENT')")
+    public ResponseEntity<TicketResponseDTO> create(@RequestPart("file") MultipartFile file, @RequestBody TicketDTO ticketDTO) {
+        return new ResponseEntity<>(ticketService.saveTicket(ticketDTO, null), HttpStatus.CREATED);
     }
 
 

@@ -82,7 +82,7 @@
     // Function to send a DELETE request to delete a group
     function deleteGroup(groupId) {
         // Construct the URL with the groupId
-        const deleteUrl = `http://localhost:8080/api/group/delete/${groupId}`;
+        const deleteUrl = `http://localhost:9090/api/group/delete/${groupId}`;
 
         // Fetch options for the DELETE request
         const requestOptions = {
@@ -110,7 +110,7 @@
     }
 
     // Fetch group data and populate the table
-    fetch('http://localhost:8080/api/group/groups', {
+    fetch('http://localhost:9090/api/group/groups', {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${authToken}`
@@ -163,7 +163,7 @@
             body: JSON.stringify(jsonData)
         };
 
-        fetch('http://localhost:8080/api/group/create', requestOptions)
+        fetch('http://localhost:9090/api/group/create', requestOptions)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Failed to add the group');

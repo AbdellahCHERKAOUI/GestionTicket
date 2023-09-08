@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @CrossOrigin()
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/api/auth")
 @AllArgsConstructor
 public class AuthController {
 
@@ -34,7 +34,7 @@ public class AuthController {
     private final JwtUtils jwtUtils;
     private final PersonRepository personRepository;
 
-    @PostMapping("")
+    @PostMapping("/token")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         try {
             Person person = personRepository.findByEmail(loginRequest.getUsername()).orElseThrow(() -> new BadCredentialsException("Invalid username or password."));

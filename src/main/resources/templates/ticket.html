@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Submit Ticket</title>
+</head>
+<body>
+<form id="ticketForm" enctype="multipart/form-data">
+    <input type="text" name="name" placeholder="Name">
+    <br><br>
+    <textarea name="description" placeholder="Description"></textarea>
+    <br><br>
+    <input type="file" name="file">
+    <br><br>
+    <input type="submit" value="Submit Ticket">
+</form>
+
+<script>
+    document.getElementById('ticketForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const authToken = sessionStorage.getItem('authToken');
+        if (!authToken) {
+            alert('Authentication token not found. Please log in.');
+            return;
+        }
+
+        const form = document.getElementById('ticketForm');
+        const formData = new FormData(form);
+
+        // Construct the JSON object
+        const ticketData = {
+            name: formData.get('name'),
+            description: formData.get('description')
+        };
+
+        // Create a Blob containing the JSON data
+        const jsonBlob = new Blob([JSON.stringify(ticketData)], { type: 'application/json' });
+
+        // Append the JSON Blob as a file named "ticketDTO.json"
+        formData.append('ticketDTO', jsonBlob, 'ticketDTO.json');
+
+        // Append the attachment file as well
+        const attachmentFile = formData.get('file');
+        formData.append('file', attachmentFile);
+
+        // Send the POST request to the API endpoint
+        fetch('http://localhost:9090/api/ticket/create', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: formData
+        })
+            .then(response => {
+                if (response.status === 201) {
+                    alert('Ticket created successfully!');
+                    form.reset();
+                } else {
+                    alert('Failed to create a ticket.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+</script>
+</body>
+</html>

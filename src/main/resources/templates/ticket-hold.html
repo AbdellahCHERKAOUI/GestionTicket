@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Tickets d'Incendie</title>
+
+    <!-- Include Bootstrap CSS from CDN -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* CSS Styles */
+        .table {
+            font-size: 14px;
+        }
+
+        body {
+            background-color: #f8f9fa;
+        }
+
+        h1, h2 {
+            color: #343a40;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+        }
+
+        /* Add more CSS styles here */
+
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="display-4 mb-4"><b>Gestion des Tickets d'Incendie</b></h1>
+    <div class="row">
+        <div class="col-md-6">
+            <!-- Ticket creation form -->
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Créer un Ticket</h2>
+                    <form id="ticketForm" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="titre">Titre du Ticket</label>
+                            <input type="text" class="form-control" id="titre" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" id="description" rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="priorite">Priorité</label>
+                            <select class="form-control" id="priorite">
+                                <option value="Basse">Basse</option>
+                                <option value="Moyenne">Moyenne</option>
+                                <option value="Haute">Haute</option>
+                            </select>
+                        </div>
+                        <div class="custom-file mb-3">
+                            <input type="file" class="custom-file-input" id="attachment" enctype="multipart/form-data">
+                            <label class="custom-file-label" for="attachment">Choisissez un fichier</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Créer un Ticket</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <!-- Ticket list -->
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Liste des Tickets</h2>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Nom</th> <!-- Updated column label -->
+                            <th>Description</th>
+                            <th>Statut</th> <!-- Updated column label -->
+                            <th>Technicien Assigné</th> <!-- Updated column label -->
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="ticketList">
+                        <!-- Tickets will be displayed here using JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include Bootstrap JS and jQuery from CDN -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- JavaScript -->
+<script>
+    // Variables globales pour stocker les tickets
+    let tickets = [];
+
+    // Sélectionnez des éléments HTML
+    const ticketForm = document.getElementById('ticketForm');
+    const ticketList = document.getElementById('ticketList');
+
+    // Load tickets from the API when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        const authToken = sessionStorage.getItem('authToken');
+        fetch('http://localhost:9090/api/ticket/tickets', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                tickets = data; // Store the fetched data in the tickets array
+                displayTickets(); // Display the tickets in the table
+            })
+            .catch(error => console.error('Error fetching tickets:', error));
+    });
+
+    <!-- Inside the 'ticketForm' event listener -->
+    ticketForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Récupérez les valeurs du formulaire
+        const name = document.getElementById('titre').value;
+        const description = document.getElementById('description').value;
+
+        // Récupérez le fichier attaché
+        const attachmentInput = document.getElementById('attachment');
+        const attachmentFile = attachmentInput.files[0]; // Get the first selected file
+
+        // Créez un objet de ticket
+        const ticketDTO = {
+            name: name,
+            description: description,
+        };
+
+        const authToken = sessionStorage.getItem('authToken');
+
+        // Create a new FormData object
+        const formData = new FormData();
+
+        // Append the file to the FormData
+        formData.append('file', attachmentFile);
+
+        // Create a Blob containing the JSON data
+        const jsonBlob = new Blob([JSON.stringify(ticketDTO)], { type: 'application/json' });
+
+        // Append the ticketDTO JSON data as a text part
+        formData.append('ticketDTO', jsonBlob, 'ticketDTO.json');
+
+        console.log(formData.get('file')); // Check the file part
+        console.log(JSON.stringify(ticketDTO)); // Check the ticketDTO part
+
+        // Send the request with the constructed body
+        fetch('http://localhost:9090/api/ticket/create', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+            },
+            body: formData,
+        })
+            // Rest of the code remains the same
+
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response, you may want to update the UI or handle errors here
+                //console.log(formData);
+                console.log('Ticket created successfully:', data);
+
+                // Simulate adding the new ticket to the local array (replace with actual API call)
+                tickets.push(data);
+
+                // Réinitialisez le formulaire
+                ticketForm.reset();
+
+                // Réinitialisez le champ de fichier personnalisé
+                const attachmentLabel = document.querySelector('.custom-file-label');
+                attachmentLabel.innerText = 'Choisissez un fichier';
+
+                // Affichez les tickets mis à jour
+                displayTickets();
+            })
+            .catch(error => console.error('Error creating ticket:', error));
+    });
+
+    // Fonction pour afficher les tickets
+    function displayTickets() {
+        ticketList.innerHTML = '';
+
+        tickets.forEach(function (ticket) {
+            const row = `
+        <tr>
+            <td>${ticket.name}</td>
+            <td>${ticket.description}</td>
+            <td>${ticket.status}</td>
+            <td>${ticket.assignedTech ? ticket.assignedTech.fullName : '-'}</td>
+            <td>
+                <button class="btn btn-primary btn-sm" onclick="editTicket('${ticket.id}')">Modifier</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteTicket(${ticket.id}, '${ticket.name}')">Supprimer</button>
+            </td>
+        </tr>
+    `;
+
+            ticketList.innerHTML += row;
+        });
+    }
+
+    // Fonction pour supprimer un ticket
+    // Fonction pour supprimer un ticket
+    function deleteTicket(id, name) {
+        const authToken = sessionStorage.getItem('authToken');
+
+        // Send a DELETE request to the API to delete the ticket by ID
+        fetch(`http://localhost:9090/api/ticket/delete/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    // If the delete request was successful, remove the ticket from the local list
+                    tickets = tickets.filter(ticket => ticket.id !== id);
+                    displayTickets();
+                } else {
+                    console.error('Error deleting ticket:', response.status);
+                }
+            })
+            .catch(error => console.error('Error deleting ticket:', error));
+    }
+
+
+    // Fonction pour afficher un formulaire de modification
+    function editTicket(ticketId) {
+        // Assuming ticketId is passed as a parameter to this function
+        // You can construct the URL with the ticketId and navigate to it
+        window.location.href = `/ticket-details?ticketId=${ticketId}`;
+    }
+
+    // Appelez la fonction pour afficher les tickets
+    displayTickets();
+</script>
+</body>
+</html>

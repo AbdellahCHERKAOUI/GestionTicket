@@ -7,6 +7,7 @@ import com.binarios.gestionticket.exception.UnexpectedProblemException;
 import com.binarios.gestionticket.repositories.AttachmentRepository;
 import com.binarios.gestionticket.repositories.TicketRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,7 +25,7 @@ import java.util.UUID;
 @Service
 public class AttachmentService {
 
-    private static final String UPLOAD_DIR = "C://Users//ANWAR//OneDrive//Bureau//Attachement";
+    private static final String UPLOAD_DIR = "C://Users//Electro-Market.ma//Desktop//attachments";
 
 
     private final AttachmentRepository attachmentRepository;
@@ -123,5 +124,28 @@ public class AttachmentService {
         Attachment attachment = attachmentRepository.findById(attachmentId).orElseThrow(() -> new ResourceNotFoundException("There is no attachment with this id "+attachmentId));
 
         attachmentRepository.deleteById(attachmentId);
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] getAttachmentData(Long attachmentId) {
+        Attachment attachment = attachmentRepository.findById(attachmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Attachment not found with id: " + attachmentId));
+
+        // Get the file path from the attachment entity
+        String filePath = attachment.getFilePath();
+
+        try {
+            // Read the attachment data from the file
+            Path attachmentPath = Paths.get(filePath);
+            return Files.readAllBytes(attachmentPath);
+        } catch (IOException e) {
+            throw new UnexpectedProblemException("Error reading attachment data");
+        }
+    }
+
+    public String getAttachmentFileName(Long attachmentId) {
+        Attachment attachment = attachmentRepository.findById(attachmentId).orElseThrow(() -> new ResourceNotFoundException("There is no attachment with this id "+attachmentId));
+
+        return attachment.getFileName();
     }
 }

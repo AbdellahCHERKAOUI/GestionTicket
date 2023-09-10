@@ -37,4 +37,13 @@ public class TicketWebController {
     public String groupDetails() {
         return "group-details";
     }
+
+    @GetMapping(path = "/ticket")
+    public String ticket() {
+        return "ticket-hold";
+    }
+    @GetMapping(path = "/ticket-details")
+    public String ticketDetails() {
+        return "ticket-details";
+    }
 }

@@ -23,37 +23,31 @@
 <h2>Tickets</h2>
 <ul id="ticketList"></ul>
 
+<!-- Add a button to redirect to 'ticket' URL -->
+<button id="ticketButton">Go to Ticket</button>
+
 </body>
 <script>
 
     const authToken = sessionStorage.getItem('authToken');
 
-
     const payload = decodeJwt(authToken);
 
-
     const token = sessionStorage.getItem('authToken');
-    //const decoded = jwt_decode(token);
-    // Extract user information from the JSON response
-    //const jsonResponse = JSON.parse(localStorage.getItem('authResponse')); // Assuming you stored the response in localStorage
-    //const username = payload.username;
     console.log(payload)
     const fullName = payload.fullName;
     const email = payload.email;
     const phoneNumber = payload.phoneNumber;
 
-    // Display the user information
-    //document.getElementById('username').textContent = username;
     document.getElementById('fullName').textContent = fullName;
     document.getElementById('email').textContent = email;
     document.getElementById('phoneNumber').textContent = phoneNumber;
 
-
     // Fetch ticket data and display it
     fetch('http://localhost:9090/api/ticket/tickets', {
-        method: 'GET', // Set the HTTP method to GET
+        method: 'GET',
         headers: {
-            'Authorization': `Bearer ${authToken}` // Include the stored token in the Authorization header
+            'Authorization': `Bearer ${authToken}`
         }
     })
         .then(response => response.json())
@@ -69,10 +63,17 @@
             console.error('Error fetching ticket data:', error);
         });
 
+    // Function to decode JWT token
     function decodeJwt(token) {
         const base64Payload = token.split(".")[1];
         const decodedPayload = atob(base64Payload);
         return JSON.parse(decodedPayload);
     }
+
+    // Add an event listener to the button for redirection
+    document.getElementById('ticketButton').addEventListener('click', function() {
+        // Redirect to 'ticket' URL when the button is clicked
+        window.location.href = 'ticket';
+    });
 </script>
 </html>

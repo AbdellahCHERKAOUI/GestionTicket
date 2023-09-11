@@ -46,4 +46,9 @@ public class TicketWebController {
     public String ticketDetails() {
         return "ticket-details";
     }
+
+    @GetMapping(path = "/assign-ticket-details")
+    public String assignTicket() {
+        return "Assign-Ticket-Details";
+    }
 }

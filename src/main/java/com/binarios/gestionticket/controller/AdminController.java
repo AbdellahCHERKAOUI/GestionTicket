@@ -65,6 +65,13 @@ public class AdminController {
         return new ResponseEntity<>(personService.allUsers(), HttpStatus.OK);
     }
 
+    @GetMapping("/techs")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Collection<PersonResponseDTO>> getAllTechs() {
+
+        return new ResponseEntity<>(personService.techFinder(), HttpStatus.OK);
+    }
+
     //Get Person by id
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")

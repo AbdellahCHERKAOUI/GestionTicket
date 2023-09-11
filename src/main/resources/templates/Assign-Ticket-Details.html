@@ -10,17 +10,16 @@
 <body>
 <div class="container mt-5">
     <h1 class="mb-4">Modifier</h1>
-    <form id="editForm">
+    <h1 class="mb-4">Assign Tech</h1>
+    <form id="assignTechForm">
         <div class="mb-3">
-            <label for="name" class="form-label">Nom :</label>
-            <input type="text" class="form-control" id="name" name="name" required>
+            <label for="assignTech" class="form-label">Assign Tech:</label>
+            <select class="form-control" id="assignTech" name="assignTech">
+
+            </select>
         </div>
         <div class="mb-3">
-            <label for="description" class="form-label">Description:</label>
-            <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
-        </div>
-        <div class="mb-3">
-            <button type="submit" class="btn btn-primary">Modifier</button>
+            <button type="submit" class="btn btn-primary">Assign</button>
         </div>
     </form>
 
@@ -78,7 +77,7 @@
                     // Create a row for each attachment
                     const row = `
                         <tr>
-                            <td><button class="btn btn-info" onclick="downloadAttachment('${attachment.id}')">Download : ${attachment.fileName}</button></td>
+                            <td><a href="#" onclick="downloadAttachment('${attachment.id}')">${attachment.fileName}</a></td>
                             <td>
                                 <button class="btn btn-danger" onclick="deleteAttachment('${attachment.id}', '${ticketId}')">Supprimer</button>
 
@@ -176,59 +175,6 @@
         }
     });
 
-    // Function to handle form submission
-    document.getElementById('editForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        // Retrieve the values from the form
-        const name = document.getElementById('name').value;
-        const description = document.getElementById('description').value;
-
-        // Create an object to hold the form data
-        const ticketDTO = {
-            name: name,
-            description: description
-        };
-
-        // Create a new FormData object
-        const formData = new FormData();
-
-        // Create a Blob containing the JSON data
-        const jsonBlob = new Blob([JSON.stringify(ticketDTO)], { type: 'application/json' });
-
-        // Append the ticketDTO JSON data as a text part
-        formData.append('ticketDTO', jsonBlob, 'ticketDTO.json');
-
-        // Get the bearer token from sessionStorage
-        const authToken = sessionStorage.getItem('authToken');
-
-        // Construct the URL for the PUT request
-        const apiUrl = `http://localhost:9090/api/ticket/edit/${ticketId}`;
-
-        // Define the headers including the bearer token
-        const headers = {
-            'Authorization': `Bearer ${authToken}`,
-        };
-
-        // Send the PUT request with the FormData payload
-        fetch(apiUrl, {
-            method: 'PUT',
-            headers: headers,
-            body: formData
-        })
-            .then(response => {
-                if (response.ok) {
-                    // Handle success, you can redirect or show a success message
-                    console.log('Ticket updated successfully');
-                    window.location.href = "ticket";
-                } else {
-                    // Handle errors, you can show an error message
-                    alert('Failed to update ticket');
-                }
-            })
-            .catch(error => console.error('Error updating ticket:', error));
-    });
-
     // Function to download an attachment
     function downloadAttachment(attachmentId) {
         // Construct the URL for downloading an attachment
@@ -272,7 +218,86 @@
             })
             .catch(error => console.error('Error downloading attachment:', error));
     }
+    // Function to fetch and populate the "Assign Tech" dropdown
+    // Function to fetch and populate the "Assign Tech" dropdown
+    function populateAssignTechDropdown() {
+        const assignTechDropdown = document.getElementById('assignTech');
 
+        // Get the bearer token from sessionStorage
+        const authToken = sessionStorage.getItem('authToken');
+
+        // Define the headers including the bearer token
+        const headers = {
+            'Authorization': `Bearer ${authToken}`,
+        };
+
+        // Fetch the data from the API URL with the headers
+        fetch('http://localhost:9090/api/person/techs', { headers })
+            .then(response => response.json())
+            .then(data => {
+                // Clear existing options in the dropdown
+                assignTechDropdown.innerHTML = '';
+
+                // Create and append options for each technician
+                data.forEach(tech => {
+                    const option = document.createElement('option');
+                    option.value = tech.id; // Use the technician's ID as the option value
+                    option.textContent = tech.fullName; // Display the technician's full name
+                    console.log(tech.fullName);
+                    assignTechDropdown.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching techs:', error));
+    }
+
+    // Call the function to populate the "Assign Tech" dropdown when the page loads
+    populateAssignTechDropdown();
+
+    // Function to handle form submission
+    document.getElementById('assignTechForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Retrieve the selected techId from the dropdown
+        const assignTechDropdown = document.getElementById('assignTech');
+        const techId = assignTechDropdown.value;
+
+        if (!techId) {
+            alert('Please select a technician to assign.');
+            return;
+        }
+
+        // Get the ticketId from the URL query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const ticketId = urlParams.get('ticketId');
+
+        // Construct the URL for the PUT request
+        const apiUrl = `http://localhost:9090/api/ticket/assign-ticket-to-tech/${ticketId}/${techId}`;
+
+        // Get the bearer token from sessionStorage
+        const authToken = sessionStorage.getItem('authToken');
+
+        // Define the headers including the bearer token
+        const headers = {
+            'Authorization': `Bearer ${authToken}`,
+        };
+
+        // Send the PUT request
+        fetch(apiUrl, {
+            method: 'PUT',
+            headers: headers
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Handle success, you can redirect or show a success message
+                    console.log('Ticket assigned to technician successfully');
+                    // You can redirect to the ticket or some other page here
+                } else {
+                    // Handle errors, you can show an error message
+                    alert('Failed to assign ticket to technician');
+                }
+            })
+            .catch(error => console.error('Error assigning ticket to technician:', error));
+    });
 
 </script>
 </body>

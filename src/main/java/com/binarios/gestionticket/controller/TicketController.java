@@ -59,7 +59,7 @@ public class TicketController {
 
     //Delete a ticket
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasAnyAuthority('CLIENT')")
+    @PreAuthorize("hasAnyAuthority('CLIENT','ADMIN')")
     public ResponseEntity<String> deleteTicket(@PathVariable Long id) {
         ticketService.deleteTicket(id);
         return new ResponseEntity<>("Ticket  number " + id + " deleted successfully", HttpStatus.OK);

@@ -22,61 +22,88 @@
 </div>
 
 <h2>Tickets</h2>
-<ul id="ticketList"></ul>
+
+<!-- Create a table for displaying tickets -->
+<table class="table">
+    <thead>
+    <tr>
+        <th>Ticket ID</th>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody id="ticketTableBody"></tbody>
+</table>
 
 <!-- Button to navigate to the "group" page -->
-
-
 <button id="group" class="btn">Go to Group Page</button>
 
 <script>
 
     const authToken = sessionStorage.getItem('authToken');
 
-
     const payload = decodeJwt(authToken);
 
-
     const token = sessionStorage.getItem('authToken');
-    //const decoded = jwt_decode(token);
-    // Extract user information from the JSON response
-    //const jsonResponse = JSON.parse(localStorage.getItem('authResponse')); // Assuming you stored the response in localStorage
-    //const username = payload.username;
-    console.log(payload)
+
     const fullName = payload.fullName;
     const email = payload.email;
     const phoneNumber = payload.phoneNumber;
 
-    // Display the user information
-    //document.getElementById('username').textContent = username;
     document.getElementById('fullName').textContent = fullName;
     document.getElementById('email').textContent = email;
     document.getElementById('phoneNumber').textContent = phoneNumber;
 
+    const ticketTableBody = document.getElementById('ticketTableBody');
 
-    // Fetch ticket data and display it
+    // Fetch ticket data and display it in a table
     fetch('http://localhost:9090/api/ticket/tickets', {
-        method: 'GET', // Set the HTTP method to GET
+        method: 'GET',
         headers: {
-            'Authorization': `Bearer ${authToken}` // Include the stored token in the Authorization header
+            'Authorization': `Bearer ${authToken}`
         }
     })
         .then(response => response.json())
         .then(tickets => {
-            const ticketList = document.getElementById('ticketList');
             tickets.forEach(ticket => {
-                const listItem = document.createElement('li');
-                listItem.textContent = `Ticket ID: ${ticket.id}, Name: ${ticket.name}, Status: ${ticket.status}`;
-                ticketList.appendChild(listItem);
+                const row = document.createElement('tr');
+
+                const ticketIDCell = document.createElement('td');
+                ticketIDCell.textContent = ticket.id;
+                row.appendChild(ticketIDCell);
+
+                const nameCell = document.createElement('td');
+                nameCell.textContent = ticket.name;
+                row.appendChild(nameCell);
+
+                const statusCell = document.createElement('td');
+                statusCell.textContent = ticket.status;
+                row.appendChild(statusCell);
+
+                const actionCell = document.createElement('td');
+                const detailsButton = document.createElement('button');
+                detailsButton.textContent = 'Details';
+                detailsButton.className = 'btn btn-primary';
+
+                // Add a click event listener to the "Details" button
+                detailsButton.addEventListener('click', function () {
+                    // Handle the click event here, e.g., show ticket details
+                    alert(`Ticket Details for ID ${ticket.id}: ${ticket.description}`);
+                });
+
+                actionCell.appendChild(detailsButton);
+                row.appendChild(actionCell);
+
+                ticketTableBody.appendChild(row);
             });
         })
         .catch(error => {
             console.error('Error fetching ticket data:', error);
         });
-    // Add a click event listener to the "Go to Group Page" button
+
     const groupButton = document.getElementById('group');
     groupButton.addEventListener('click', function () {
-        // Redirect to the "group" page when the button is clicked
         window.location.href = 'group'; // Replace with the correct URL
     });
 

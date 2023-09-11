@@ -4,33 +4,69 @@
     <title>Login Form</title>
     <link rel="stylesheet"
           href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <!-- Inclure Font Awesome pour obtenir les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* This defines two equal columns */
+            gap: 10px; /* Adjust the gap between columns */
+        }
+
+        .grid-item {
+            padding: 10px;
+            border: 0px solid #ccc;
+        }
+        /* Styles pour le formulaire */
+        body {
+        }
+    </style>
 </head>
 <body>
-<!--<form id="loginForm">-->
-<!--    <input type="text" id="username" name="username" placeholder="Username">-->
-<!--    <input type="password" id="password" name="password" placeholder="Password">-->
-<!--    <button type="submit">Login</button>-->
-<!--</form>-->
+<div class="grid-container">
 
-<div style="margin-top: 50px; margin-left: 35%; margin-right: 35%">
-    <form id="loginForm">
-        <!-- Email input -->
-        <div class="form-outline mb-4">
-            <input type="email" id="username" class="form-control" />
-            <label class="form-label" for="username"  >Email address</label>
+    <div class="grid-item" style="margin-top: 65px; margin-left: 20%; margin-right: 25%; background-color:#ECF9FF ; border-radius: 5%; height: 556px">
+        <div  style=" margin-left: 10px; margin-right: 10px; margin-bottom: 25px ">
+            <div fxfull style="margin-top: 25px; margin-bottom: 25px" class="col-md-9 col-lg-6 col-xl-5">
+                <center><img src="/authentication.png"
+                             style="width: 250px; margin-left: 35%; margin-right: 35%"></center>
+            </div>
+            <form id="loginForm">
+                <!-- Email input -->
+                <div class="form-outline mb-4">
+                    <label class="form-label" for="username">
+                        <i class="fas fa-user fa-lg me-2"></i>   Email address
+                    </label>
+                    <input type="email" id="username" class="form-control" placeholder="Username" />
+
+                </div>
+
+                <!-- Password input -->
+                <div class="form-outline mb-4">
+                    <label class="form-label" for="password">
+                        <i class="fas fa-lock fa-lg me-2"></i>   Password
+                    </label>
+                    <div class="password-input-container">
+                        <input type="password" id="password" class="form-control" placeholder="Password" />
+                        <i id="password-toggle" class="fas fa-eye-slash toggle-password" style="cursor: pointer;"></i>
+                    </div>
+                </div>
+
+                <!-- Submit button -->
+                <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
+
+            </form>
         </div>
+    </div>
+    <div class="grid-item"  style="margin-top: 1%; margin-right:75%; margin-left: 2%">
+        <img src="/2.png" style="width: 600px;height: 600px; margin-left: 35%; margin-right: 35%">
 
-        <!-- Password input -->
-        <div class="form-outline mb-4">
-            <input type="password" id="password" class="form-control" />
-            <label class="form-label" for="password" >Password</label>
-        </div>
-
-        <!-- Submit button -->
-        <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
-
-    </form>
+    </div>
 </div>
+
+
+
 
 <script>
     document.getElementById("loginForm").addEventListener("submit", function(event) {
@@ -90,6 +126,23 @@
             });
     });
 </script>
+<script>
+    const passwordInput = document.getElementById("password");
+    const passwordToggle = document.getElementById("password-toggle");
+
+    passwordToggle.addEventListener("click", function () {
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            passwordToggle.classList.remove("fa-eye-slash");
+            passwordToggle.classList.add("fa-eye");
+        } else {
+            passwordInput.type = "password";
+            passwordToggle.classList.remove("fa-eye");
+            passwordToggle.classList.add("fa-eye-slash");
+        }
+    });
+</script>
+
 
 </body>
 </html>

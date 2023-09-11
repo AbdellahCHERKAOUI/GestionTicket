@@ -12,7 +12,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class TicketWebController {
     private TicketRepository homeRepository;
 
-       @GetMapping(path = "/admin")
+    @GetMapping(path = "/login")
+    public String loginPage() {
+        return "login";
+    }
+    @GetMapping(path = "/admin")
     //@PreAuthorize("hasRole('ADMIN')")
     public String adminPage() {
         return "admin";

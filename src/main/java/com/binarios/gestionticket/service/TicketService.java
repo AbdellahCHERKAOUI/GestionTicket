@@ -137,7 +137,7 @@ public class TicketService {
         return ticketResponseDTOS;
     }
 
-    public TicketResponseDTO editTicket(Long id, TicketDTO ticketDTO, MultipartFile file) {
+    public TicketResponseDTO editTicket(Long id, TicketDTO ticketDTO) {
         Ticket ticket = ticketRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("There is no ticket with this id"));
 
         ticket.setName(ticketDTO.getName());
@@ -152,11 +152,6 @@ public class TicketService {
         ticket.setClient(client);
         //ticket.setAdmin(admin.orElse(null));
 
-        // Save the attachment if it exists
-        if (!file.isEmpty()) {
-            Attachment attachment = attachmentService.saveFile(file);
-            ticket.getAttachments().add(attachment);
-        }
 
         Ticket savedTicket = ticketRepository.save(ticket);
 
@@ -299,4 +294,23 @@ public class TicketService {
     }
 
 
+    public TicketResponseDTO getTicketById(Long id) {
+        Ticket  ticket = ticketRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("There no ticket"));
+
+        TicketResponseDTO ticketResponseDTO = new TicketResponseDTO();
+        ticketResponseDTO.setId(ticket.getId());
+        ticketResponseDTO.setName(ticket.getName());
+        ticketResponseDTO.setStatus(ticket.getStatus());
+        ticketResponseDTO.setDescription(ticket.getDescription());
+        ticketResponseDTO.setAdmin(mapPersonToPersonResponseDTO(ticket.getAdmin()));
+        ticketResponseDTO.setClient(mapPersonToPersonResponseDTO(ticket.getClient()));
+        if (Objects.nonNull(ticket.getAssignedTech())) {
+            ticketResponseDTO.setAssignedTech(mapPersonToPersonResponseDTO(ticket.getAssignedTech()));
+        }
+        //ticketResponseDTO.setAssignedTech(mapPersonToPersonResponseDTO(ticket.getAssignedTech()));
+        ticketResponseDTO.setAttachments(ticket.getAttachments());
+
+        return ticketResponseDTO;
+
+    }
 }

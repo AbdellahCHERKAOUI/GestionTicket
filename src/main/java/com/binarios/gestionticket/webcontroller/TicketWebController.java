@@ -16,7 +16,7 @@ public class TicketWebController {
     public String loginPage() {
         return "login";
     }
-    @GetMapping(path = "/admin")
+       @GetMapping(path = "/admin")
     //@PreAuthorize("hasRole('ADMIN')")
     public String adminPage() {
         return "admin";
@@ -36,5 +36,14 @@ public class TicketWebController {
     @GetMapping(path = "/group-details.html")
     public String groupDetails() {
         return "group-details";
+    }
+
+    @GetMapping(path = "/ticket")
+    public String ticket() {
+        return "ticket-hold";
+    }
+    @GetMapping(path = "/ticket-details")
+    public String ticketDetails() {
+        return "ticket-details";
     }
 }

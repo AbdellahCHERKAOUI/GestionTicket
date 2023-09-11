@@ -5,9 +5,10 @@ import com.binarios.gestionticket.dto.request.TicketStatusUpdateDTO;
 import com.binarios.gestionticket.dto.response.CommentResponseDTO;
 import com.binarios.gestionticket.dto.response.TicketResponseDTO;
 import com.binarios.gestionticket.entities.Attachment;
+import com.binarios.gestionticket.entities.Ticket;
+import com.binarios.gestionticket.repositories.TicketRepository;
 import com.binarios.gestionticket.service.CommentService;
 import com.binarios.gestionticket.service.TicketService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,20 +27,14 @@ import java.util.List;
 public class TicketController {
     private final TicketService ticketService;
     private final CommentService commentService;
+    private final TicketRepository ticketRepository;
 
 
-    @PostMapping(value = "/create")
+    @PostMapping(value = "/create" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyAuthority('CLIENT')")
-    public ResponseEntity<TicketResponseDTO> createTicket(@RequestPart("file") MultipartFile file, @RequestPart("ticketDTO") TicketDTO ticketDTO) {
+    public ResponseEntity<TicketResponseDTO> createTicket(@RequestParam("file") MultipartFile file, @RequestPart("ticketDTO") TicketDTO ticketDTO) {
         return new ResponseEntity<>(ticketService.saveTicket(ticketDTO, file), HttpStatus.CREATED);
     }
-
-    @PostMapping(value = "/add")
-    @PreAuthorize("hasAnyAuthority('CLIENT')")
-    public ResponseEntity<TicketResponseDTO> create(@RequestPart("file") MultipartFile file, @RequestBody TicketDTO ticketDTO) {
-        return new ResponseEntity<>(ticketService.saveTicket(ticketDTO, null), HttpStatus.CREATED);
-    }
-
 
     @GetMapping(value = "/tickets")
     @PreAuthorize("hasAnyAuthority('ADMIN','TECH','CLIENT')")
@@ -47,12 +42,18 @@ public class TicketController {
         return new ResponseEntity<>(ticketService.getAllTickets(), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/{ticketId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','TECH','CLIENT')")
+    public ResponseEntity<TicketResponseDTO> showTicketById(@PathVariable(name = "ticketId") Long id ) {
+        return new ResponseEntity<>(ticketService.getTicketById(id), HttpStatus.OK);
+    }
+
     //Update a ticket
     //Here we can update just the -name- and the -description- of the ticket
-    @PutMapping(value = "/edit/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PutMapping(value = "/edit/{id}")
     @PreAuthorize("hasAnyAuthority('CLIENT')")
-    public ResponseEntity<TicketResponseDTO> updateTicket(@RequestParam("file") MultipartFile file, @RequestPart TicketDTO ticketDTO, @PathVariable(name = "id") Long id) {
-        TicketResponseDTO ticketResponseDTO = ticketService.editTicket(id, ticketDTO, file);
+    public ResponseEntity<TicketResponseDTO> updateTicket(@RequestPart TicketDTO ticketDTO, @PathVariable(name = "id") Long id) {
+        TicketResponseDTO ticketResponseDTO = ticketService.editTicket(id, ticketDTO);
         return new ResponseEntity<>(ticketResponseDTO, HttpStatus.OK);
     }
 

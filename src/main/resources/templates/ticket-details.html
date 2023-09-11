@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier</title>
+</head>
+<body>
+<h1>Modifier</h1>
+<form id="editForm">
+    <div>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+    </div>
+    <div>
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="4" required></textarea>
+    </div>
+    <div>
+        <button type="submit">Modifier</button>
+    </div>
+</form>
+
+<h2>Attachments</h2>
+<table>
+    <thead>
+    <tr>
+        <th>File Name</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody id="attachmentList">
+    <!-- Attachments will be displayed here using JavaScript -->
+    </tbody>
+</table>
+
+<!-- Input field to add an attachment -->
+<div>
+    <input type="file" id="attachmentInput">
+    <button id="addAttachmentButton">Add Attachment</button>
+</div>
+
+<script>
+    // Function to fetch ticket details and populate the form
+    function fetchTicketDetails(ticketId) {
+
+        fetchAttachments(ticketId);
+    }
+
+    // Function to fetch and display attachments for the ticket
+    function fetchAttachments(ticketId) {
+        // Construct the URL for fetching attachments
+        const apiUrl = `http://localhost:9090/api/ticket/${ticketId}/attachments`;
+
+        // Get the bearer token from sessionStorage
+        const authToken = sessionStorage.getItem('authToken');
+
+        // Define the headers including the bearer token
+        const headers = {
+            'Authorization': `Bearer ${authToken}`,
+        };
+
+        fetch(apiUrl, { headers })
+            .then(response => response.json())
+            .then(data => {
+                const attachmentList = document.getElementById('attachmentList');
+                attachmentList.innerHTML = ''; // Clear previous attachments
+
+                data.forEach(attachment => {
+                    // Create a row for each attachment
+                    const row = `
+                        <tr>
+                            <td><a href="#" onclick="downloadAttachment('${attachment.id}')">${attachment.fileName}</a></td>
+                            <td>
+                                <button onclick="deleteAttachment('${attachment.id}', '${ticketId}')">Delete</button>
+
+                            </td>
+                        </tr>
+                    `;
+                    attachmentList.innerHTML += row;
+                });
+            })
+            .catch(error => console.error('Error fetching attachments:', error));
+    }
+
+    // Function to add an attachment to the ticket
+    function addAttachmentToTicket(ticketId, file) {
+        // Construct the URL for adding an attachment to the ticket
+        const apiUrl = `http://localhost:9090/api/attachment/addToTicket/${ticketId}`;
+
+        // Get the bearer token from sessionStorage
+        const authToken = sessionStorage.getItem('authToken');
+
+        // Create a FormData object to send the file
+        const formData = new FormData();
+        formData.append('file', file);
+
+        // Define the headers including the bearer token
+        const headers = {
+            'Authorization': `Bearer ${authToken}`,
+        };
+
+        // Send the POST request to add the attachment to the ticket
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: headers,
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Attachment added successfully, refresh the attachment list
+                    fetchAttachments(ticketId);
+                    // Clear the attachment input field after successfully adding the attachment
+                    const attachmentInput = document.getElementById('attachmentInput');
+                    attachmentInput.value = ""; // Set the input field value to an empty string
+                } else {
+                    console.error('Error adding attachment to ticket:', response.status);
+                }
+            })
+            .catch(error => console.error('Error adding attachment to ticket:', error));
+    }
+
+    // Function to delete an attachment from the ticket
+    function deleteAttachment(attachmentId, ticketId) {
+        // Construct the URL for deleting an attachment
+        const apiUrl = `http://localhost:9090/api/attachment/delete/${attachmentId}`;
+
+        // Get the bearer token from sessionStorage
+        const authToken = sessionStorage.getItem('authToken');
+
+        // Define the headers including the bearer token
+        const headers = {
+            'Authorization': `Bearer ${authToken}`,
+        };
+
+        // Send the DELETE request to delete the attachment
+        fetch(apiUrl, {
+            method: 'DELETE',
+            headers: headers
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Attachment deleted successfully, refresh the attachment list
+                    fetchAttachments(ticketId);
+                } else {
+                    console.error('Error deleting attachment:', response.status);
+                }
+            })
+            .catch(error => console.error('Error deleting attachment:', error));
+    }
+
+    // Get the ticketId from the URL query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const ticketId = urlParams.get('ticketId');
+
+    // Call the fetchTicketDetails function with the retrieved ticketId
+    fetchTicketDetails(ticketId);
+
+    // Add an event listener to the "Add Attachment" button
+    document.getElementById('addAttachmentButton').addEventListener('click', function () {
+        const attachmentInput = document.getElementById('attachmentInput');
+        const file = attachmentInput.files[0]; // Get the selected file
+        if (file) {
+            // Call the function to add the attachment to the ticket
+            addAttachmentToTicket(ticketId, file);
+        } else {
+            alert('Please select a file to add as an attachment.');
+        }
+    });
+
+    // Function to handle form submission
+    document.getElementById('editForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Retrieve the values from the form
+        const name = document.getElementById('name').value;
+        const description = document.getElementById('description').value;
+
+        // Create an object to hold the form data
+        const ticketDTO = {
+            name: name,
+            description: description
+        };
+
+        // Create a new FormData object
+        const formData = new FormData();
+
+        // Create a Blob containing the JSON data
+        const jsonBlob = new Blob([JSON.stringify(ticketDTO)], { type: 'application/json' });
+
+        // Append the ticketDTO JSON data as a text part
+        formData.append('ticketDTO', jsonBlob, 'ticketDTO.json');
+
+        // Get the bearer token from sessionStorage
+        const authToken = sessionStorage.getItem('authToken');
+
+        // Construct the URL for the PUT request
+        const apiUrl = `http://localhost:9090/api/ticket/edit/${ticketId}`;
+
+        // Define the headers including the bearer token
+        const headers = {
+            'Authorization': `Bearer ${authToken}`,
+        };
+
+        // Send the PUT request with the FormData payload
+        fetch(apiUrl, {
+            method: 'PUT',
+            headers: headers,
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Handle success, you can redirect or show a success message
+                    console.log('Ticket updated successfully');
+                    window.location.href = "ticket";
+                } else {
+                    // Handle errors, you can show an error message
+                    alert('Failed to update ticket');
+                }
+            })
+            .catch(error => console.error('Error updating ticket:', error));
+    });
+
+    // Function to download an attachment
+    function downloadAttachment(attachmentId) {
+        // Construct the URL for downloading an attachment
+        const apiUrl = `http://localhost:9090/api/attachment/download/${attachmentId}`;
+
+        // Get the bearer token from sessionStorage
+        const authToken = sessionStorage.getItem('authToken');
+
+        // Define the headers including the bearer token
+        const headers = {
+            'Authorization': `Bearer ${authToken}`,
+        };
+
+        // Send a GET request to download the attachment
+        fetch(apiUrl, { headers })
+            .then(response => {
+                if (response.ok) {
+                    // Trigger the browser to download the attachment file
+                    response.blob().then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+
+                        // Extract the filename and remove quotes
+                        const contentDispositionHeader = response.headers.get('Content-Disposition');
+                        const filenameMatch = contentDispositionHeader.match(/filename="(.+)"/);
+                        if (filenameMatch && filenameMatch.length > 1) {
+                            a.download = filenameMatch[1].replace(/"/g, '');
+                        } else {
+                            // Handle the case where the filename doesn't match the expected pattern
+                            a.download = 'downloaded_file'; // Provide a default filename
+                        }
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    });
+                } else {
+                    console.error('Error downloading attachment:', response.status);
+                }
+            })
+            .catch(error => console.error('Error downloading attachment:', error));
+    }
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Welcome Page</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#"><h1 class="mb-4">ADMIN Interface</h1></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <!-- Vous pouvez ajouter des liens de navigation ici -->
+            <li class="nav-item">
+                <a class="nav-link" type="button" data-toggle="modal" data-target="#myModal">
+                    Profile
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" type="button" id="group">
+                    Groups
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" type="button" id="ticket">
+                    Tickets
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Déconnexion</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Profile</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="fullName"><strong>Full Name:</strong></label>
+                    <span id="fullName" class="form-control-static"></span>
+                </div>
+                <div class="form-group">
+                    <label for="email"><strong>Email:</strong></label>
+                    <span id="email" class="form-control-static"></span>
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber"><strong>Phone Number:</strong></label>
+                    <span id="phoneNumber" class="form-control-static"></span>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+<div style="margin-top: 50px; margin-left: 2%; margin-right: 2%;">
+
+    <h2>Tickets</h2>
+
+    <!-- Create a table for displaying tickets -->
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Ticket ID</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Description</th>
+            <th>Assigned Tech</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody id="ticketTableBody"></tbody>
+    </table>
+
+    <!-- Button to navigate to the "group" page -->
+<!--    <button id="group" class="btn">Go to Group Page</button>-->
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+
+    const authToken = sessionStorage.getItem('authToken');
+
+
+    const payload = decodeJwt(authToken);
+
+
+    const token = sessionStorage.getItem('authToken');
+    //const decoded = jwt_decode(token);
+    // Extract user information from the JSON response
+    //const jsonResponse = JSON.parse(localStorage.getItem('authResponse')); // Assuming you stored the response in localStorage
+    //const username = payload.username;
+    const fullName = payload.fullName;
+    const email = payload.email;
+    const phoneNumber = payload.phoneNumber;
+
+    // Display the user information
+    //document.getElementById('username').textContent = username;
+    document.getElementById('fullName').textContent = fullName;
+    document.getElementById('email').textContent = email;
+    document.getElementById('phoneNumber').textContent = phoneNumber;
+
+
+    // Fetch ticket data and display it in a table
+    fetch('http://localhost:9090/api/ticket/tickets', {
+        method: 'GET', // Set the HTTP method to GET
+        headers: {
+            'Authorization': `Bearer ${authToken}` // Include the stored token in the Authorization header
+        }
+    })
+        .then(response => response.json())
+        .then(tickets => {
+            const ticketTableBody = document.getElementById('ticketTableBody');
+            tickets.forEach(ticket => {
+                const row = document.createElement('tr');
+
+                const ticketIDCell = document.createElement('td');
+                ticketIDCell.textContent = ticket.id;
+                row.appendChild(ticketIDCell);
+
+                const nameCell = document.createElement('td');
+                nameCell.textContent = ticket.name;
+                row.appendChild(nameCell);
+
+                const statusCell = document.createElement('td');
+                statusCell.textContent = ticket.status;
+                row.appendChild(statusCell);
+
+                const descriptionCell = document.createElement('td');
+                descriptionCell.textContent = ticket.description;
+                row.appendChild(descriptionCell);
+
+                const assignedTechCell = document.createElement('td');
+                assignedTechCell.textContent = ticket.assignedTech ? ticket.assignedTech.fullName : '-';
+                row.appendChild(assignedTechCell);
+
+                const actionCell = document.createElement('td');
+                const detailsButton = document.createElement('button');
+                detailsButton.textContent = 'Assigner';
+                detailsButton.className = 'btn btn-primary';
+                detailsButton.style= "margin-right:4px";
+
+                // Add a click event listener to the "Details" button
+                detailsButton.addEventListener('click', function () {
+                    // Redirect to the details page with the ticketId as a query parameter
+                    window.location.href = `/assign-ticket-details?ticketId=${ticket.id}`;
+                });
+
+                actionCell.appendChild(detailsButton);
+
+                // Create a "Delete" button for each ticket
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.className = 'btn btn-danger';
+
+                // Add a click event listener to the "Delete" button
+                deleteButton.addEventListener('click', function () {
+                    const confirmed = confirm(`Are you sure you want to delete Ticket ID ${ticket.id}?`);
+                    if (confirmed) {
+                        // Send a request to delete the ticket with the given ID
+                        fetch(`http://localhost:9090/api/ticket/delete/${ticket.id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${authToken}`
+                            }
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    // Remove the table row from the UI if the deletion was successful
+                                    row.remove();
+                                } else {
+                                    console.error('Error deleting ticket:', response.statusText);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error deleting ticket:', error);
+                            });
+                    }
+                });
+
+                actionCell.appendChild(deleteButton);
+
+                row.appendChild(actionCell);
+                ticketTableBody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching ticket data:', error);
+        });
+    // Add a click event listener to the "Go to Group Page" button
+    const groupButton = document.getElementById('group');
+    groupButton.addEventListener('click', function () {
+        // Redirect to the "group" page when the button is clicked
+        window.location.href = 'group'; // Replace with the correct URL
+    });
+
+    const ticketButton = document.getElementById('ticket');
+    ticketButton.addEventListener('click', function () {
+        // Redirect to the "group" page when the button is clicked
+        window.location.href = 'admin'; // Replace with the correct URL
+    });
+
+    function decodeJwt(token) {
+        const base64Payload = token.split(".")[1];
+        const decodedPayload = atob(base64Payload);
+        return JSON.parse(decodedPayload);
+    }
+</script>
+</body>
+</html>

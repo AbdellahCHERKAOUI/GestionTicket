@@ -385,5 +385,36 @@ public class PersonService {
         Optional<Person> person = personRepository.findByRole(PersonRole.ADMIN);
         return person.isPresent();
     }
+
+    public Collection<PersonResponseDTO> techFinder() {
+        Collection<Person> people = personRepository.findAll();
+        Collection<PersonResponseDTO> personResponseDTOS = new ArrayList<>();
+        Collection<PersonResponseDTO> people1 = new ArrayList<>(); // Create a list for people with the "TECH" role
+
+        for (Person person : people) {
+            PersonResponseDTO createdPersonDTO = new PersonResponseDTO();
+            createdPersonDTO.setId(person.getId());
+            createdPersonDTO.setUsername(person.getUsername());
+            createdPersonDTO.setRole(person.getRole().name());
+            createdPersonDTO.setEmail(person.getEmail());
+            createdPersonDTO.setPhoneNumber(person.getPhoneNumber());
+            createdPersonDTO.setBirthDate(person.getBirthDate());
+            createdPersonDTO.setFullName(person.getFullName());
+            createdPersonDTO.setSpecialite(person.getSpecialite());
+            createdPersonDTO.setActive(person.isActive());
+            if (person.getGroup() != null) {
+                createdPersonDTO.setGroup(person.getGroup().getId());
+            } else {
+                createdPersonDTO.setGroup(null);
+            }
+            personResponseDTOS.add(createdPersonDTO);
+
+            // Check if the person has the "TECH" role and add them to the people1 list
+            if (person.getRole() == PersonRole.TECH) {
+                people1.add(createdPersonDTO);
+            }
+        }
+       return people1;
+    }
 }
 

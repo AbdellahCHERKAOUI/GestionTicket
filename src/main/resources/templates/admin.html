@@ -4,23 +4,70 @@
     <title>Welcome Page</title>
     <link rel="stylesheet"
           href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-<div style="margin-top: 50px; margin-left: 2%; margin-right: 2%;">
-    <h1>Welcome, </h1>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#"><h1 class="mb-4">ADMIN Interface</h1></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <!-- Vous pouvez ajouter des liens de navigation ici -->
+            <li class="nav-item">
+                <a class="nav-link" type="button" data-toggle="modal" data-target="#myModal">
+                    Profile
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" type="button" id="group">
+                    Groups
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" type="button" id="ticket">
+                    Tickets
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Déconnexion</a>
+            </li>
+        </ul>
+    </div>
+</nav>
 
-    <div>
-        <strong>Full Name:</strong>
-        <span id="fullName"></span>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Profile</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="fullName"><strong>Full Name:</strong></label>
+                    <span id="fullName" class="form-control-static"></span>
+                </div>
+                <div class="form-group">
+                    <label for="email"><strong>Email:</strong></label>
+                    <span id="email" class="form-control-static"></span>
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber"><strong>Phone Number:</strong></label>
+                    <span id="phoneNumber" class="form-control-static"></span>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+            </div>
+        </div>
     </div>
-    <div>
-        <strong>Email:</strong>
-        <span id="email"></span>
-    </div>
-    <div>
-        <strong>Phone Number:</strong>
-        <span id="phoneNumber"></span>
-    </div>
+</div>
+<div style="margin-top: 50px; margin-left: 2%; margin-right: 2%;">
 
     <h2>Tickets</h2>
 
@@ -40,9 +87,13 @@
     </table>
 
     <!-- Button to navigate to the "group" page -->
-    <button id="group" class="btn">Go to Group Page</button>
+<!--    <button id="group" class="btn">Go to Group Page</button>-->
 </div>
 
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
 
@@ -57,7 +108,6 @@
     // Extract user information from the JSON response
     //const jsonResponse = JSON.parse(localStorage.getItem('authResponse')); // Assuming you stored the response in localStorage
     //const username = payload.username;
-    console.log(payload)
     const fullName = payload.fullName;
     const email = payload.email;
     const phoneNumber = payload.phoneNumber;
@@ -160,6 +210,12 @@
     groupButton.addEventListener('click', function () {
         // Redirect to the "group" page when the button is clicked
         window.location.href = 'group'; // Replace with the correct URL
+    });
+
+    const ticketButton = document.getElementById('ticket');
+    ticketButton.addEventListener('click', function () {
+        // Redirect to the "group" page when the button is clicked
+        window.location.href = 'admin'; // Replace with the correct URL
     });
 
     function decodeJwt(token) {

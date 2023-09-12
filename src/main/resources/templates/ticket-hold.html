@@ -9,6 +9,16 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* This defines two equal columns */
+            gap: 10px; /* Adjust the gap between columns */
+        }
+
+        .grid-item {
+            padding: 10px;
+            border: 0px solid #ccc;
+        }
         /* CSS Styles */
         .table {
             font-size: 14px;
@@ -200,9 +210,9 @@
             <td>${ticket.description}</td>
             <td>${ticket.status}</td>
             <td>${ticket.assignedTech ? ticket.assignedTech.fullName : '-'}</td>
-            <td>
-                <button class="btn btn-primary btn-sm" onclick="editTicket('${ticket.id}')">Modifier</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteTicket(${ticket.id}, '${ticket.name}')">Supprimer</button>
+            <td class="grid-container">
+                <button class="btn btn-primary btn-sm grid-item" onclick="editTicket('${ticket.id}')">Modifier</button>
+                <button class="btn btn-danger btn-sm grid-item" onclick="deleteTicket(${ticket.id}, '${ticket.name}')">Supprimer</button>
             </td>
         </tr>
     `;

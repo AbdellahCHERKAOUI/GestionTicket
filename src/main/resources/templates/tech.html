@@ -1,111 +1,172 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="en">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <title>Title</title>-->
-<!--</head>-->
-<!--<body>-->
-<!--<p>Welcome</p>-->
 
-
-<!--<div>-->
-<!--    <strong>Full Name:</strong>-->
-<!--    <span id="fullName"></span>-->
-<!--</div>-->
-<!--<div>-->
-<!--    <strong>Email:</strong>-->
-<!--    <span id="email"></span>-->
-<!--</div>-->
-<!--<div>-->
-<!--    <strong>Phone Number:</strong>-->
-<!--    <span id="phoneNumber"></span>-->
-<!--</div>-->
-
-<!--<h2>Tickets</h2>-->
-<!--<ul id="ticketList"></ul>-->
-
-<!--</body>-->
-<!--<script>-->
-
-<!--    const authToken = sessionStorage.getItem('authToken');-->
-
-
-<!--    const payload = decodeJwt(authToken);-->
-
-
-<!--    const token = sessionStorage.getItem('authToken');-->
-<!--    //const decoded = jwt_decode(token);-->
-<!--    // Extract user information from the JSON response-->
-<!--    //const jsonResponse = JSON.parse(localStorage.getItem('authResponse')); // Assuming you stored the response in localStorage-->
-<!--    //const username = payload.username;-->
-<!--    console.log(payload)-->
-<!--    const fullName = payload.fullName;-->
-<!--    const email = payload.email;-->
-<!--    const phoneNumber = payload.phoneNumber;-->
-
-<!--    // Display the user information-->
-<!--    //document.getElementById('username').textContent = username;-->
-<!--    document.getElementById('fullName').textContent = fullName;-->
-<!--    document.getElementById('email').textContent = email;-->
-<!--    document.getElementById('phoneNumber').textContent = phoneNumber;-->
-
-
-<!--    // Fetch ticket data and display it-->
-<!--    fetch('http://localhost:9090/api/ticket/tickets', {-->
-<!--        method: 'GET', // Set the HTTP method to GET-->
-<!--        headers: {-->
-<!--            'Authorization': `Bearer ${authToken}` // Include the stored token in the Authorization header-->
-<!--        }-->
-<!--    })-->
-<!--        .then(response => response.json())-->
-<!--        .then(tickets => {-->
-<!--            const ticketList = document.getElementById('ticketList');-->
-<!--            tickets.forEach(ticket => {-->
-<!--                const listItem = document.createElement('li');-->
-<!--                listItem.textContent = `Ticket ID: ${ticket.id}, Name: ${ticket.name}, Status: ${ticket.status}`;-->
-<!--                ticketList.appendChild(listItem);-->
-<!--            });-->
-<!--        })-->
-<!--        .catch(error => {-->
-<!--            console.error('Error fetching ticket data:', error);-->
-<!--        });-->
-
-<!--    function decodeJwt(token) {-->
-<!--        const base64Payload = token.split(".")[1];-->
-<!--        const decodedPayload = atob(base64Payload);-->
-<!--        return JSON.parse(decodedPayload);-->
-<!--    }-->
-<!--</script>-->
-<!--</html>-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Technician Dashboard</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Technician Interface</title>
+    <!-- Ajoutez les liens vers les fichiers Bootstrap et CSS ici -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Ajoutez vos styles CSS personnalisés ici */
+        body {
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
-<div class="container mt-5">
-    <h1>Technician Dashboard</h1>
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th>Ticket ID</th>
-            <th>TicketName</th>
-            <th>Description</th>
-            <th>Status</th>
-            <th>Client ID</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody id="ticketList">
-        <!-- Les données des tickets seront insérées ici dynamiquement -->
-        </tbody>
-    </table>
+
+<h1 class="mb-4">Technician Interface</h1>
+
+<!-- Tableau pour afficher les tickets -->
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Ticket ID</th>
+        <th>Client Name</th>
+        <th>Description</th>
+        <th>Priorité</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody id="ticketTableBody">
+    <!-- Les lignes de tableau seront ajoutées ici avec JavaScript -->
+    </tbody>
+</table>
+
+<!-- Fenêtre modale pour les détails du ticket -->
+<div class="modal fade" id="ticketDetailsModal" tabindex="-1" role="dialog" aria-labelledby="ticketDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ticketDetailsModalLabel">Détails du Ticket</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="ticketDetailsContent">
+                    <!-- Les détails du ticket seront affichés ici -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-primary" id="saveChangesBtn">Sauvegarder les Changements</button>
+            </div>
+        </div>
+    </div>
 </div>
 
-<script src="ticket.js"></script>
+<!-- JavaScript pour afficher les tickets et gérer les actions -->
+<script>
+    // Exemple d'authToken pour le test (remplacez-le par votre authentification réelle)
+    const authToken = sessionStorage.getItem('authToken');
+
+    // Fonction pour récupérer les données des tickets depuis le serveur
+    function getTickets() {
+        fetch('http://localhost:9090/api/ticket/tickets', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        })
+            .then(response => response.json())
+            .then(tickets => {
+                const ticketTableBody = document.getElementById('ticketTableBody');
+                ticketTableBody.innerHTML = ''; // Effacer le contenu précédent
+
+                tickets.forEach(ticket => {
+                    const row = document.createElement('tr');
+                    row.id = `ticketRow${ticket.id}`; // Donnez un ID unique à chaque ligne
+                    row.innerHTML = `
+                        <td>${ticket.id}</td>
+                        <td>${ticket.client.username}</td>
+                        <td>${ticket.description}</td>
+                        <td>${ticket.priority}</td>
+                        <td class="ticket-status">${ticket.status}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#ticketDetailsModal" data-ticket-id="${ticket.id}">Détails</button>
+                        </td>
+                    `;
+                    ticketTableBody.appendChild(row);
+
+                    // Gestionnaire d'événements pour le bouton "Détails"
+                    const detailsButton = row.querySelector('.btn-primary');
+                    detailsButton.addEventListener('click', function() {
+                        // Mettre à jour le contenu de la fenêtre modale avec les détails du ticket
+                        const modalTitle = document.querySelector('#ticketDetailsModalLabel');
+                        modalTitle.textContent = `Détails du Ticket - ID: ${ticket.id}`;
+
+                        const ticketDetailsContent = document.getElementById('ticketDetailsContent');
+                        ticketDetailsContent.innerHTML = `
+                            <div>
+
+                                <div class="form-group">
+                                    <label for="statusSelect">Statut:</label>
+                                    <select class="form-control" id="statusSelect">
+                                        <option value="CLOSED">CLOSED</option>
+                                        <option value="OPEN">OPEN</option>
+                                        <option value="IN_PROGRESS">In Progress</option>
+                                        <option value="DONE">DONE</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="commentTextArea">Commentaire:</label>
+                                    <textarea class="form-control" id="commentTextArea" rows="3">${ticket.comment || ''}</textarea>
+                                </div>
+                            </div>
+                        `;
+
+                        // Pré-sélectionner le statut actuel
+                        const statusSelect = document.getElementById('statusSelect');
+                        statusSelect.value = ticket.status;
+
+                        // Gestionnaire d'événements pour le bouton "Sauvegarder les Changements"
+                        const saveChangesBtn = document.getElementById('saveChangesBtn');
+                        saveChangesBtn.addEventListener('click', function() {
+                            const newStatus = statusSelect.value;
+                            const newComment = document.getElementById('commentTextArea').value;
+                            // Envoyer une requête au serveur pour mettre à jour le statut et le commentaire du ticket
+                            fetch(`http://localhost:9090/api/ticket/${ticket.id}/updateStatus`, {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${authToken}`,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    newStatus: newStatus,
+                                    comment: newComment
+                                })
+                            })
+                                .then(response => response.json())
+                                .then(updatedTicket => {
+                                    // Mettre à jour le statut dans le tableau de l'interface technicien
+                                    const statusCell = row.querySelector('.ticket-status');
+                                    if (statusCell) {
+                                        statusCell.textContent = newStatus;
+                                    }
+                                    // Fermer la fenêtre modale
+                                    $('#ticketDetailsModal').modal('hide');
+                                })
+                                .catch(error => {
+                                    console.error('Erreur lors de la mise à jour du ticket :', error);
+                                });
+                        });
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Erreur lors de la récupération des données des tickets :', error);
+            });
+    }
+
+    // Appel de la fonction pour récupérer les données des tickets
+    getTickets();
+</script>
+
+<!-- Bootstrap JS (si nécessaire) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
-

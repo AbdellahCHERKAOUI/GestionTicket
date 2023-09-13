@@ -58,7 +58,7 @@ public class AdminController {
     //Person (CRUD)
 
     //Show Users
-    @GetMapping()
+    @GetMapping("/users")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Collection<PersonResponseDTO>> showPeople() {
 

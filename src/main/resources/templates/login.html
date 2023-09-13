@@ -119,10 +119,11 @@
 
             })
             .catch(error => {
-                // Handle authentication failure more gracefully (e.g., show an error message)
-                console.error("Authentication failed:", error);
-                // Display an error message on the login form
-                document.getElementById("error-message").textContent = "Invalid username or password";
+                // // Handle authentication failure more gracefully (e.g., show an error message)
+                // console.error("Authentication failed:", error);
+                // // Display an error message on the login form
+                // document.getElementById("error-message").textContent = "Invalid username or password";
+                alert("Invalid username or password!! Try to contact the admin");
             });
     });
 </script>

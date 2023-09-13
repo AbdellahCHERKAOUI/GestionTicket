@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,7 +44,7 @@
     <h1 class="text-center text-white mb-4">Admin Interface</h1>
     <a href="#" data-toggle="modal" data-target="#createClientModal" class="btn btn-info btn-block mb-3">Créer Client</a>
     <a href="#" data-toggle="modal" data-target="#createTechnicianModal" class="btn btn-info btn-block mb-3">Créer Technicien</a>
-    <a href="#" data-toggle="modal" data-target="#ListeUsers" class="btn btn-info btn-block mb-3">Lste Users</a>
+    <a href="#" data-toggle="modal" data-target="#ListeUsers" class="btn btn-info btn-block mb-3" id="users">Liste Users</a>
 
 
 </nav>
@@ -75,7 +74,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Déconnexion</a>
+                    <a class="nav-link" href="#" id="disconnect">Déconnexion</a>
                 </li>
             </ul>
         </div>
@@ -120,7 +119,6 @@
                 <table class="table">
                     <thead>
                     <tr>
-                        <th>Ticket ID</th>
                         <th>Name</th>
                         <th>Status</th>
                         <th>Description</th>
@@ -308,9 +306,9 @@
             tickets.forEach(ticket => {
                 const row = document.createElement('tr');
 
-                const ticketIDCell = document.createElement('td');
-                ticketIDCell.textContent = ticket.id;
-                row.appendChild(ticketIDCell);
+                // const ticketIDCell = document.createElement('td');
+                // ticketIDCell.textContent = ticket.id;
+                // row.appendChild(ticketIDCell);
 
                 const nameCell = document.createElement('td');
                 nameCell.textContent = ticket.name;
@@ -393,12 +391,25 @@
         // Redirect to the "group" page when the button is clicked
         window.location.href = 'admin'; // Replace with the correct URL
     });
+    const disconnectButton = document.getElementById('disconnect');
+    disconnectButton.addEventListener('click', function () {
+        // Redirect to the "group" page when the button is clicked
+        window.location.href = 'login'; // Replace with the correct URL
+        localStorage. clear();
+        sessionStorage. clear();
+    });
 
     function decodeJwt(token) {
         const base64Payload = token.split(".")[1];
         const decodedPayload = atob(base64Payload);
         return JSON.parse(decodedPayload);
     }
+
+    const showUsersButton = document.getElementById('users');
+    showUsersButton.addEventListener('click', function () {
+        // Redirect to the "group" page when the button is clicked
+        window.location.href = 'users'; // Replace with the correct URL
+    });
 </script>
 </body>
 </html>

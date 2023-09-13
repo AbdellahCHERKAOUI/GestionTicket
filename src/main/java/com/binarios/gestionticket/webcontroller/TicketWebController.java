@@ -51,4 +51,9 @@ public class TicketWebController {
     public String assignTicket() {
         return "Assign-Ticket-Details";
     }
+
+    @GetMapping(path = "/users")
+    public String showUsers() {
+        return "users";
+    }
 }

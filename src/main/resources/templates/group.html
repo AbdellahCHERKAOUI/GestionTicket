@@ -26,8 +26,9 @@
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#"><h1 class="mb-4">ADMIN Interface</h1></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <a class="navbar-brand" href="#"><h1 class="mb-4">Groupes</h1></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -84,13 +85,13 @@
 </div>
 
 
-<div class="container mt-5" >
+<div class="container mt-5">
     <div class="row">
         <div class="col-md-6" style="margin-left: -144px">
             <h1>Welcome to the Group Page</h1>
 
             <!-- Form to add a new group -->
-            <form id="addGroupForm" >
+            <form id="addGroupForm">
                 <div class="form-group">
                     <label for="name">Name:</label>
                     <input type="text" id="name" name="name" required class="form-control">
@@ -110,7 +111,6 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Name</th>
                     <th>Description</th>
                     <th>Actions</th>
@@ -126,6 +126,9 @@
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 
@@ -220,9 +223,8 @@
                 row.dataset.groupId = group.id; // Store groupId as a data attribute
 
                 row.innerHTML = `
-                <td>${group.id}</td>
                 <td>${group.name}</td>
-                <td class="description-cell">${group.description}</td>
+                <td >${group.description}</td>
             `;
 
                 // Add the Actions column to the row

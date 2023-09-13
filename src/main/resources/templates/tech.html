@@ -14,25 +14,55 @@
     </style>
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<!--    <a class="navbar-brand" href="#"><h1 class="mb-4">ADMIN Interface</h1></a>-->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <!-- Vous pouvez ajouter des liens de navigation ici -->
+            <li class="nav-item">
+                <a class="nav-link" type="button" data-toggle="modal" data-target="#myModal">
+                    Profile
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" type="button" id="group">
+                    Groups
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" type="button" id="ticket">
+                    Tickets
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Déconnexion</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div  style="margin-left: 103px; margin-top: 33px;">
+    <h1 class="mb-4">Technician Interface</h1>
 
-<h1 class="mb-4">Technician Interface</h1>
-
-<!-- Tableau pour afficher les tickets -->
-<table class="table table-striped">
-    <thead>
-    <tr>
-        <th>Ticket ID</th>
-        <th>Client Name</th>
-        <th>Description</th>
-        <th>Priorité</th>
-        <th>Status</th>
-        <th>Action</th>
-    </tr>
-    </thead>
-    <tbody id="ticketTableBody">
-    <!-- Les lignes de tableau seront ajoutées ici avec JavaScript -->
-    </tbody>
-</table>
+    <!-- Tableau pour afficher les tickets -->
+    <table class="table table-striped" >
+        <thead>
+        <tr>
+            <th>Ticket ID</th>
+            <th>Client Name</th>
+            <th>Description</th>
+            <th>Priorité</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody id="ticketTableBody">
+        <!-- Les lignes de tableau seront ajoutées ici avec JavaScript -->
+        </tbody>
+    </table>
+</div>
 
 <!-- Fenêtre modale pour les détails du ticket -->
 <div class="modal fade" id="ticketDetailsModal" tabindex="-1" role="dialog" aria-labelledby="ticketDetailsModalLabel" aria-hidden="true">

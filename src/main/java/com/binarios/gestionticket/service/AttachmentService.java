@@ -25,7 +25,7 @@ import java.util.UUID;
 @Service
 public class AttachmentService {
 
-    private static final String UPLOAD_DIR = "C://Users//Electro-Market.ma//Desktop//attachments";
+    private static final String UPLOAD_DIR = "C://Users//ANWAR//OneDrive//Bureau//Attachement";
 
 
     private final AttachmentRepository attachmentRepository;

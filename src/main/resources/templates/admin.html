@@ -1,93 +1,269 @@
+
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
-    <title>Welcome Page</title>
-    <link rel="stylesheet"
-          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>admin interface</title>
+    <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Include custom CSS for the sidebar -->
+    <style>
+        /* Sidebar styles */
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #333;
+            padding-top: 20px;
+        }
+
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+        }
+
+        .sidebar a:hover {
+            background-color: #555;
+        }
+
+        /* Main content styles */
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#"><h1 class="mb-4">ADMIN Interface</h1></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-            <!-- Vous pouvez ajouter des liens de navigation ici -->
-            <li class="nav-item">
-                <a class="nav-link" type="button" data-toggle="modal" data-target="#myModal">
-                    Profile
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" type="button" id="group">
-                    Groups
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" type="button" id="ticket">
-                    Tickets
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Déconnexion</a>
-            </li>
-        </ul>
-    </div>
+<!-- Sidebar -->
+<nav class="sidebar">
+    <h1 class="text-center text-white mb-4">Admin Interface</h1>
+    <a href="#" data-toggle="modal" data-target="#createClientModal" class="btn btn-info btn-block mb-3">Créer Client</a>
+    <a href="#" data-toggle="modal" data-target="#createTechnicianModal" class="btn btn-info btn-block mb-3">Créer Technicien</a>
+    <a href="#" data-toggle="modal" data-target="#ListeUsers" class="btn btn-info btn-block mb-3">Lste Users</a>
+
+
 </nav>
 
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Profile</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="fullName"><strong>Full Name:</strong></label>
-                    <span id="fullName" class="form-control-static"></span>
-                </div>
-                <div class="form-group">
-                    <label for="email"><strong>Email:</strong></label>
-                    <span id="email" class="form-control-static"></span>
-                </div>
-                <div class="form-group">
-                    <label for="phoneNumber"><strong>Phone Number:</strong></label>
-                    <span id="phoneNumber" class="form-control-static"></span>
-                </div>
-            </div>
+<!-- Main content -->
+<div class="content">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#"><h1 class="mb-4"></h1></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" type="button" data-toggle="modal" data-target="#myModal">
+                        Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" type="button" id="group">
+                        Groups
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" type="button" id="ticket">
+                        Tickets
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Déconnexion</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-            <div class="modal-footer">
+
+            <!-- Modal -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Profile</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="fullName"><strong>Full Name:</strong> <strong style="color: red"> *</strong></label>
+                                <span id="fullName" class="form-control-static"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="email"><strong>Email:</strong></label>
+                                <span id="email" class="form-control-static"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="phoneNumber"><strong>Phone Number:</strong></label>
+                                <span id="phoneNumber" class="form-control-static"></span>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 50px; margin-left: 2%; margin-right: 2%;">
+
+                <h2>Tickets</h2>
+
+                <!-- Create a table for displaying tickets -->
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Ticket ID</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Description</th>
+                        <th>Assigned Tech</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody id="ticketTableBody"></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+    <!-- Modal pour Créer un Client -->
+    <div class="modal fade" id="createClientModal" tabindex="-1" role="dialog" aria-labelledby="createClientModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createClientModalLabel">Créer un Client</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form for creating a client -->
+                    <form id="createClientForm">
+                        <div class="form-group">
+                            <label for="fullName">fullName <strong style="color: red">*</strong> : </label>
+                            <input type="text" class="form-control" id="name" placeholder="fullName">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password <strong style="color: red">*</strong> : </label>
+                            <input type="password" class="form-control" id="password" placeholder="password">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Nom du Client <strong style="color: red">*</strong> : </label>
+                            <input type="email" class="form-control" id="mail" placeholder="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="phoneNumber">phoneNumber <strong style="color: red">*</strong> :  </label>
+                            <input type="tel" class="form-control" id="phone" placeholder="phoneNumber">
+                        </div>
+                        <div class="form-group">
+                            <label for="birthDate">birthDate <strong style="color: red">*</strong> : </label>
+                            <input type="date" class="form-control" id="birthDate" placeholder="birthDate">
+                        </div>
+<!--                        <div class="form-group">-->
+<!--                            <label for="group">groupe</label>-->
+<!--                            <input type="text" class="form-control" id="groupe" placeholder="groupe">-->
+<!--                        </div>-->
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <button type="button" class="btn btn-outline-secondary">Action</button>
+                                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">binarios</a>
+                                    <a class="dropdown-item" href="#">t2s</a>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                    <div role="separator" class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#">imalliance</a>
+                                </div>
+                            </div>
+                            <input type="text" class="form-control" aria-label="Text input with segmented dropdown button">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary " data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" id="createClientSubmitBtn">Créer</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div style="margin-top: 50px; margin-left: 2%; margin-right: 2%;">
 
-    <h2>Tickets</h2>
-
-    <!-- Create a table for displaying tickets -->
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Ticket ID</th>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Description</th>
-            <th>Assigned Tech</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody id="ticketTableBody"></tbody>
-    </table>
+    <!-- Modal pour Créer un Technicien -->
+    <div class="modal fade" id="createTechnicianModal" tabindex="-1" role="dialog" aria-labelledby="createTechnicianModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createTechnicianModalLabel">Créer un Technicien</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form for creating a technician -->
+                    <form id="createTechnicianForm">
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label for="fullName">fullName</label>
+                                <input type="text" class="form-control" id="techname" placeholder="fullName">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="techpassword" placeholder="password">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Nom du Client</label>
+                                <input type="email" class="form-control" id="techmail" placeholder="email">
+                            </div>
+                            <div class="form-group">
+                                <label for="phoneNumber">phoneNumber</label>
+                                <input type="tel" class="form-control" id="techphone" placeholder="phoneNumber">
+                            </div>
+                            <div class="form-group">
+                                <label for="birthDate">birthDate</label>
+                                <input type="date" class="form-control" id="techbirthDate" placeholder="birthDate">
+                            </div>
+                            <!--                        <div class="form-group">-->
+                            <!--                            <label for="group">groupe</label>-->
+                            <!--                            <input type="text" class="form-control" id="groupe" placeholder="groupe">-->
+                            <!--                        </div>-->
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <button type="button" class="btn btn-outline-secondary">Action</button>
+                                    <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="sr-only">Toggle Dropdown</span>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="#">binarios</a>
+                                        <a class="dropdown-item" href="#">t2s</a>
+                                        <a class="dropdown-item" href="#">Something else here</a>
+                                        <div role="separator" class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="#">imalliance</a>
+                                    </div>
+                                </div>
+                                <input type="text" class="form-control" aria-label="Text input with segmented dropdown button">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-success" id="createTechnicianSubmitBtn">Créer</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Button to navigate to the "group" page -->
-<!--    <button id="group" class="btn">Go to Group Page</button>-->
+    <!--    <button id="group" class="btn">Go to Group Page</button>-->
 </div>
 
 
@@ -155,7 +331,7 @@
                 const actionCell = document.createElement('td');
                 const detailsButton = document.createElement('button');
                 detailsButton.textContent = 'Assigner';
-                detailsButton.className = 'btn btn-primary';
+                detailsButton.className = 'btn btn-info';
                 detailsButton.style= "margin-right:4px";
 
                 // Add a click event listener to the "Details" button
@@ -169,7 +345,7 @@
                 // Create a "Delete" button for each ticket
                 const deleteButton = document.createElement('button');
                 deleteButton.textContent = 'Delete';
-                deleteButton.className = 'btn btn-danger';
+                deleteButton.className = 'btn btn-secondary';
 
                 // Add a click event listener to the "Delete" button
                 deleteButton.addEventListener('click', function () {

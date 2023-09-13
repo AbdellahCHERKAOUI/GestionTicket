@@ -50,6 +50,7 @@
 
 
 <script>
+    const authToken = sessionStorage.getItem('authToken');
     // Function to fetch ticket details and populate the form
     function fetchTicketDetails(ticketId) {
 
@@ -272,6 +273,26 @@
                 }
             })
             .catch(error => console.error('Error downloading attachment:', error));
+    }
+
+    // Call the fetchGroupDetails function when the page loads
+    window.addEventListener('load', fetchTicketDetails);
+    function fetchTicketDetails() {
+        fetch(`http://localhost:9090/api/ticket/${ticketId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        })
+            .then(response => response.json())
+            .then(ticket => {
+                // Populate the input fields with group details
+                document.getElementById('name').value = ticket.name;
+                document.getElementById('description').value = ticket.description;
+            })
+            .catch(error => {
+                console.error('Error fetching group details:', error);
+            });
     }
 
 

@@ -2,8 +2,39 @@
 <html>
 <head>
     <title>Submit Ticket</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#"><h1 class="mb-4">ADMIN Interface</h1></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <!-- Vous pouvez ajouter des liens de navigation ici -->
+            <li class="nav-item">
+                <a class="nav-link" type="button" data-toggle="modal" data-target="#myModal">
+                    Profile
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" type="button" id="group">
+                    Groups
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" type="button" id="ticket">
+                    Tickets
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Déconnexion</a>
+            </li>
+        </ul>
+    </div>
+</nav>
 <form id="ticketForm" enctype="multipart/form-data">
     <input type="text" name="name" placeholder="Name">
     <br><br>
@@ -13,6 +44,11 @@
     <br><br>
     <input type="submit" value="Submit Ticket">
 </form>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 
 <script>
     document.getElementById('ticketForm').addEventListener('submit', function (event) {
@@ -62,6 +98,18 @@
             .catch(error => {
                 console.error('Error:', error);
             });
+    });
+
+    const groupButton = document.getElementById('group');
+    groupButton.addEventListener('click', function () {
+        // Redirect to the "group" page when the button is clicked
+        window.location.href = 'group'; // Replace with the correct URL
+    });
+
+    const ticketButton = document.getElementById('ticket');
+    ticketButton.addEventListener('click', function () {
+        // Redirect to the "group" page when the button is clicked
+        window.location.href = 'admin'; // Replace with the correct URL
     });
 </script>
 </body>

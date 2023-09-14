@@ -7,7 +7,15 @@
     <!-- Ajoutez les liens vers les fichiers Bootstrap et CSS ici -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        /* Ajoutez vos styles CSS personnalisés ici */
+
+        .ellipsis {
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block ;
+        }
+
         body {
             padding: 20px;
         }
@@ -81,7 +89,7 @@
                     row.innerHTML = `
                         <td>${ticket.id}</td>
                         <td>${ticket.client.username}</td>
-                        <td>${ticket.description}</td>
+                         <td style="max-width: 120px" title="${ticket.description}"> <div class="ellipsis">${ticket.description}</div> </td>
                         <td>${ticket.priority}</td>
                         <td class="ticket-status">${ticket.status}</td>
                         <td>

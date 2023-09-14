@@ -9,6 +9,14 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- Include custom CSS for the sidebar -->
     <style>
+        .ellipsis {
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block ;
+        }
+
         /* Sidebar styles */
         .sidebar {
             height: 100%;
@@ -528,6 +536,11 @@
     //     localStorage. clear();
     //     sessionStorage. clear();
     // });
+    function decodeJwt(token) {
+        const base64Payload = token.split(".")[1];
+        const decodedPayload = atob(base64Payload);
+        return JSON.parse(decodedPayload);
+    }
 </script>
 </body>
 </html>

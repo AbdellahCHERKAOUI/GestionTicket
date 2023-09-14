@@ -60,6 +60,31 @@
     </style>
 </head>
 <body>
+<!-- Main content -->
+<div class="content">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#"><h1 class="mb-4"></h1></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav" style="margin-left: 1300px;">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" type="button" data-toggle="modal" data-target="#myModal">
+                        Profile
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="disconnect">Déconnexion</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+
+
+
 <div class="container mt-5">
     <h1 class="mb-4">Modifier</h1>
     <form id="editForm">
@@ -72,7 +97,7 @@
             <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
         </div>
         <div class="mb-3">
-            <button type="submit" class="btn btn-info">Modifier</button>
+            <button type="submit" class="btn btn-secondary">Modifier</button>
         </div>
     </form>
 
@@ -92,8 +117,14 @@
     <!-- Input field to add an attachment -->
     <div class="mb-3">
         <input type="file" class="form-control mb-2" id="attachmentInput">
-        <button id="addAttachmentButton" class="btn btn-success "> <i class="bi bi-upload">Attachment</i></button>
+        <button id="addAttachmentButton" class="btn btn-success">Attachment <i class="bi bi-upload"></i>
+        </button>
     </div>
+ <div class="mb-3">
+        <button id="retour" class="btn btn-outline-danger" style="margin-top: -99px; margin-left: 1160px;" ><i class="bi bi-arrow-left-circle-fill"></i> Precedent
+        </button>
+    </div>
+
 </div>
 
 <!-- Include Bootstrap JS (optional) -->
@@ -132,9 +163,9 @@
                     // Create a row for each attachment
                     const row = `
                         <tr>
-                            <td><button class="btn btn-info" onclick="downloadAttachment('${attachment.id}')">Download : ${attachment.fileName}</button></td>
+                            <td><button class="btn btn-outline-primary" onclick="downloadAttachment('${attachment.id}')">Download : ${attachment.fileName}</button></td>
                             <td>
-                                <button class="btn btn-danger" onclick="deleteAttachment('${attachment.id}', '${ticketId}')">Supprimer</button>
+                                <button class="btn btn-outline-danger" onclick="deleteAttachment('${attachment.id}', '${ticketId}')">Supprimer</button>
 
                             </td>
                         </tr>
@@ -217,6 +248,7 @@
 
     // Call the fetchTicketDetails function with the retrieved ticketId
     fetchTicketDetails(ticketId);
+    fetchAttachments(ticketId);
 
     // Add an event listener to the "Add Attachment" button
     document.getElementById('addAttachmentButton').addEventListener('click', function () {
@@ -346,8 +378,20 @@
                 console.error('Error fetching group details:', error);
             });
     }
+    const retourButton = document.getElementById('retour');
+    retourButton.addEventListener('click', function () {
+        // Redirect to the "group" page when the button is clicked
+        window.location.href = 'ticket'; // Replace with the correct URL
 
+    });
 
+    const disconnectButton = document.getElementById('disconnect');
+    disconnectButton.addEventListener('click', function () {
+        // Redirect to the "group" page when the button is clicked
+        window.location.href = 'login'; // Replace with the correct URL
+        localStorage.clear();
+        sessionStorage.clear();
+    });
 </script>
 </body>
 </html>

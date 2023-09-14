@@ -534,14 +534,9 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
+
             <li class="nav-item">
                 <a class="nav-link" href="#" data-toggle="modal" data-target="#myModal">Profile</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" type="button" id="group">Groups</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" type="button" id="ticket">Tickets</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#" id="disconnect">Déconnexion</a>
@@ -763,6 +758,14 @@
 
     // Appelez la fonction pour afficher les tickets
     displayTickets();
+
+    const disconnectButton = document.getElementById('disconnect');
+    disconnectButton.addEventListener('click', function () {
+        // Redirect to the "group" page when the button is clicked
+        window.location.href = 'login'; // Replace with the correct URL
+        localStorage.clear();
+        sessionStorage.clear();
+    });
 </script>
 </body>
 </html>

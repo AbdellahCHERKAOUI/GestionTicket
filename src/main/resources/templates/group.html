@@ -304,6 +304,8 @@
     disconnectButton.addEventListener('click', function () {
         // Redirect to the "group" page when the button is clicked
         window.location.href = 'login'; // Replace with the correct URL
+        localStorage.clear();
+        sessionStorage.clear();
     });
 
 </script>

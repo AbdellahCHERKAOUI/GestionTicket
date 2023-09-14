@@ -12,10 +12,11 @@
             padding: 20px;
         }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-<!--    <a class="navbar-brand" href="#"><h1 class="mb-4">ADMIN Interface</h1></a>-->
+    <a class="navbar-brand" href="#"><h1 class="mb-4">Interface technicien</h1></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -28,34 +29,53 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" type="button" id="group">
-                    Groups
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" type="button" id="ticket">
-                    Tickets
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Déconnexion</a>
+                <a class="nav-link" href="#" id="disconnect">Déconnexion</a>
             </li>
         </ul>
     </div>
 </nav>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Profile</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="fullName"><strong>Full Name:</strong></label>
+                    <span id="fullName" class="form-control-static"></span>
+                </div>
+                <div class="form-group">
+                    <label for="email"><strong>Email:</strong></label>
+                    <span id="email" class="form-control-static"></span>
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber"><strong>Phone Number:</strong></label>
+                    <span id="phoneNumber" class="form-control-static"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
 <div  style="margin-left: 103px; margin-top: 33px;">
-    <h1 class="mb-4">Technician Interface</h1>
+    <h1 class="mb-4">Tickets</h1>
 
     <!-- Tableau pour afficher les tickets -->
     <table class="table table-striped" >
         <thead>
         <tr>
-            <th>Ticket ID</th>
-            <th>Client Name</th>
+            <th>Client</th>
+            <th>Nom du ticket</th>
             <th>Description</th>
-            <th>Priorité</th>
-            <th>Status</th>
+            <th>Statut</th>
             <th>Action</th>
+
         </tr>
         </thead>
         <tbody id="ticketTableBody">
@@ -89,8 +109,26 @@
 
 <!-- JavaScript pour afficher les tickets et gérer les actions -->
 <script>
-    // Exemple d'authToken pour le test (remplacez-le par votre authentification réelle)
     const authToken = sessionStorage.getItem('authToken');
+    const payload = decodeJwt(authToken);
+
+
+    const token = sessionStorage.getItem('authToken');
+    //const decoded = jwt_decode(token);
+    // Extract user information from the JSON response
+    //const jsonResponse = JSON.parse(localStorage.getItem('authResponse')); // Assuming you stored the response in localStorage
+    //const username = payload.username;
+    const fullName = payload.fullName;
+    const email = payload.email;
+    const phoneNumber = payload.phoneNumber;
+
+    // Display the user information
+    //document.getElementById('username').textContent = username;
+    document.getElementById('fullName').textContent = fullName;
+    document.getElementById('email').textContent = email;
+    document.getElementById('phoneNumber').textContent = phoneNumber;
+    // Exemple d'authToken pour le test (remplacez-le par votre authentification réelle)
+
 
     // Fonction pour récupérer les données des tickets depuis le serveur
     function getTickets() {
@@ -109,19 +147,19 @@
                     const row = document.createElement('tr');
                     row.id = `ticketRow${ticket.id}`; // Donnez un ID unique à chaque ligne
                     row.innerHTML = `
-                        <td>${ticket.id}</td>
-                        <td>${ticket.client.username}</td>
+                        <td>${ticket.client.fullName}</td>
+                        <td>${ticket.name}</td>
                         <td>${ticket.description}</td>
-                        <td>${ticket.priority}</td>
                         <td class="ticket-status">${ticket.status}</td>
                         <td>
-                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#ticketDetailsModal" data-ticket-id="${ticket.id}">Détails</button>
+                            <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#ticketDetailsModal" data-ticket-id="${ticket.id}"><i class="bi bi-info-circle"></i>  Détails</button>
+                            <button type="button" class="btn btn-info btn-sm"  onclick="editTicket('${ticket.id}')"><i class="bi bi-archive"></i>  Attachments</button>
                         </td>
                     `;
                     ticketTableBody.appendChild(row);
 
                     // Gestionnaire d'événements pour le bouton "Détails"
-                    const detailsButton = row.querySelector('.btn-primary');
+                    const detailsButton = row.querySelector('.btn-secondary');
                     detailsButton.addEventListener('click', function() {
                         // Mettre à jour le contenu de la fenêtre modale avec les détails du ticket
                         const modalTitle = document.querySelector('#ticketDetailsModalLabel');
@@ -140,10 +178,6 @@
                                         <option value="DONE">DONE</option>
                                     </select>
                                 </div>
-                                <div class="form-group">
-                                    <label for="commentTextArea">Commentaire:</label>
-                                    <textarea class="form-control" id="commentTextArea" rows="3">${ticket.comment || ''}</textarea>
-                                </div>
                             </div>
                         `;
 
@@ -155,7 +189,7 @@
                         const saveChangesBtn = document.getElementById('saveChangesBtn');
                         saveChangesBtn.addEventListener('click', function() {
                             const newStatus = statusSelect.value;
-                            const newComment = document.getElementById('commentTextArea').value;
+                            //const newComment = document.getElementById('commentTextArea').value;
                             // Envoyer une requête au serveur pour mettre à jour le statut et le commentaire du ticket
                             fetch(`http://localhost:9090/api/ticket/${ticket.id}/updateStatus`, {
                                 method: 'POST',
@@ -190,8 +224,28 @@
             });
     }
 
+    function editTicket(ticketId) {
+        // Assuming ticketId is passed as a parameter to this function
+        // You can construct the URL with the ticketId and navigate to it
+        window.location.href = `/ticket-details-tech?ticketId=${ticketId}`;
+    }
+
+    //Decode the token
+    function decodeJwt(token) {
+        const base64Payload = token.split(".")[1];
+        const decodedPayload = atob(base64Payload);
+        return JSON.parse(decodedPayload);
+    }
+
     // Appel de la fonction pour récupérer les données des tickets
     getTickets();
+    const disconnectButton = document.getElementById('disconnect');
+    disconnectButton.addEventListener('click', function () {
+        // Redirect to the "group" page when the button is clicked
+        window.location.href = 'login'; // Replace with the correct URL
+        localStorage.clear();
+        sessionStorage.clear();
+    });
 </script>
 
 <!-- Bootstrap JS (si nécessaire) -->

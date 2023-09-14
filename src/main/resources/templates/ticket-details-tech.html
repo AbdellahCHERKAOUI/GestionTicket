@@ -7,26 +7,78 @@
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <style>
+        /* Ajout de styles personnalisés */
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        /*.btn-success {*/
+        /*    background-color: #28a745;*/
+        /*    border-color: #28a745;*/
+        /*}*/
+
+        .btn-success:hover {
+            background-color: #1e7e34;
+            border-color: #1e7e34;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background-color: #bb2d3b;
+            border-color: #bb2d3b;
+        }
+    </style>
+
 
 </head>
 <body>
 <div class="container mt-5">
-    <h1 class="mb-4">Modifier</h1>
-    <form id="editForm">
-        <div class="mb-3">
-            <label for="name" class="form-label">Nom :</label>
-            <input type="text" class="form-control" id="name" name="name" required>
-        </div>
-        <div class="mb-3">
-            <label  for="description" class="form-label ">Description:</label>
-            <textarea class="form-control " id="description" name="description" rows="4" required></textarea>
-        </div>
-        <div class="mb-3">
-            <button type="submit" class="btn btn-primary">Modifier</button>
-        </div>
-    </form>
+    <h1 class="mb-4">Pièces jointes :</h1>
+    <!--    <form id="editForm">-->
+    <!--        <div class="mb-3">-->
+    <!--            <label for="name" class="form-label">Nom :</label>-->
+    <!--            <input type="text" class="form-control" id="name" name="name" required>-->
+    <!--        </div>-->
+    <!--        <div class="mb-3">-->
+    <!--            <label  for="description" class="form-label ">Description:</label>-->
+    <!--            <textarea class="form-control " id="description" name="description" rows="4" required></textarea>-->
+    <!--        </div>-->
+    <!--        <div class="mb-3">-->
+    <!--            <button type="submit" class="btn btn-primary">Modifier</button>-->
+    <!--        </div>-->
+    <!--    </form>-->
 
-    <h2 class="mt-4">Pièces jointes :</h2>
+<!--    <h2 class="mt-4">Pièces jointes :</h2>-->
     <table class="table">
         <thead>
         <tr>
@@ -41,8 +93,15 @@
 
     <!-- Input field to add an attachment -->
     <div class="mb-3">
-        <input type="file" class="form-control" id="attachmentInput" >
-        <button id="addAttachmentButton" class="btn btn-success" >Ajouter un attachment</button>
+        <input type="file" class="form-control" id="attachmentInput">
+        <button id="addAttachmentButton" class="btn btn-success" style="margin-top: 7px;"><i class="bi bi-upload"></i> Attachment
+        </button>
+    </div>
+
+    <div >
+        <button id="goBack" class="btn btn-secondary" style="margin-top: -98px;
+    margin-left: 1187px;"><i class="bi bi-back"></i> Retour
+        </button>
     </div>
 </div>
 
@@ -52,6 +111,7 @@
 
 <script>
     const authToken = sessionStorage.getItem('authToken');
+
     // Function to fetch ticket details and populate the form
     function fetchTicketDetails(ticketId) {
 
@@ -71,7 +131,7 @@
             'Authorization': `Bearer ${authToken}`,
         };
 
-        fetch(apiUrl, { headers })
+        fetch(apiUrl, {headers})
             .then(response => response.json())
             .then(data => {
                 const attachmentList = document.getElementById('attachmentList');
@@ -81,9 +141,9 @@
                     // Create a row for each attachment
                     const row = `
                         <tr>
-                            <td><button class="btn btn-info" onclick="downloadAttachment('${attachment.id}')"><i class="bi bi-download"></i>  ${attachment.fileName}</button></td>
+                            <td><button class="btn btn-outline-primary" onclick="downloadAttachment('${attachment.id}')"><i class="bi bi-download"></i>  ${attachment.fileName}</button></td>
                             <td>
-                                <button class="btn btn-danger" onclick="deleteAttachment('${attachment.id}', '${ticketId}')">Supprimer</button>
+                                <button class="btn btn-outline-danger" onclick="deleteAttachment('${attachment.id}', '${ticketId}')">Supprimer</button>
 
                             </td>
                         </tr>
@@ -180,58 +240,6 @@
         }
     });
 
-    // Function to handle form submission
-    document.getElementById('editForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        // Retrieve the values from the form
-        const name = document.getElementById('name').value;
-        const description = document.getElementById('description').value;
-
-        // Create an object to hold the form data
-        const ticketDTO = {
-            name: name,
-            description: description
-        };
-
-        // Create a new FormData object
-        const formData = new FormData();
-
-        // Create a Blob containing the JSON data
-        const jsonBlob = new Blob([JSON.stringify(ticketDTO)], { type: 'application/json' });
-
-        // Append the ticketDTO JSON data as a text part
-        formData.append('ticketDTO', jsonBlob, 'ticketDTO.json');
-
-        // Get the bearer token from sessionStorage
-        const authToken = sessionStorage.getItem('authToken');
-
-        // Construct the URL for the PUT request
-        const apiUrl = `http://localhost:9090/api/ticket/edit/${ticketId}`;
-
-        // Define the headers including the bearer token
-        const headers = {
-            'Authorization': `Bearer ${authToken}`,
-        };
-
-        // Send the PUT request with the FormData payload
-        fetch(apiUrl, {
-            method: 'PUT',
-            headers: headers,
-            body: formData
-        })
-            .then(response => {
-                if (response.ok) {
-                    // Handle success, you can redirect or show a success message
-                    console.log('Ticket updated successfully');
-                    window.location.href = "ticket";
-                } else {
-                    // Handle errors, you can show an error message
-                    alert('Failed to update ticket');
-                }
-            })
-            .catch(error => console.error('Error updating ticket:', error));
-    });
 
     // Function to download an attachment
     function downloadAttachment(attachmentId) {
@@ -247,7 +255,7 @@
         };
 
         // Send a GET request to download the attachment
-        fetch(apiUrl, { headers })
+        fetch(apiUrl, {headers})
             .then(response => {
                 if (response.ok) {
                     // Trigger the browser to download the attachment file
@@ -279,23 +287,15 @@
 
     // Call the fetchGroupDetails function when the page loads
     window.addEventListener('load', fetchTicketDetails);
-    function fetchTicketDetails() {
-        fetch(`http://localhost:9090/api/ticket/${ticketId}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${authToken}`
-            }
-        })
-            .then(response => response.json())
-            .then(ticket => {
-                // Populate the input fields with group details
-                document.getElementById('name').value = ticket.name;
-                document.getElementById('description').value = ticket.description;
-            })
-            .catch(error => {
-                console.error('Error fetching group details:', error);
-            });
-    }
+
+
+    const goBackButton = document.getElementById('goBack');
+    goBackButton.addEventListener('click', function () {
+        // Redirect to the "group" page when the button is clicked
+        window.location.href = 'tech'; // Replace with the correct URL
+    });
+
+
 
 
 </script>

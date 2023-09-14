@@ -33,7 +33,7 @@ public class AttachmentController {
     //Delete an attachment of a ticket -There is a parallel deletion from the attachment DB, and the list of the Ticket-
 
     @DeleteMapping("/delete/{attachmentId}")
-    @PreAuthorize("hasAnyAuthority('CLIENT','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('CLIENT','ADMIN','TECH')")
     public ResponseEntity<String> deleteAttachment(@PathVariable("attachmentId") Long attachmentId) throws Exception {
         attachmentService.deleteAttachmentById(attachmentId);
         return new ResponseEntity<>("The attachment with the id " + attachmentId + " has been deleted successfully", HttpStatus.OK);

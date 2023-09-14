@@ -526,6 +526,37 @@
         </style>
 </head>
 <body>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Profile</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="fullName"><strong>Full Name:</strong></label>
+                    <span id="fullName" class="form-control-static"></span>
+                </div>
+                <div class="form-group">
+                    <label for="email"><strong>Email:</strong></label>
+                    <span id="email" class="form-control-static"></span>
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber"><strong>Phone Number:</strong></label>
+                    <span id="phoneNumber" class="form-control-static"></span>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Navbar Bootstrap -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#"><b>Gestion des Tickets d'Incendie</b></a>
@@ -610,6 +641,26 @@
 
 <!-- JavaScript -->
 <script>
+    const authToken = sessionStorage.getItem('authToken');
+
+
+    const payload = decodeJwt(authToken);
+
+
+    const token = sessionStorage.getItem('authToken');
+    //const decoded = jwt_decode(token);
+    // Extract user information from the JSON response
+    //const jsonResponse = JSON.parse(localStorage.getItem('authResponse')); // Assuming you stored the response in localStorage
+    //const username = payload.username;
+    const fullName = payload.fullName;
+    const email = payload.email;
+    const phoneNumber = payload.phoneNumber;
+
+    // Display the user information
+    //document.getElementById('username').textContent = username;
+    document.getElementById('fullName').textContent = fullName;
+    document.getElementById('email').textContent = email;
+    document.getElementById('phoneNumber').textContent = phoneNumber;
     // Variables globales pour stocker les tickets
     let tickets = [];
 
@@ -776,6 +827,12 @@
         localStorage.clear();
         sessionStorage.clear();
     });
+
+    function decodeJwt(token) {
+        const base64Payload = token.split(".")[1];
+        const decodedPayload = atob(base64Payload);
+        return JSON.parse(decodedPayload);
+    }
 </script>
 </body>
 </html>

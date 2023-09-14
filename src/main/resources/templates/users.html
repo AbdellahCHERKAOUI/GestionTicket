@@ -158,23 +158,13 @@
                     <!--                            <label for="group">groupe</label>-->
                     <!--                            <input type="text" class="form-control" id="groupe" placeholder="groupe">-->
                     <!--                        </div>-->
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <button type="button" class="btn btn-outline-secondary">Action</button>
-                            <button type="button"
-                                    class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="sr-only">Toggle Dropdown</span>
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">binarios</a>
-                                <a class="dropdown-item" href="#">t2s</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                                <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">imalliance</a>
-                            </div>
-                        </div>
-                        <input type="text" class="form-control" aria-label="Text input with segmented dropdown button">
+                    <div class="form-group">
+                        <label for="group">Groupe <strong style="color: red">*</strong> :</label>
+                        <select class="form-control" id="groupe">
+                            <option value=1>Binarios</option>
+                            <option value=2>Imalliance</option>
+                            <option value=3>T2s </option>
+                        </select>
                     </div>
                 </form>
             </div>
@@ -225,24 +215,14 @@
                         <!--                            <label for="group">groupe</label>-->
                         <!--                            <input type="text" class="form-control" id="groupe" placeholder="groupe">-->
                         <!--                        </div>-->
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <button type="button" class="btn btn-outline-secondary">Action</button>
-                                <button type="button"
-                                        class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">binarios</a>
-                                    <a class="dropdown-item" href="#">t2s</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
-                                    <div role="separator" class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">imalliance</a>
-                                </div>
-                            </div>
-                            <input type="text" class="form-control"
-                                   aria-label="Text input with segmented dropdown button">
+                        <div class="form-group">
+                            <label for="Specialité">Spécialité <strong style="color: red">*</strong> :</label>
+                            <select class="form-control" id="specialité">
+                                <option value="DEVELOPER">DEVELOPER</option>
+                                <option value="RESEAUX">RESEAUX</option>
+                                <option value="FINANCE">FINANCE</option>
+                                <option value="MANAGEMENT">MANAGEMENT</option>
+                            </select>
                         </div>
                     </div>
                 </form>

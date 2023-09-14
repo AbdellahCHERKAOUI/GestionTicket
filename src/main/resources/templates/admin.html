@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -119,6 +120,7 @@
                 <table class="table">
                     <thead>
                     <tr>
+<!--                        <th>Ticket ID</th>-->
                         <th>Name</th>
                         <th>Status</th>
                         <th>Description</th>
@@ -165,31 +167,19 @@
                             <label for="birthDate">birthDate <strong style="color: red">*</strong> : </label>
                             <input type="date" class="form-control" id="birthDate" placeholder="birthDate">
                         </div>
-<!--                        <div class="form-group">-->
-<!--                            <label for="group">groupe</label>-->
-<!--                            <input type="text" class="form-control" id="groupe" placeholder="groupe">-->
-<!--                        </div>-->
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <button type="button" class="btn btn-outline-secondary">Action</button>
-                                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">binarios</a>
-                                    <a class="dropdown-item" href="#">t2s</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
-                                    <div role="separator" class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">imalliance</a>
-                                </div>
-                            </div>
-                            <input type="text" class="form-control" aria-label="Text input with segmented dropdown button">
+                        <div class="form-group">
+                            <label for="group">Groupe <strong style="color: red">*</strong> :</label>
+                            <select class="form-control" id="groupe">
+                                <option value=1>Binarios</option>
+                                <option value=2>Imalliance</option>
+                                <option value=3>T2s </option>
+                            </select>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary " data-dismiss="modal">Annuler</button>
-                    <button type="button" class="btn btn-primary" id="createClientSubmitBtn">Créer</button>
+                    <button type="button"  class="btn btn-success" id="createClientSubmitBtn">Créer</button>
                 </div>
             </div>
         </div>
@@ -229,32 +219,22 @@
                                 <label for="birthDate">birthDate</label>
                                 <input type="date" class="form-control" id="techbirthDate" placeholder="birthDate">
                             </div>
-                            <!--                        <div class="form-group">-->
-                            <!--                            <label for="group">groupe</label>-->
-                            <!--                            <input type="text" class="form-control" id="groupe" placeholder="groupe">-->
-                            <!--                        </div>-->
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <button type="button" class="btn btn-outline-secondary">Action</button>
-                                    <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <span class="sr-only">Toggle Dropdown</span>
-                                    </button>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="#">binarios</a>
-                                        <a class="dropdown-item" href="#">t2s</a>
-                                        <a class="dropdown-item" href="#">Something else here</a>
-                                        <div role="separator" class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#">imalliance</a>
-                                    </div>
-                                </div>
-                                <input type="text" class="form-control" aria-label="Text input with segmented dropdown button">
+                            <div class="form-group">
+                                <label for="Specialité">Spécialité <strong style="color: red">*</strong> :</label>
+                                <select class="form-control" id="specialité">
+                                    <option value="DEVELOPER">DEVELOPER</option>
+                                    <option value="RESEAUX">RESEAUX</option>
+                                    <option value="FINANCE">FINANCE</option>
+                                    <option value="MANAGEMENT">MANAGEMENT</option>
+                                </select>
                             </div>
-                        </div>
+                            </div>
+
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                    <button type="button" class="btn btn-success" id="createTechnicianSubmitBtn">Créer</button>
+                    <button type="button" onclick ="createTechnician()" class="btn btn-success" id="createTechnicianSubmitBtn">Créer</button>
                 </div>
             </div>
         </div>
@@ -410,6 +390,144 @@
         // Redirect to the "group" page when the button is clicked
         window.location.href = 'users'; // Replace with the correct URL
     });
+
+
+
+    // Fonction pour créer un client
+    function createClient() {
+        // Capturer les données du formulaire
+        const name = document.getElementById('name').value;
+        const password = document.getElementById('password').value;
+        const email = document.getElementById('mail').value;
+        const phoneNumber = document.getElementById('phone').value;
+        const birthDate = document.getElementById('birthDate').value;
+        const groupe = document.getElementById('groupe');
+        console.log(groupe)
+        // Construire l'objet client à envoyer au serveur
+        const clientData  = {
+            fullName: name,
+            password: password,
+            email: email,
+            phoneNumber: phoneNumber,
+            birthDate: birthDate,
+            group: groupe
+        };
+
+        // Envoyer la requête POST pour créer un client
+        fetch('http://localhost:9090/api/client/create', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(clientData)
+        })
+            .then(response => response.json())
+            .then(createdClient => {
+                // Ajouter le client à la liste des utilisateurs
+                const userList = document.getElementById('userList');
+                const listItem = document.createElement('li');
+                listItem.textContent = `Client: ${createdClient.fullName}, Email: ${createdClient.email}, Groupe: ${createdClient.groupe}`;
+                userList.appendChild(listItem);
+
+                // Effacer les champs du formulaire après la création réussie
+                document.getElementById('name').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('mail').value = '';
+                document.getElementById('phone').value = '';
+                document.getElementById('birthDate').value = '';
+                document.getElementById('groupe').value = '';
+
+                // Fermer la fenêtre modale
+                $('#createClientModal').modal('hide');
+            })
+            .catch(error => {
+                console.error('Erreur lors de la création du client:', error);
+            });
+    }
+
+    // Fonction pour créer un technicien
+    function createTechnician() {
+        // Capturer les données du formulaire
+        const techName = document.getElementById('techname').value;
+        const techPassword = document.getElementById('techpassword').value;
+        const techEmail = document.getElementById('techmail').value;
+        const techPhoneNumber = document.getElementById('techphone').value;
+        const techBirthDate = document.getElementById('techbirthDate').value;
+        const techSpecialite = document.getElementById('specialité').value;
+
+
+        // Construire l'objet technicien à envoyer au serveur
+        const techData = {
+            fullName: techName,
+            password: techPassword,
+            email: techEmail,
+            phoneNumber: techPhoneNumber,
+            birthDate: techBirthDate,
+            Specialite: techSpecialite
+        };
+
+        // Envoyer la requête POST pour créer un technicien
+        fetch('http://localhost:9090/api/tech/create', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(techData)
+        })
+            .then(response => response.json())
+            .then(createdTechnician => {
+                // Ajouter le technicien à la liste des utilisateurs
+                const userList = document.getElementById('userList');
+                const listItem = document.createElement('li');
+                listItem.textContent = `Technicien: ${createdTechnician.fullName}, Email: ${createdTechnician.email}, Spécialité: ${createdTechnician.specialite}`;
+                userList.appendChild(listItem);
+
+                // Effacer les champs du formulaire après la création réussie
+                document.getElementById('techname').value = '';
+                document.getElementById('techpassword').value = '';
+                document.getElementById('techmail').value = '';
+                document.getElementById('techphone').value = '';
+                document.getElementById('techbirthDate').value = '';
+                document.getElementById('specialité').value = '';
+
+                // Fermer la fenêtre modale
+                $('#createTechnicianModal').modal('hide');
+            })
+            .catch(error => {
+                console.error('Erreur lors de la création du technicien:', error);
+            });
+    }
+
+    // Gestionnaire d'événement pour le bouton "Créer Client"
+    document.getElementById('createClientSubmitBtn').addEventListener('click', function() {
+
+        // Pour le bouton "Créer" dans la modal de création de client
+    const createClientSubmitBtn = document.getElementById('createClientSubmitBtn');
+    createClientSubmitBtn.addEventListener('click', function () {
+        createClient(); // Appeler la fonction de création de client
+    });
+    });
+
+
+    // // Gestionnaire d'événement pour le bouton "Créer Technicien"
+    // document.getElementById('createTechnicianSubmitBtn').addEventListener('click', function() {
+    // // Pour le bouton "Créer" dans la modal de création de technicien
+    // // const createTechnicianSubmitBtn = document.getElementById('createTechnicianSubmitBtn');
+    // // createTechnicianSubmitBtn.addEventListener('click', function () {
+    // //     createTechnician(); // Appeler la fonction de création de technicien
+    // // });  });
+
+
+    // //deconnexion
+    // const disconnectButton = document.getElementById('disconnect');
+    // disconnectButton.addEventListener('click', function () {
+    //     // Redirect to the "group" page when the button is clicked
+    //     window.location.href = 'login'; // Replace with the correct URL
+    //     localStorage. clear();
+    //     sessionStorage. clear();
+    // });
 </script>
 </body>
 </html>

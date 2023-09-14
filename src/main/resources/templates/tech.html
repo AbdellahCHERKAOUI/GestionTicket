@@ -19,6 +19,13 @@
         body {
             padding: 20px;
         }
+        .ellipsis {
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block ;
+        }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
 </head>
@@ -156,8 +163,8 @@
                     row.id = `ticketRow${ticket.id}`; // Donnez un ID unique à chaque ligne
                     row.innerHTML = `
                         <td>${ticket.client.fullName}</td>
-                        <td>${ticket.name}</td>
-                        <td>${ticket.description}</td>
+                        <td >${ticket.name}</td>
+                        <td style="max-width: 120px" title="${ticket.description}"> <div class="ellipsis">${ticket.description}</div> </td>
                         <td class="ticket-status">${ticket.status}</td>
                         <td>
                             <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#ticketDetailsModal" data-ticket-id="${ticket.id}"><i class="bi bi-info-circle"></i>  Détails</button>
@@ -179,11 +186,11 @@
 
                                 <div class="form-group">
                                     <label for="statusSelect">Statut:</label>
-                                    <select class="form-control" id="statusSelect">
+                                    <select class="form-control" id="statusSelect" selected="${ticket.status}">
                                         <option value="CLOSED">CLOSED</option>
                                         <option value="OPEN">OPEN</option>
                                         <option value="IN_PROGRESS">In Progress</option>
-                                        <option value="DONE">DONE</option>
+                                        <option value="DONE" >DONE</option>
                                     </select>
                                 </div>
                             </div>
@@ -206,8 +213,7 @@
                                     'Content-Type': 'application/json'
                                 },
                                 body: JSON.stringify({
-                                    newStatus: newStatus,
-                                    comment: newComment
+                                    newStatus: newStatus
                                 })
                             })
                                 .then(response => response.json())

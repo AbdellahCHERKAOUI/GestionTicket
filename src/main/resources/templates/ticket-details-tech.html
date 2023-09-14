@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <style>
+        /* Ajout de styles personnalisés */
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        /*.btn-success {*/
+        /*    background-color: #28a745;*/
+        /*    border-color: #28a745;*/
+        /*}*/
+
+        .btn-success:hover {
+            background-color: #1e7e34;
+            border-color: #1e7e34;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background-color: #bb2d3b;
+            border-color: #bb2d3b;
+        }
+    </style>
+
+
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">Pièces jointes :</h1>
+    <!--    <form id="editForm">-->
+    <!--        <div class="mb-3">-->
+    <!--            <label for="name" class="form-label">Nom :</label>-->
+    <!--            <input type="text" class="form-control" id="name" name="name" required>-->
+    <!--        </div>-->
+    <!--        <div class="mb-3">-->
+    <!--            <label  for="description" class="form-label ">Description:</label>-->
+    <!--            <textarea class="form-control " id="description" name="description" rows="4" required></textarea>-->
+    <!--        </div>-->
+    <!--        <div class="mb-3">-->
+    <!--            <button type="submit" class="btn btn-primary">Modifier</button>-->
+    <!--        </div>-->
+    <!--    </form>-->
+
+<!--    <h2 class="mt-4">Pièces jointes :</h2>-->
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Nom de fichier</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody id="attachmentList">
+        <!-- Attachments will be displayed here using JavaScript -->
+        </tbody>
+    </table>
+
+    <!-- Input field to add an attachment -->
+    <div class="mb-3">
+        <input type="file" class="form-control" id="attachmentInput">
+        <button id="addAttachmentButton" class="btn btn-success" style="margin-top: 7px;"><i class="bi bi-upload"></i> Attachment
+        </button>
+    </div>
+
+    <div >
+        <button id="goBack" class="btn btn-secondary" style="margin-top: -98px;
+    margin-left: 1187px;"><i class="bi bi-back"></i> Retour
+        </button>
+    </div>
+</div>
+
+<!-- Include Bootstrap JS (optional) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+    const authToken = sessionStorage.getItem('authToken');
+
+    // Function to fetch ticket details and populate the form
+    function fetchTicketDetails(ticketId) {
+
+        fetchAttachments(ticketId);
+    }
+
+    // Function to fetch and display attachments for the ticket
+    function fetchAttachments(ticketId) {
+        // Construct the URL for fetching attachments
+        const apiUrl = `http://localhost:9090/api/ticket/${ticketId}/attachments`;
+
+        // Get the bearer token from sessionStorage
+        const authToken = sessionStorage.getItem('authToken');
+
+        // Define the headers including the bearer token
+        const headers = {
+            'Authorization': `Bearer ${authToken}`,
+        };
+
+        fetch(apiUrl, {headers})
+            .then(response => response.json())
+            .then(data => {
+                const attachmentList = document.getElementById('attachmentList');
+                attachmentList.innerHTML = ''; // Clear previous attachments
+
+                data.forEach(attachment => {
+                    // Create a row for each attachment
+                    const row = `
+                        <tr>
+                            <td><button class="btn btn-outline-primary" onclick="downloadAttachment('${attachment.id}')"><i class="bi bi-download"></i>  ${attachment.fileName}</button></td>
+                            <td>
+                                <button class="btn btn-outline-danger" onclick="deleteAttachment('${attachment.id}', '${ticketId}')">Supprimer</button>
+
+                            </td>
+                        </tr>
+                    `;
+                    attachmentList.innerHTML += row;
+                });
+            })
+            .catch(error => console.error('Error fetching attachments:', error));
+    }
+
+    // Function to add an attachment to the ticket
+    function addAttachmentToTicket(ticketId, file) {
+        // Construct the URL for adding an attachment to the ticket
+        const apiUrl = `http://localhost:9090/api/attachment/addToTicket/${ticketId}`;
+
+        // Get the bearer token from sessionStorage
+        const authToken = sessionStorage.getItem('authToken');
+
+        // Create a FormData object to send the file
+        const formData = new FormData();
+        formData.append('file', file);
+
+        // Define the headers including the bearer token
+        const headers = {
+            'Authorization': `Bearer ${authToken}`,
+        };
+
+        // Send the POST request to add the attachment to the ticket
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: headers,
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Attachment added successfully, refresh the attachment list
+                    fetchAttachments(ticketId);
+                    // Clear the attachment input field after successfully adding the attachment
+                    const attachmentInput = document.getElementById('attachmentInput');
+                    attachmentInput.value = ""; // Set the input field value to an empty string
+                } else {
+                    console.error('Error adding attachment to ticket:', response.status);
+                }
+            })
+            .catch(error => console.error('Error adding attachment to ticket:', error));
+    }
+
+    // Function to delete an attachment from the ticket
+    function deleteAttachment(attachmentId, ticketId) {
+        // Construct the URL for deleting an attachment
+        const apiUrl = `http://localhost:9090/api/attachment/delete/${attachmentId}`;
+
+        // Get the bearer token from sessionStorage
+        const authToken = sessionStorage.getItem('authToken');
+
+        // Define the headers including the bearer token
+        const headers = {
+            'Authorization': `Bearer ${authToken}`,
+        };
+
+        // Send the DELETE request to delete the attachment
+        fetch(apiUrl, {
+            method: 'DELETE',
+            headers: headers
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Attachment deleted successfully, refresh the attachment list
+                    fetchAttachments(ticketId);
+                } else {
+                    console.error('Error deleting attachment:', response.status);
+                }
+            })
+            .catch(error => console.error('Error deleting attachment:', error));
+    }
+
+    // Get the ticketId from the URL query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const ticketId = urlParams.get('ticketId');
+
+    // Call the fetchTicketDetails function with the retrieved ticketId
+    fetchTicketDetails(ticketId);
+    fetchAttachments(ticketId);
+
+    // Add an event listener to the "Add Attachment" button
+    document.getElementById('addAttachmentButton').addEventListener('click', function () {
+        const attachmentInput = document.getElementById('attachmentInput');
+        const file = attachmentInput.files[0]; // Get the selected file
+        if (file) {
+            // Call the function to add the attachment to the ticket
+            addAttachmentToTicket(ticketId, file);
+        } else {
+            alert('Please select a file to add as an attachment.');
+        }
+    });
+
+
+    // Function to download an attachment
+    function downloadAttachment(attachmentId) {
+        // Construct the URL for downloading an attachment
+        const apiUrl = `http://localhost:9090/api/attachment/download/${attachmentId}`;
+
+        // Get the bearer token from sessionStorage
+        const authToken = sessionStorage.getItem('authToken');
+
+        // Define the headers including the bearer token
+        const headers = {
+            'Authorization': `Bearer ${authToken}`,
+        };
+
+        // Send a GET request to download the attachment
+        fetch(apiUrl, {headers})
+            .then(response => {
+                if (response.ok) {
+                    // Trigger the browser to download the attachment file
+                    response.blob().then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+
+                        // Extract the filename and remove quotes
+                        const contentDispositionHeader = response.headers.get('Content-Disposition');
+                        const filenameMatch = contentDispositionHeader.match(/filename="(.+)"/);
+                        if (filenameMatch && filenameMatch.length > 1) {
+                            a.download = filenameMatch[1].replace(/"/g, '');
+                        } else {
+                            // Handle the case where the filename doesn't match the expected pattern
+                            a.download = 'downloaded_file'; // Provide a default filename
+                        }
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    });
+                } else {
+                    console.error('Error downloading attachment:', response.status);
+                }
+            })
+            .catch(error => console.error('Error downloading attachment:', error));
+    }
+
+    // Call the fetchGroupDetails function when the page loads
+    window.addEventListener('load', fetchTicketDetails);
+
+
+    const goBackButton = document.getElementById('goBack');
+    goBackButton.addEventListener('click', function () {
+        // Redirect to the "group" page when the button is clicked
+        window.location.href = 'tech'; // Replace with the correct URL
+    });
+
+
+
+
+</script>
+</body>
+</html>

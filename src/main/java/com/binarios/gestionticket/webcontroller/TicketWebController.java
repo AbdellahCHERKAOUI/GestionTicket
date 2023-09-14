@@ -56,4 +56,9 @@ public class TicketWebController {
     public String showUsers() {
         return "users";
     }
+
+    @GetMapping(path = "/ticket-details-tech")
+    public String techTicketsDetails() {
+        return "ticket-details-tech";
+    }
 }

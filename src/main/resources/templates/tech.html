@@ -167,9 +167,10 @@
                         <td style="max-width: 120px" title="${ticket.description}"> <div class="ellipsis">${ticket.description}</div> </td>
                         <td class="ticket-status">${ticket.status}</td>
                         <td>
-                            <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#ticketDetailsModal" data-ticket-id="${ticket.id}"><i class="bi bi-info-circle"></i>  Détails</button>
-                            <button type="button" class="btn btn-info btn-sm"  onclick="editTicket('${ticket.id}')"><i class="bi bi-archive"></i>  Attachments</button>
-                        </td>
+    <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#ticketDetailsModal" data-ticket-id="${ticket.id}"><i class="bi bi-info-circle"></i>  Détails</button>
+    <button type="button" class="btn btn-info btn-sm"  onclick="editTicket('${ticket.id}')"><i class="bi bi-archive"></i>  Attachments</button>
+    <!--<button class="btn btn-success btn-sm" onclick="communicateWithClient('${ticket.id}')">Communiquer</button>-->
+</td>
                     `;
                     ticketTableBody.appendChild(row);
 
@@ -225,6 +226,7 @@
                                     }
                                     // Fermer la fenêtre modale
                                     $('#ticketDetailsModal').modal('hide');
+                                    location.reload();
                                 })
                                 .catch(error => {
                                     console.error('Erreur lors de la mise à jour du ticket :', error);
@@ -260,6 +262,10 @@
         localStorage.clear();
         sessionStorage.clear();
     });
+
+/*    function communicateWithClient(ticketId) {
+        window.location.href = `/communication-interface?ticketId=${ticketId}`;
+    }*/
 </script>
 
 <!-- Bootstrap JS (si nécessaire) -->

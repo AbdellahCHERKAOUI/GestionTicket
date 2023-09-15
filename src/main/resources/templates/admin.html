@@ -89,6 +89,10 @@
         </div>
     </nav>
 
+    <!-- Afficher la liste des utilisateurs -->
+    <h2>Utilisateurs</h2>
+    <ul id="userList" class="list-group">
+    </ul>
 
             <!-- Modal -->
             <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -102,7 +106,7 @@
                         </div>
                         <div class="modal-body">
                             <div class="form-group">
-                                <label for="fullName"><strong>Full Name:</strong> <strong style="color: red"> *</strong></label>
+                                <label for="fullName"><strong>Full Name:</strong> </label>
                                 <span id="fullName" class="form-control-static"></span>
                             </div>
                             <div class="form-group">
@@ -142,111 +146,107 @@
         </main>
     </div>
 </div>
-    <!-- Modal pour Créer un Client -->
-    <div class="modal fade" id="createClientModal" tabindex="-1" role="dialog" aria-labelledby="createClientModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createClientModalLabel">Créer un Client</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <!-- Form for creating a client -->
-                    <form id="createClientForm">
-                        <div class="form-group">
-                            <label for="fullName">fullName <strong style="color: red">*</strong> : </label>
-                            <input type="text" class="form-control" id="name" placeholder="fullName">
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Password <strong style="color: red">*</strong> : </label>
-                            <input type="password" class="form-control" id="password" placeholder="password">
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Nom du Client <strong style="color: red">*</strong> : </label>
-                            <input type="email" class="form-control" id="mail" placeholder="email">
-                        </div>
-                        <div class="form-group">
-                            <label for="phoneNumber">phoneNumber <strong style="color: red">*</strong> :  </label>
-                            <input type="tel" class="form-control" id="phone" placeholder="phoneNumber">
-                        </div>
-                        <div class="form-group">
-                            <label for="birthDate">birthDate <strong style="color: red">*</strong> : </label>
-                            <input type="date" class="form-control" id="birthDate" placeholder="birthDate">
-                        </div>
-                        <div class="form-group">
-                            <label for="group">Groupe <strong style="color: red">*</strong> :</label>
-                            <select class="form-control" id="groupe">
-                                <option value=1>Binarios</option>
-                                <option value=2>Imalliance</option>
-                                <option value=3>T2s </option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary " data-dismiss="modal">Annuler</button>
-                    <button type="button"  class="btn btn-success" id="createClientSubmitBtn">Créer</button>
-                </div>
+<!-- Formulaire pour créer un client -->
+<div class="modal fade" id="createClientModal" tabindex="-1" role="dialog" aria-labelledby="createClientModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createClientModalLabel">Créer un Client</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulaire pour créer un client -->
+                <form id="createClientForm">
+                    <div class="form-group">
+                        <label for="fullName">Nom complet <strong style="color: red">*</strong> :</label>
+                        <input type="text" class="form-control" id="name" placeholder="Nom complet">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Mot de passe <strong style="color: red">*</strong> :</label>
+                        <input type="password" class="form-control" id="password" placeholder="Mot de passe">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email <strong style="color: red">*</strong> :</label>
+                        <input type="email" class="form-control" id="mail" placeholder="Email">
+                    </div>
+                    <div class="form-group">
+                        <label for="phoneNumber">Numéro de téléphone <strong style="color: red">*</strong> :</label>
+                        <input type="tel" class="form-control" id="phone" placeholder="Numéro de téléphone">
+                    </div>
+                    <div class="form-group">
+                        <label for="birthDate">Date de naissance <strong style="color: red">*</strong> :</label>
+                        <input type="date" class="form-control" id="birthDate" placeholder="Date de naissance">
+                    </div>
+                    <div class="form-group">
+                        <label for="groupe">Groupe <strong style="color: red">*</strong> :</label>
+                        <select class="form-control" id="groupe">
+                            <!-- Les options seront remplies dynamiquement via JavaScript -->
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-success" id="createClientSubmitBtn">Créer</button>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Modal pour Créer un Technicien -->
-    <div class="modal fade" id="createTechnicianModal" tabindex="-1" role="dialog" aria-labelledby="createTechnicianModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createTechnicianModalLabel">Créer un Technicien</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <!-- Form for creating a technician -->
-                    <form id="createTechnicianForm">
-                        <div class="form-group">
+        <div class="modal fade" id="createTechnicianModal" tabindex="-1" role="dialog" aria-labelledby="createTechnicianModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createTechnicianModalLabel">Créer un Technicien</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Form for creating a technician -->
+                        <form id="createTechnicianForm">
                             <div class="form-group">
-                                <label for="fullName">fullName</label>
-                                <input type="text" class="form-control" id="techname" placeholder="fullName">
-                            </div>
-                            <div class="form-group">
-                                <label for="password">Password</label>
-                                <input type="password" class="form-control" id="techpassword" placeholder="password">
+                                <label for="fullName">Nom complet <strong style="color: red">*</strong> :</label>
+                                <input type="text" class="form-control" id="techname" placeholder="Nom complet">
                             </div>
                             <div class="form-group">
-                                <label for="email">Nom du Client</label>
-                                <input type="email" class="form-control" id="techmail" placeholder="email">
+                                <label for="password">Mot de passe <strong style="color: red">*</strong> :</label>
+                                <input type="password" class="form-control" id="techpassword" placeholder="Mot de passe">
                             </div>
                             <div class="form-group">
-                                <label for="phoneNumber">phoneNumber</label>
-                                <input type="tel" class="form-control" id="techphone" placeholder="phoneNumber">
+                                <label for="email">Email <strong style="color: red">*</strong> :</label>
+                                <input type="email" class="form-control" id="techmail" placeholder="Email">
                             </div>
                             <div class="form-group">
-                                <label for="birthDate">birthDate</label>
-                                <input type="date" class="form-control" id="techbirthDate" placeholder="birthDate">
+                                <label for="phoneNumber">Numéro de téléphone <strong style="color: red">*</strong> :</label>
+                                <input type="tel" class="form-control" id="techphone" placeholder="Numéro de téléphone">
                             </div>
                             <div class="form-group">
-                                <label for="Specialité">Spécialité <strong style="color: red">*</strong> :</label>
-                                <select class="form-control" id="specialité">
-                                    <option value="DEVELOPER">DEVELOPER</option>
-                                    <option value="RESEAUX">RESEAUX</option>
-                                    <option value="FINANCE">FINANCE</option>
-                                    <option value="MANAGEMENT">MANAGEMENT</option>
-                                </select>
+                                <label for="birthDate">Date de naissance <strong style="color: red">*</strong> :</label>
+                                <input type="date" class="form-control" id="techbirthDate" placeholder="Date de naissance">
                             </div>
-                            </div>
+                                <div class="form-group">
+                                    <label for="Specialité">Spécialité <strong style="color: red">*</strong> :</label>
+                                    <select class="form-control" id="specialité">
+                                        <option value="DEVELOPER">DEVELOPER</option>
+                                        <option value="RESEAUX">RESEAUX</option>
+                                        <option value="FINANCE">FINANCE</option>
+                                        <option value="MANAGEMENT">MANAGEMENT</option>
+                                    </select>
+                                </div>
 
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                    <button type="button" onclick ="createTechnician()" class="btn btn-success" id="createTechnicianSubmitBtn">Créer</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                        <button type="button" onclick ="createTechnician()" class="btn btn-success" id="createTechnicianSubmitBtn">Créer</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
     <!-- Button to navigate to the "group" page -->
     <!--    <button id="group" class="btn">Go to Group Page</button>-->
@@ -408,26 +408,59 @@
     });
 
 
+    // Fonction pour charger les options du groupe depuis l'API
+    function loadGroupOptions() {
+        fetch('http://localhost:9090/api/group/groups', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        })
+            .then(response => response.json())
+            .then(groups => {
+                const groupeSelect = document.getElementById('groupe');
+
+                // Effacez toutes les options précédentes (au cas où)
+                groupeSelect.innerHTML = '';
+
+                // Remplissez le menu déroulant avec les groupes récupérés de l'API
+                groups.forEach(group => {
+                    const option = document.createElement('option');
+                    option.value = group.id; // Utilisez une valeur appropriée pour chaque groupe
+                    option.textContent = group.name; // Utilisez le champ correct pour le nom du groupe
+                    groupeSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Erreur lors du chargement des groupes:', error);
+            });
+    }
+
+    // Appelez la fonction pour charger les options de groupe lors de la création du formulaire
+    loadGroupOptions();
+
 
     // Fonction pour créer un client
-    function createClient() {
-        // Capturer les données du formulaire
-        const name = document.getElementById('name').value;
-        const password = document.getElementById('password').value;
-        const email = document.getElementById('mail').value;
-        const phoneNumber = document.getElementById('phone').value;
-        const birthDate = document.getElementById('birthDate').value;
-        const groupe = document.getElementById('groupe');
-        console.log(groupe)
+        function createClient() {
+            // Capturer les données du formulaire
+            const name = document.getElementById('name').value;
+            const password = document.getElementById('password').value;
+            const email = document.getElementById('mail').value;
+            const phoneNumber = document.getElementById('phone').value;
+            const birthDate = document.getElementById('birthDate').value;
+            const group = Number(document.getElementById('groupe').value);
+
+
         // Construire l'objet client à envoyer au serveur
-        const clientData  = {
+        const clientData = {
             fullName: name,
             password: password,
             email: email,
             phoneNumber: phoneNumber,
             birthDate: birthDate,
-            group: groupe
+            group: group
         };
+            console.log('clientData',clientData);
 
         // Envoyer la requête POST pour créer un client
         fetch('http://localhost:9090/api/client/create', {
@@ -440,11 +473,8 @@
         })
             .then(response => response.json())
             .then(createdClient => {
-                // Ajouter le client à la liste des utilisateurs
-                const userList = document.getElementById('userList');
-                const listItem = document.createElement('li');
-                listItem.textContent = `Client: ${createdClient.fullName}, Email: ${createdClient.email}, Groupe: ${createdClient.groupe}`;
-                userList.appendChild(listItem);
+                // Traitez la réponse de création de client ici, par exemple, affichez un message de succès.
+                console.log('Client créé avec succès:', createdClient);
 
                 // Effacer les champs du formulaire après la création réussie
                 document.getElementById('name').value = '';
@@ -461,6 +491,14 @@
                 console.error('Erreur lors de la création du client:', error);
             });
     }
+
+    // Appelez la fonction pour charger les options de groupe lors de la création du formulaire
+    loadGroupOptions();
+
+    // Gestionnaire d'événement pour le bouton "Créer Client"
+    document.getElementById('createClientSubmitBtn').addEventListener('click', function() {
+        createClient(); // Appeler la fonction de création de client
+    });
 
     // Fonction pour créer un technicien
     function createTechnician() {
@@ -480,7 +518,7 @@
             email: techEmail,
             phoneNumber: techPhoneNumber,
             birthDate: techBirthDate,
-            Specialite: techSpecialite
+            specialite: techSpecialite
         };
 
         // Envoyer la requête POST pour créer un technicien
@@ -516,15 +554,15 @@
             });
     }
 
-    // Gestionnaire d'événement pour le bouton "Créer Client"
-    document.getElementById('createClientSubmitBtn').addEventListener('click', function() {
-
-        // Pour le bouton "Créer" dans la modal de création de client
-    const createClientSubmitBtn = document.getElementById('createClientSubmitBtn');
-    createClientSubmitBtn.addEventListener('click', function () {
-        createClient(); // Appeler la fonction de création de client
-    });
-    });
+    // // Gestionnaire d'événement pour le bouton "Créer Client"
+    // document.getElementById('createClientSubmitBtn').addEventListener('click', function() {
+    //
+    //     // Pour le bouton "Créer" dans la modal de création de client
+    // const createClientSubmitBtn = document.getElementById('createClientSubmitBtn');
+    // createClientSubmitBtn.addEventListener('click', function () {
+    //     createClient(); // Appeler la fonction de création de client
+    // });
+    // });
 
 
     // // Gestionnaire d'événement pour le bouton "Créer Technicien"

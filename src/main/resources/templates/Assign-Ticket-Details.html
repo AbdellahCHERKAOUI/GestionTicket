@@ -85,7 +85,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Déconnexion</a>
+                <a class="nav-link" href="#" id="disconnect" >Déconnexion </a>
             </li>
         </ul>
     </div>
@@ -464,6 +464,14 @@
         const decodedPayload = atob(base64Payload);
         return JSON.parse(decodedPayload);
     }
+
+    const disconnectButton = document.getElementById('disconnect');
+    disconnectButton.addEventListener('click', function () {
+        // Redirect to the "group" page when the button is clicked
+        window.location.href = 'login'; // Replace with the correct URL
+        localStorage.clear();
+        sessionStorage.clear();
+    });
 
 
 

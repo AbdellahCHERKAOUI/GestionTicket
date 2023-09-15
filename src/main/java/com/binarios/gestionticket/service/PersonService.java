@@ -16,6 +16,7 @@ import com.binarios.gestionticket.exception.ResourceNotFoundException;
 import com.binarios.gestionticket.repositories.GroupRepository;
 import com.binarios.gestionticket.repositories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -91,7 +92,7 @@ public class PersonService {
     }
 
     public Collection<PersonResponseDTO> allUsers() {
-        Collection<Person> people = personRepository.findAll();
+        Collection<Person> people = personRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));;
         Collection<PersonResponseDTO> personResponseDTOS = new ArrayList<>();
 
         for (Person person : people) {

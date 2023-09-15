@@ -21,6 +21,13 @@
             overflow: visible;
             text-overflow: inherit;
         }
+
+        .ellipsis {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block ;
+        }
     </style>
 </head>
 <body>
@@ -224,7 +231,7 @@
 
                 row.innerHTML = `
                 <td>${group.name}</td>
-                <td >${group.description}</td>
+                <td style="max-width: 120px" title="${group.description}"> <div class="ellipsis">${group.description}</div> </td>
             `;
 
                 // Add the Actions column to the row

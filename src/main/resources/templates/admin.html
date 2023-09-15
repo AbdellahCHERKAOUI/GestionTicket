@@ -90,9 +90,8 @@
     </nav>
 
     <!-- Afficher la liste des utilisateurs -->
-    <h2>Utilisateurs</h2>
-    <ul id="userList" class="list-group">
-    </ul>
+<!--    <ul id="userList" class="list-group" >-->
+<!--    </ul>-->
 
             <!-- Modal -->
             <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -476,6 +475,7 @@
                 // Traitez la réponse de création de client ici, par exemple, affichez un message de succès.
                 console.log('Client créé avec succès:', createdClient);
 
+
                 // Effacer les champs du formulaire après la création réussie
                 document.getElementById('name').value = '';
                 document.getElementById('password').value = '';
@@ -532,11 +532,11 @@
         })
             .then(response => response.json())
             .then(createdTechnician => {
-                // Ajouter le technicien à la liste des utilisateurs
-                const userList = document.getElementById('userList');
-                const listItem = document.createElement('li');
-                listItem.textContent = `Technicien: ${createdTechnician.fullName}, Email: ${createdTechnician.email}, Spécialité: ${createdTechnician.specialite}`;
-                userList.appendChild(listItem);
+                // // Ajouter le technicien à la liste des utilisateurs
+                // const userList = document.getElementById('userList');
+                // const listItem = document.createElement('li');
+                // listItem.textContent = `Technicien: ${createdTechnician.fullName}, Email: ${createdTechnician.email}, Spécialité: ${createdTechnician.specialite}`;
+                // userList.appendChild(listItem);
 
                 // Effacer les champs du formulaire après la création réussie
                 document.getElementById('techname').value = '';

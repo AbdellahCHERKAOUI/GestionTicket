@@ -307,7 +307,15 @@
                 row.appendChild(statusCell);
 
                 const descriptionCell = document.createElement('td');
-                descriptionCell.textContent = ticket.description;
+                descriptionCell.style.maxWidth='120px';
+                // Create a div element for the description and apply the 'ellipsis' class
+                const descriptionDiv = document.createElement('div');
+                descriptionDiv.textContent = ticket.description;
+                descriptionDiv.title = ticket.description;
+                descriptionDiv.classList.add('ellipsis'); // Add the 'ellipsis' class to the div
+
+                // Append the div to the cell
+                descriptionCell.appendChild(descriptionDiv);
                 row.appendChild(descriptionCell);
 
                 const assignedTechCell = document.createElement('td');

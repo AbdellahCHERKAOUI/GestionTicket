@@ -7,6 +7,7 @@
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <style>
         /* Ajouter de styles personnalisés */
         body {
@@ -121,16 +122,16 @@
 </div>
 
 <div class="container mt-5">
-    <h1 class="mb-4">Assign Tech</h1>
+    <h1 class="mb-4">Attribuer un technicien</h1>
     <form id="assignTechForm">
         <div class="mb-3">
-            <label for="assignTech" class="form-label">Assign Tech:</label>
+            <label for="assignTech" class="form-label">Attribuer un technicien:</label>
             <select class="form-control" id="assignTech" name="assignTech">
 
             </select>
         </div>
         <div class="mb-3">
-            <button type="submit" class="btn btn-primary">Assign</button>
+            <button type="submit" class="btn btn-secondary">Attribuer</button>
         </div>
     </form>
 
@@ -150,7 +151,12 @@
     <!-- Input field to add an attachment -->
     <div class="mb-3">
         <input type="file" class="form-control" id="attachmentInput" >
-        <button id="addAttachmentButton" class="btn btn-success" >Ajouter un attachment</button>
+        <button id="addAttachmentButton" class="btn btn-success" style="margin-top: 7px;"><i class="bi bi-upload"></i> Attachment</button>
+    </div>
+    <div >
+        <button id="goBack" class="btn btn-outline-danger" style="margin-top: -98px;
+    margin-left: 982px;"><i class="bi bi-arrow-left-circle-fill"></i> Precedent
+        </button>
     </div>
 </div>
 
@@ -207,7 +213,10 @@
                     // Create a row for each attachment
                     const row = `
                         <tr>
-                            <td><a href="#" onclick="downloadAttachment('${attachment.id}')">${attachment.fileName}</a></td>
+                            <td><button class="btn btn-outline-primary" onclick="downloadAttachment('${attachment.id}')">
+    <i class="bi bi-download"></i> ${attachment.fileName}
+</button>
+</td>
                             <td>
                                 <button class="btn btn-danger" onclick="deleteAttachment('${attachment.id}', '${ticketId}')">Supprimer</button>
 
@@ -440,6 +449,12 @@
 
     const ticketButton = document.getElementById('ticket');
     ticketButton.addEventListener('click', function () {
+        // Redirect to the "group" page when the button is clicked
+        window.location.href = 'admin'; // Replace with the correct URL
+    });
+
+    const goBackButton = document.getElementById('goBack');
+    goBackButton.addEventListener('click', function () {
         // Redirect to the "group" page when the button is clicked
         window.location.href = 'admin'; // Replace with the correct URL
     });

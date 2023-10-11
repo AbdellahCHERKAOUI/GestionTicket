@@ -92,7 +92,7 @@ public class PersonService {
     }
 
     public Collection<PersonResponseDTO> allUsers() {
-        Collection<Person> people = personRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));;
+        Collection<Person> people  = personRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));;
         Collection<PersonResponseDTO> personResponseDTOS = new ArrayList<>();
 
         for (Person person : people) {
